@@ -1,0 +1,14 @@
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_005/snap_005.0.hdf5       36.874740
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_015/snap_015.0.hdf5       22.805816
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_025/snap_025.0.hdf5       14.033992
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_035/snap_035.0.hdf5       9.0023399
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_045/snap_045.0.hdf5       6.0107574
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_055/snap_055.0.hdf5       3.9372611
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_065/snap_065.0.hdf5       2.3161107
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_075/snap_075.0.hdf5       1.4719748
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_085/snap_085.0.hdf5      0.99729423
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_095/snap_095.0.hdf5      0.70010635
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_105/snap_105.0.hdf5      0.46091779
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_115/snap_115.0.hdf5      0.27335335
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_125/snap_125.0.hdf5      0.12575933
+/n/hernquistfs1/mvogelsberger/projects/GFM/Production/Cosmo/Cosmo0/L25n256/output/snapdir_135/snap_135.0.hdf5   2.2204460e-16

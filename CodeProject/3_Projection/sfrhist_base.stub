@@ -1,0 +1,106 @@
+
+runname cosmo_test		/ run designation
+
+#include_file            ./gal1 / this contains the sfr history and Z distr of the initial galaxies; you need to create this file in your WD (see instructions); need one for each progenitor
+
+
+# Probably don't need to change any of the below parameters for initial runs
+
+
+nbodycod		GFM # we are working with GADGET snapshots
+simparfile		./simpar	/  symbolic link to GADGET parameter file
+
+#stellarmodelfile	/n/home12/chayward/sundata/stellarmodel/Patrik_stuff/Patrik-imfKroupa-Zmulti-ml-subsampled.fits
+#stellarmodelfile	~chayward/sundata/stellarmodel/Patrik-imfKroupa-Zmulti-ml.fits
+#stellarmodelfile 	~chayward/sundata/stellarmodel/Patrik_stuff/Patrik-imfKroupa-Zsolar.fits
+#stellarmodelfile	~gsnyder/sps_models/GFS_combined_nolines_CF00.fits
+#stellarmodelfile       ~gsnyder/sps_models/bc03_cf00_test_1e7_withoutZtrend_nodiffusedust.fits
+#stellarmodelfile	~gsnyder/sps_models/bc03_cf00_3e7_Ztrend_nodiffusedust_guolike.fits
+#stellarmodelfile        ~gsnyder/sps_models/bc03_guolike_3e7_new.fits
+stellarmodelfile	~gsnyder/sps_models/bc03_cf00_baseline_3e7_Z1_onlyBC.fits
+
+# Maraston models
+#stellarmodelfile	~chayward/sundata/stellarmodel/Maraston05-rhb-kroupa.fits / Maraston stellar models
+# Use this low-resolution file for testing
+#stellarmodelfile	~chayward/sundata/stellarmodel/supersparse-imfK-Zmulti.fits  # looks like it borks things!
+# Use this high-resolution file for kinematics
+#stellarmodelfile	~chayward/sundata/stellarmodel/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits
+
+min_wavelength		0.02e-6	/ [m] smallest wavelength used
+max_wavelength		5.0e-6	/ [m] longest wavelength used
+
+#use_mappings_seds	true
+use_mappings_seds	false / don't use Groves HII+PDR templates, just Starburst99
+
+#mappings_sed_file 	~chayward/sundata/mappings/Smodel.fits
+
+# Use this low-resolution version for convergence testing.
+mappings_sed_file	~chayward/sundata/mappings/Smodel-lores128.fits
+
+#mappings_pdr_fraction	0. / no PDRs
+mappings_pdr_fraction	0.5 / normal PDR fraction (t_clear ~1-2 Myr)
+#mappings_pdr_fraction 	1.0 / complete PDR obscuration (t_clear > 10 Myr)
+mappings_mcl		1e6
+#mappings_set_radius	true / sets radius of Mappings particles to r_s (the
+#			radius necessary to contain amount of gas implicit
+#			in the models; see Jonsson+09) rather than the
+#			gravitational softening length.
+#mappings_pdr_file       ~chayward/sundata/mappings/Z1_AvRadii.txt
+#cluster_mappings_particles   true / combines particles into one particle if they overlap; potentially important for extreme starbursts where a lot of Mappings particles are present
+
+#bhmodelfile		~chayward/sundata/newbhmodel.fits
+# Use this high-resolution version for kinematics (N/A currently)
+#bhmodelfile		~chayward/sundata/newbhmodel_hires.fits
+
+#bh_radiative_efficiency	0.1
+bh_radiative_efficiency 0. / turn AGN off
+
+#ic_snapshot_directory	./ / Initial snapshots for individual progenitors
+
+h-inverse_units         true / Units from Gadget snapshot include h^-1 terms
+
+seed			0
+
+#Optional keywords for sfrhist
+
+star_adaptive_smoothing true
+star_radius_factor	1.0	/ The radius of the stellar particles are set to the gravitational softening length multiplied by this factor.
+#bh_radius_factor 0.1	/ same for BHs
+
+#center_galaxies		true / Translates origin to center of system
+#center_galaxy		0 / Translates origin to center of galaxy i (i = 0-n-1)
+#translate_origin	3809.09 6347.61 3137.00  #2476.78 801.763 1891.29 / Translates origin to specified (x,y,z)
+#center_generic		true
+
+#########################
+
+# This part of the file contains general settings for grid creation.
+
+#grid_min		-5000. -5000. -5000.        / [kpc]
+#grid_max 		110000.  110000. 110000.           / [kpc]
+              
+
+use_grid_emission 	false	/ emission from particles
+gas_tolerance   	0.1	/ no refinement based on gas
+L_bol_tolerance		1e100	/ no emission in grid
+metal_tolerance         0.10	/ using tau tolerance
+gas_metallicity 	0.	/ metals are explicitly included
+n_rays_estimated	5e8	/ [] estimated number of rays for tolerance
+opacity                 3e-5    / [kpc^2/M_sun] guess for metal opacity
+tau_tolerance   	2.	/ [] resolve this optical depth
+size_factor     	3.
+max_level       	8.
+n_threads       	4
+work_chunk_levels       4
+
+mcrx_data_dir   	~gsnyder/sunrise/src/
+
+#Optional keywords for grid creation part
+
+use_counters 		false
+#use_hpm			true
+CCfits_verbose		false
+
+#bolometric_dump_file
+#integrated_dump_file
+#dump_grid_structure

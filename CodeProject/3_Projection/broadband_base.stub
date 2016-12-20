@@ -1,0 +1,9 @@
+# This file contains general settings for broadband.  It is included by 
+# the file-specific configuration files
+
+filter_file_directory		/n/home09/gsnyder/cosmo_stuff/filters_HUDF/
+filter_list			/n/home09/gsnyder/cosmo_stuff/filters_HUDF/filters_hstandjwst_new
+filter_lambda_conversion	1.e-10	/ [] Filter files are in Angstrom
+#redshift			10.	/ [] Set to redshift SEDs for
+use_lyman_absorption		true
+use_counters			true
