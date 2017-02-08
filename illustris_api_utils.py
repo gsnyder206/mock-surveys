@@ -5,7 +5,6 @@ import string
 import sys
 import struct
 import numpy as np
-import cPickle
 import asciitable
 import scipy.ndimage
 import scipy.stats as ss
@@ -14,12 +13,10 @@ import scipy as sp
 import scipy.odr as odr
 import glob
 import os
-import make_color_image
-import make_fake_wht
+
 import gzip
 import tarfile
 import shutil
-import cosmocalc
 import congrid
 import astropy.io.ascii as ascii
 import warnings
@@ -90,11 +87,11 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
 
     if os.path.lexists(checkf) and clobber is False:
         if verbose:
-            print "Subhalo cutout exists, skipping: ", checkf
+            print("Subhalo cutout exists, skipping: ", checkf)
         return checkf
     else:
         if verbose:
-            print "Getting subhalo cutout: ", checkf
+            print("Getting subhalo cutout: ", checkf)
         file = get(url+"/cutout.hdf5",params,savepath)
         return file
 
