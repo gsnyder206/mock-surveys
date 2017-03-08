@@ -1,44 +1,86 @@
-#Base parameter file for Sunrise, sfrhist, these parameters do not change
 
-nbodycod			yt
+runname cosmo_test		/ run designation
 
+nbodycod		GFM # we are working with GADGET snapshots
+simparfile		./simpar	/  symbolic link to GADGET parameter file
 
-star_radius_factor			1.0
+stellarmodelfile	~gsnyder/sunrise_data/bc03_cf00_1e7_new_ism_both.fits
 
-use_mappings_sed			True
-mappings_pdr_fraction		0.2 / Amount of light from mappings PDR
-mappings_mcl				1e4
-cluster_mappings_particle	True
+min_wavelength		0.02e-6	/ [m] smallest wavelength used
+max_wavelength		20.0e-6	/ [m] longest wavelength used
 
+use_mappings_seds	true
+#use_mappings_seds	false / don't use Groves HII+PDR templates, just Starburst99
 
-CCfits_verbose 				false
-use_counters                true
-#nthreads                    8
-save_cellcodes              true
+#mappings_sed_file 	~chayward/sundata/mappings/Smodel.fits
 
+# Use this low-resolution version for convergence testing.
+mappings_sed_file	~gsnyder/sunrise_data/Smodel-lores256.fits
+
+#mappings_pdr_fraction	0. / no PDRs
+mappings_pdr_fraction	0.2 / normal PDR fraction (t_clear ~1-2 Myr)
+#mappings_pdr_fraction 	1.0 / complete PDR obscuration (t_clear > 10 Myr)
+mappings_mcl		1e6
+#mappings_set_radius	true / sets radius of Mappings particles to r_s (the
+#			radius necessary to contain amount of gas implicit
+#			in the models; see Jonsson+09) rather than the
+#			gravitational softening length.
+#mappings_pdr_file       ~chayward/sundata/mappings/Z1_AvRadii.txt
+#cluster_mappings_particles   true / combines particles into one particle if they overlap; potentially important for extreme starbursts where a lot of Mappings particles are present
+
+bhmodelfile		~gsnyder/sunrise_data/newbhmodel.fits
+# Use this high-resolution version for kinematics (N/A currently)
+#bhmodelfile		~chayward/sundata/newbhmodel_hires.fits
+
+bh_radiative_efficiency	0.1
+#bh_radiative_efficiency 0. / turn AGN off
+
+#ic_snapshot_directory	./ / Initial snapshots for individual progenitors
+
+h-inverse_units         true / Units from Gadget snapshot include h^-1 terms
 
 seed			0
 
+#Optional keywords for sfrhist
 
+star_adaptive_smoothing false
+star_radius_factor	1.0	/ The radius of the stellar particles are set to the gravitational softening length multiplied by this factor.
+#bh_radius_factor 0.1	/ same for BHs
 
+#center_galaxies		true / Translates origin to center of system
+#center_galaxy		0 / Translates origin to center of galaxy i (i = 0-n-1)
+#translate_origin	3809.09 6347.61 3137.00  #2476.78 801.763 1891.29 / Translates origin to specified (x,y,z)
+center_generic		true
+
+#########################
+
+# This part of the file contains general settings for grid creation.
+
+grid_min		-200.  -200.  -200.        / [kpc]
+grid_max 		200.  200.  200.           / [kpc]
+              
 
 use_grid_emission 	false	/ emission from particles
-#gas_tolerance   	0.1	/ no refinement based on gas
-#L_bol_tolerance		#1e100	/ no emission in grid
-#metal_tolerance     #0.1	/ using tau tolerance
-#gas_metallicity 	#0.	/ metals are explicitly included
-#n_rays_estimated	#1e7	/ [] estimated number of rays for tolerance
-#opacity             #3e-5    / [kpc^2/M_sun] guess for metal opacity
-#tau_tolerance   	#2.	/ [] resolve this optical depth
-#size_factor     	#1.0
-#max_level       	#17
-#work_chunk_levels   #8
+gas_tolerance   	0.1	/ no refinement based on gas
+L_bol_tolerance		1e100	/ no emission in grid
+metal_tolerance         0.1	/ using tau tolerance
+gas_metallicity 	0.	/ metals are explicitly included
+n_rays_estimated	1e7	/ [] estimated number of rays for tolerance
+opacity                 3e-5    / [kpc^2/M_sun] guess for metal opacity
+tau_tolerance   	1.	/ [] resolve this optical depth
+size_factor     	1.0
+max_level       	11
+n_threads       	16
+work_chunk_levels       4
 
+mcrx_data_dir   	/home/gsnyder/code/InstallationLibraries/sunrise/src/
 
-mcrx_data_dir   	/u/gfsnyder/sunrise_data/
+#Optional keywords for grid creation part
 
+use_counters 		false
+#use_hpm			true
+CCfits_verbose		false
 
-
-
-
-
+#bolometric_dump_file
+#integrated_dump_file
+#dump_grid_structure
