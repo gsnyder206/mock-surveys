@@ -248,20 +248,20 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='1
     bsubf.write('/u/gfsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
     bsubf.write('/u/gfsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
     if run_type=='images':
-	bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
-	bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
-	bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-	bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
+        bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
+        bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
         #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
         bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
     elif run_type=='ifu':
         #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         bsubf.write('gzip -9 mcrx.fits\n')
     elif run_type=='grism':
-	bsubf.write('/u/gfsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
-	#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-	#bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
-
+        bsubf.write('/u/gfsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        
     bsubf.close()
 
 
