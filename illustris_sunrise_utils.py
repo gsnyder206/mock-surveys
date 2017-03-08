@@ -10,6 +10,7 @@ import gfs_sublink_utils as gsu
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',nthreads=24,redshift_override=None):
 
     fits_file = os.path.abspath(snap_cutout)
+    galprops_data = subhalo_object
     
     snap_dir = os.path.dirname(fits_file)
     
@@ -28,7 +29,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     else:
         redshift=redshift_override
 
-
+    
         
     for run_type in list_of_types:
         run_dir = snap_dir+'/%s'%run_type
