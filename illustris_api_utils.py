@@ -121,6 +121,8 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             np.save(npyf,sub)
             file = get(url+"/cutout.hdf5",params,savepath)
             download = True
+            #add attributes to header that Sunrise needs for GFM setting.. time, Omega, npart?
+            
         except HTTPError as h:
             file = None
             sub = None
