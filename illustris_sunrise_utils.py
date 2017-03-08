@@ -10,7 +10,7 @@ import gfs_sublink_utils as gsu
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
                                     stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                                     data_dir='$HOME/sunrise_data/',
-                                    nthreads=24,redshift_override=None):
+                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00'):
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -87,10 +87,10 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-        #print('\tGenerating sunrise.qsub file for %s...'%run_type)
-        #qsub_fn   = 'sunrise.qsub'		
-        #final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
-        #                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
+        print('\tGenerating sunrise.sbatch file for %s...'%run_type)
+        sbatch_fn   = 'sunrise.sbatch'		
+        final_fn = generate_sbatch(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
+                                 galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit)
 
         
     
@@ -245,6 +245,46 @@ def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_
     
     return
 
+
+def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='24', queue='compute',email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0,account='hsc102'):
+
+    bsubf = open(run_dir+'/'+filename, 'w+')
+    bsubf.write('#!/bin/bash\n')
+    bsubf.write('#SBATCH -A '+account+'\n')
+    bsubf.write('#SBATCH --partition='+queue+'\n')
+    bsubf.write('#SBATCH --t='+walltime+'\n')
+    bsubf.write('#SBATCH --nodes=1\n')
+    bsubf.write('#SBATCH --ntasks-per-node='+ncpus+'\n')
+    
+    bsubf.write('#SBATCH --export=ALL\n')
+    bsubf.write('#SBATCH --job-name=sunrise_'+run_type+'\n')
+    bsubf.write('#SBATCH --output='+run_dir+'/sunrise_slurm.out\n')
+    bsubf.write('\n')
+    
+    bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
+    bsubf.write('/home/gsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
+    bsubf.write('/home/gsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
+    if run_type=='images':
+        bsubf.write('/home/gsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
+        bsubf.write('/home/gsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+        #bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
+    elif run_type=='ifu':
+        bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('gzip -9 mcrx.fits\n')
+    elif run_type=='grism':
+        bsubf.write('/home/gsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        
+
+    
+    bsubf.write('\n')
+    bsubf.close()
+
+    return os.path.abspath(run_dir+'/'+filename)
 
 
 #will need a generate_sbatch for slurm jobs on Comet
