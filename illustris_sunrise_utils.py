@@ -7,7 +7,10 @@ import gfs_sublink_utils as gsu
 #this function takes as inputs the return values of illustris_api_utils.get_subhalo()
 #this is a snapshot file and subhalo metadata object
 
-def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',nthreads=24,redshift_override=None):
+def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
+                                    stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
+                                    data_dir='$HOME/sunrise_data/',
+                                    nthreads=24,redshift_override=None):
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -17,7 +20,8 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     print("Setting up sunrise run in.. ", snap_dir)
 
     stub_dir = os.path.expandvars(stub_dir)
-
+    data_dir = os.path.expandvars(data_dir)
+    
     print("Using stubs in.. ",stub_dir)
     
     list_of_types = ['images','grism']
@@ -32,6 +36,9 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     else:
         redshift=redshift_override
 
+
+    print('redshift= ',redshift)
+    
     nthreads=str(nthreads)
         
     for run_type in list_of_types:
@@ -43,9 +50,10 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
         sfrhist_fn   = 'sfrhist.config'
         sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
 
-        generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
+        generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
-                                galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx,scale_convert=scale_convert)
+                                galprops_data = galprops_data, run_type = run_type,
+                                nthreads=nthreads, idx = idx,scale_convert=scale_convert)
 
 
         print('\tGenerating mcrx.config file for %s...'%run_type)
@@ -63,7 +71,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
             broadband_fn   = 'broadband.config'
             broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
 
-            generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+            generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                              stub_name = broadband_stub, 
                                              galprops_data = galprops_data, idx = idx)
         if run_type == 'grism': 
@@ -71,7 +79,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
             broadband_fn   = 'broadband.config'
             broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
 
-            generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, filename = broadband_fn, 
+            generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                             stub_name = broadband_stub, 
                                             galprops_data = galprops_data, idx = idx)
 
@@ -90,7 +98,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0):
+def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0):
 
 	sf = open(run_dir+'/'+filename,'w+')
 	sf.write('#Parameter File for Sunrise, sfrhist\n\n')
@@ -123,8 +131,8 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 		sf.write('min_wavelength			%s\n'%("0.02e-6"))
 		sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
 
-		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Mappings_Smodels_gfs.fits"))
-		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits"))   #or Patrik's hires.fits inputs
+		sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
+		sf.write('stellarmodelfile			%s\n'%(data_dir+'/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits'))   
 
 
 
@@ -136,7 +144,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file='', idx = None):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None):
 	mf = open(run_dir+'/'+filename,'w+')
 
 	mf.write('#Parameter File for Sunrise, mcrx\n\n')
@@ -144,8 +152,17 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
 	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
 	mf.write('n_threads          		'+nthreads+'\n')
-	mf.write('camera_positions      %s\n'%(cam_file))
 
+        #approximating Torrey and HST13887 settings
+        if cam_file is None:
+            mf.write('camerafov     120\n')
+            mf.write('ntheta        2\n')
+            mf.write('ntheta        3\n')
+            mf.write('exclude_south_pole   true \n')
+	else:
+            mf.write('camera_positions      %s\n'%(cam_file))
+
+        
 	if run_type != 'ifu':
 		mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
 	else:
@@ -154,7 +171,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	#move npixels to .config file
 
 	if run_type == 'images':
-		mf.write('npixels     800\n')
+		mf.write('npixels     400\n')
 	elif run_type == 'ifu':
 		mf.write('npixels     400\n')
 	else:
@@ -170,7 +187,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 	return
 
 
-def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
+def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
@@ -182,8 +199,8 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 	bf.write('redshift                          %.3f\n\n'%redshift)
 	bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
 	bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
-	bf.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_rest'))
-	bf.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
+	bf.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_rest'))
+	bf.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
 	bf.close()
 
 	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
@@ -194,8 +211,8 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 	bfz.write('redshift                          %.3f\n\n'%redshift)
 	bfz.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
 	bfz.write('output_file                       %s\n'%(run_dir+'/broadbandz.fits'))
-	bfz.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_st'))
-	bfz.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
+	bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st'))
+	bfz.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
 	bfz.close()
 
 
@@ -206,7 +223,7 @@ def generate_broadband_config_images(run_dir, snap_dir, filename, stub_name, gal
 	return
 
 
-def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galprops_data, idx = None):
+def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 	#I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
@@ -219,8 +236,8 @@ def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galp
 	bfg.write('redshift                          %.3f\n\n'%redshift)
 	bfg.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
 	bfg.write('output_file                       %s\n'%(run_dir+'/grism.fits'))
-	bfg.write('filter_list                       %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/filters_grism'))
-	bfg.write('filter_file_directory             %s\n'%('/u/gfsnyder/sunrise_data/sunrise_filters/'))
+	bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_grism'))
+	bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
 	bfg.close()
 
 
