@@ -4,18 +4,10 @@ runname cosmo_test		/ run designation
 nbodycod		GFM # we are working with GADGET snapshots
 simparfile		./simpar	/  symbolic link to GADGET parameter file
 
-stellarmodelfile	~gsnyder/sunrise_data/bc03_cf00_1e7_new_ism_both.fits
-
-min_wavelength		0.02e-6	/ [m] smallest wavelength used
-max_wavelength		20.0e-6	/ [m] longest wavelength used
 
 use_mappings_seds	true
 #use_mappings_seds	false / don't use Groves HII+PDR templates, just Starburst99
 
-#mappings_sed_file 	~chayward/sundata/mappings/Smodel.fits
-
-# Use this low-resolution version for convergence testing.
-mappings_sed_file	~gsnyder/sunrise_data/Smodel-lores256.fits
 
 #mappings_pdr_fraction	0. / no PDRs
 mappings_pdr_fraction	0.2 / normal PDR fraction (t_clear ~1-2 Myr)
@@ -50,14 +42,14 @@ star_radius_factor	1.0	/ The radius of the stellar particles are set to the grav
 #center_galaxies		true / Translates origin to center of system
 #center_galaxy		0 / Translates origin to center of galaxy i (i = 0-n-1)
 #translate_origin	3809.09 6347.61 3137.00  #2476.78 801.763 1891.29 / Translates origin to specified (x,y,z)
-center_generic		true
+#center_generic		true
 
 #########################
 
 # This part of the file contains general settings for grid creation.
 
-grid_min		-200.  -200.  -200.        / [kpc]
-grid_max 		200.  200.  200.           / [kpc]
+#grid_min		-200.  -200.  -200.        / [kpc]
+#grid_max 		200.  200.  200.           / [kpc]
               
 
 use_grid_emission 	false	/ emission from particles
@@ -70,7 +62,6 @@ opacity                 3e-5    / [kpc^2/M_sun] guess for metal opacity
 tau_tolerance   	1.	/ [] resolve this optical depth
 size_factor     	1.0
 max_level       	11
-n_threads       	16
 work_chunk_levels       4
 
 mcrx_data_dir   	/home/gsnyder/code/InstallationLibraries/sunrise/src/

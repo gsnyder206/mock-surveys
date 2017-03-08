@@ -107,9 +107,10 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
 	sf.write('n_threads          		'+nthreads+'\n')
 
+        gridw=200
 	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
-	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
-	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
+	sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
+	sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
 
 
 	if run_type == 'images':
