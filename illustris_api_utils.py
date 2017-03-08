@@ -29,7 +29,7 @@ from astropy.cosmology import WMAP7,z_at_value
 from astropy.coordinates import SkyCoord
 import copy
 import medianstats_bootstrap as msbs
-import illustris_python as ilpy
+#import illustris_python as ilpy
 import h5py
 import requests
 from multiprocessing import Process, Queue, current_process
