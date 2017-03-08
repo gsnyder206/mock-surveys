@@ -62,7 +62,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                              stub_name = mcrx_stub,
-                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file, idx = idx)
+                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=None , idx = idx)
 
 
         
