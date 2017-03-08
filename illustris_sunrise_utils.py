@@ -100,47 +100,47 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0):
 
-	sf = open(run_dir+'/'+filename,'w+')
-	sf.write('#Parameter File for Sunrise, sfrhist\n\n')
-	sf.write('include_file        		%s\n\n'%stub_name)
-	sf.write('snapshot_file       		%s\n'%fits_file)
-	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
-	sf.write('n_threads          		'+nthreads+'\n')
+    sf = open(run_dir+'/'+filename,'w+')
+    sf.write('#Parameter File for Sunrise, sfrhist\n\n')
+    sf.write('include_file        		%s\n\n'%stub_name)
+    sf.write('snapshot_file       		%s\n'%fits_file)
+    sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
+    sf.write('n_threads          		'+nthreads+'\n')
+    
+    gridw=200
+    sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
+    sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
+    sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
+    
 
-        gridw=200
-	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
-	sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
-	sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
-
-
-	if run_type == 'images':
-		sf.write('min_wavelength			%s\n'%("0.02e-6"))
-		sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
-
-		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
-		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
-
-
-	elif run_type == 'ifu':
-		sf.write('min_wavelength			%s\n'%("0.6450e-6"))
-		sf.write('max_wavelength			%s\n\n'%("0.6650e-6"))
-
-		sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel_full_hires.fits"))
-		sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
-
-	elif run_type == 'grism':
-		sf.write('min_wavelength			%s\n'%("0.02e-6"))
-		sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
-
-		sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
-		sf.write('stellarmodelfile			%s\n'%(data_dir+'/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits'))   
+    if run_type == 'images':
+        sf.write('min_wavelength			%s\n'%("0.02e-6"))
+        sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
+        
+        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
+        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
 
 
+    elif run_type == 'ifu':
+        sf.write('min_wavelength			%s\n'%("0.6450e-6"))
+        sf.write('max_wavelength			%s\n\n'%("0.6650e-6"))
+        
+        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel_full_hires.fits"))
+        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
 
-	sf.close()
-	print('\t\tSuccessfully generated %s'%filename)
+    elif run_type == 'grism':
+        sf.write('min_wavelength			%s\n'%("0.02e-6"))
+        sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
+        
+        sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
+        sf.write('stellarmodelfile			%s\n'%(data_dir+'/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits'))   
 
-	return
+
+
+    sf.close()
+    print('\t\tSuccessfully generated %s'%filename)
+    
+    return
 
 
 
