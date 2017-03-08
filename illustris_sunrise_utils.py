@@ -29,7 +29,8 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     else:
         redshift=redshift_override
 
-    
+        
+    nthreads=str(nthreads)
         
     for run_type in list_of_types:
         run_dir = snap_dir+'/%s'%run_type
