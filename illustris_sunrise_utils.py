@@ -3,6 +3,7 @@ import sys
 import numpy as np
 import glob
 import gfs_sublink_utils as gsu
+import shutil
 
 #this function takes as inputs the return values of illustris_api_utils.get_subhalo()
 #this is a snapshot file and subhalo metadata object
@@ -23,6 +24,8 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     data_dir = os.path.expandvars(data_dir)
     
     print("Using stubs in.. ",stub_dir)
+    stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
+
     
     list_of_types = ['images','grism']
 
@@ -45,7 +48,10 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
         run_dir = snap_dir+'/%s'%run_type
         if not os.path.lexists(run_dir):
             os.mkdir(run_dir)
-                        
+
+        for sf in stub_files:
+            shutil.copy(sf,run_dir)
+            
         print('\tGenerating sfrhist.config file for %s...'%run_type)
         sfrhist_fn   = 'sfrhist.config'
         sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
@@ -109,8 +115,8 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     
     gridw=200
     sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
-    sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
-    sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
+    sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
+    sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
     
 
     if run_type == 'images':
@@ -253,7 +259,7 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
     bsubf.write('#!/bin/bash\n')
     bsubf.write('#SBATCH -A '+account+'\n')
     bsubf.write('#SBATCH --partition='+queue+'\n')
-    bsubf.write('#SBATCH --t='+walltime+'\n')
+    bsubf.write('#SBATCH -t '+walltime+'\n')
     bsubf.write('#SBATCH --nodes=1\n')
     bsubf.write('#SBATCH --ntasks-per-node='+ncpus+'\n')
     
