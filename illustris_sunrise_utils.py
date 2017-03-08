@@ -87,10 +87,10 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-        print('\tGenerating sunrise.qsub file for %s...'%run_type)
-        qsub_fn   = 'sunrise.qsub'		
-        final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
-                                 galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
+        #print('\tGenerating sunrise.qsub file for %s...'%run_type)
+        #qsub_fn   = 'sunrise.qsub'		
+        #final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, 
+        #                         galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,model=model,queue=queue,email=notify,walltime=walltime_limit, isnap=isnap)
 
         
     
