@@ -231,40 +231,40 @@ def generate_broadband_config_grism(run_dir, snap_dir, filename, stub_name, galp
 #will need a generate_sbatch for slurm jobs on Comet
 def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='12', model='wes', queue='normal',email='rsimons@jhu.edu',walltime='04:00:00',isnap=0):
 
-	bsubf = open(run_dir+'/'+filename, 'w+')
-	bsubf.write('#!/bin/bash\n')
-	bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
-	bsubf.write('#PBS -l select=1:ncpus='+ncpus+':model='+model+'\n')   #selects cpu model and number (sunrise uses 1 node)
-	bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
-	bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
-	bsubf.write('#PBS -N sunrise_'+run_type+'\n')     #selects job name
-	bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
-	bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
-	bsubf.write('#PBS -o '+run_dir+'/sunrise_pbs.out\n')  #save standard output here
-	bsubf.write('#PBS -e '+run_dir+'/sunrise_pbs.err\n')  #save standard error here
-	bsubf.write('#PBS -V\n')    #export environment variables at start of job
+    bsubf = open(run_dir+'/'+filename, 'w+')
+    bsubf.write('#!/bin/bash\n')
+    bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
+    bsubf.write('#PBS -l select=1:ncpus='+ncpus+':model='+model+'\n')   #selects cpu model and number (sunrise uses 1 node)
+    bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
+    bsubf.write('#PBS -q '+queue+'\n')       #selects queue to submit to 
+    bsubf.write('#PBS -N sunrise_'+run_type+'\n')     #selects job name
+    bsubf.write('#PBS -M '+email+'\n')  #notifies job info to this email address 
+    bsubf.write('#PBS -m abe\n')  #set notification types (abe=abort, begin, end)
+    bsubf.write('#PBS -o '+run_dir+'/sunrise_pbs.out\n')  #save standard output here
+    bsubf.write('#PBS -e '+run_dir+'/sunrise_pbs.err\n')  #save standard error here
+    bsubf.write('#PBS -V\n')    #export environment variables at start of job
+    
+    bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
+    bsubf.write('/u/gfsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
+    bsubf.write('/u/gfsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
+    if run_type=='images':
+	bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
+	bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
+	bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+	bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+        bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
+    elif run_type=='ifu':
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        bsubf.write('gzip -9 mcrx.fits\n')
+    elif run_type=='grism':
+	bsubf.write('/u/gfsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
+	#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+	#bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
-	bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
-	bsubf.write('/u/gfsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
-	bsubf.write('/u/gfsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
-	if run_type=='images':
-		bsubf.write('/u/gfsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
-		bsubf.write('/u/gfsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
-		bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-		bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
-                #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-                bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
-	elif run_type=='ifu':
-		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-                bsubf.write('gzip -9 mcrx.fits\n')
-	elif run_type=='grism':
-		bsubf.write('/u/gfsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
-		#bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-		#bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
-
-	bsubf.close()
-
-
+    bsubf.close()
 
 
-	return os.path.abspath(run_dir+'/'+filename)
+
+
+    return os.path.abspath(run_dir+'/'+filename)
