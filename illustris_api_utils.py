@@ -105,7 +105,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
 
     if os.path.lexists(checkf) and os.path.lexists(npyf) and clobber is False:
         if verbose:
-            print "Subhalo cutout exists, skipping: ", checkf
+            print("Subhalo cutout exists, skipping: ", checkf)
         download = False
         subobj = np.load(npyf)
         sub = subobj.all()   #?
@@ -113,7 +113,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
         return checkf, sub, download
     else:
         if verbose:
-            print "Getting subhalo cutout: ", checkf
+            print("Getting subhalo cutout: ", checkf)
 
         #subhalo metadata
         try:
@@ -135,13 +135,13 @@ def process_subhalo(sim,snap,sfid,i,label,camera_obj,params=defaultparams,savepa
     substuff = None
 
     if i % 100 ==0:
-        print "Finished: ", i, snap, sfid, downloaded, (time.time() - start_time)/60.0, file
+        print("Finished: ", i, snap, sfid, downloaded, (time.time() - start_time)/60.0, file)
         sys.stdout.flush()
 
 
 
     if file is None:
-        print "Subhalo Failed: ", i, snap, sfid, downloaded, file
+        print("Subhalo Failed: ", i, snap, sfid, downloaded, file)
         sys.stdout.flush()
         return (file, substuff)
 
@@ -207,7 +207,7 @@ def get_lightcone_images_threaded(lcfile,geofile,sim='Illustris-2',clobber=False
     coords_dec = np.asarray(data['col4']) #degrees
 
     catalog = ilc.process_lightcone_catalog(lightcone=geofile,basedir='.')
-    print catalog.delb_arcmin
+    print(catalog.delb_arcmin)
 
 
     NUMBER_OF_PROCESSES=Np
@@ -223,7 +223,7 @@ def get_lightcone_images_threaded(lcfile,geofile,sim='Illustris-2',clobber=False
     if lim is None:
         lim=np.int64(N_objects)
 
-    print "Items to process: ", lim
+    print("Items to process: ", lim)
 
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
@@ -255,9 +255,9 @@ def get_lightcone_images_threaded(lcfile,geofile,sim='Illustris-2',clobber=False
 
 
     #build up images/analysis here!
-    print cutout_files[0:5]
-    print cutout_files[-5:]
-    print len(cutout_files)
+    print(cutout_files[0:5])
+    print(cutout_files[-5:])
+    print(len(cutout_files))
 
     for p in range(NUMBER_OF_PROCESSES):
         task_queue.put('STOP')
@@ -289,7 +289,7 @@ def get_lightcone_images(lcfile,geofile,sim='Illustris-2',clobber=False,savepath
 def do_lightcone_images(savepath=None):
 
     if savepath is None:
-        print "Requires savepath specification!"
+        print("Requires savepath specification!")
         exit()
 
     lcfile = os.path.expandvars('$HOME/oasis_project/Lightcones/Illustris-2_RADEC_hudfwide_75Mpc_7_6_xyz_corners.txt')
@@ -323,17 +323,17 @@ def do_lightcone_images(savepath=None):
     #print "Un-Staging took: ", staget, ' seconds'
     
 
-    print 'Threaded calculation took: ', et-st, ' seconds'
+    print('Threaded calculation took: ', et-st, ' seconds')
     #print 'Serial calculation took: ', et1-st1, ' seconds'
 
 
 if __name__=="__main__":
     if len(sys.argv) != 2:
-        print "Usage:  python illustris_api_utils_gordon.py SAVEPATH"
+        print("Usage:  python illustris_api_utils_gordon.py SAVEPATH")
         exit()
     else:
         savepath=sys.argv[1]
 
-    print "Saving intermediate files at: ", savepath
+    print("Saving intermediate files at: ", savepath)
 
     do_lightcone_images(savepath=savepath)
