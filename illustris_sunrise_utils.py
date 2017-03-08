@@ -182,9 +182,9 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 
 
 
-	print('\t\tSuccessfully generated %s'%filename)
+    print('\t\tSuccessfully generated %s'%filename)
 
-	return
+    return
 
 
 def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None):
