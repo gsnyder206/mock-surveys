@@ -189,61 +189,61 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 
 def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0):
 
-	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
+    #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
-	bf = open(run_dir+'/'+filename,'w+')
-        red0=0.0
+    bf = open(run_dir+'/'+filename,'w+')
+    red0=0.0
         
-	bf.write('#Parameter File for Sunrise, broadband\n\n')
-	bf.write('include_file                      %s\n\n'%stub_name)
-	bf.write('redshift                          %.3f\n\n'%red0)
-	bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-	bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
-	bf.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_rest'))
-	bf.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
-	bf.close()
+    bf.write('#Parameter File for Sunrise, broadband\n\n')
+    bf.write('include_file                      %s\n\n'%stub_name)
+    bf.write('redshift                          %.3f\n\n'%red0)
+    bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
+    bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
+    bf.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_rest'))
+    bf.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
+    bf.close()
+    
+    bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
+    
+    bfz.write('#Parameter File for Sunrise, broadband\n\n')
+    bfz.write('include_file                      %s\n\n'%stub_name)
+    bfz.write('redshift                          %.3f\n\n'%redshift)
+    bfz.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
+    bfz.write('output_file                       %s\n'%(run_dir+'/broadbandz.fits'))
+    bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st'))
+    bfz.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
+    bfz.close()
+    
 
-	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
-
-	bfz.write('#Parameter File for Sunrise, broadband\n\n')
-	bfz.write('include_file                      %s\n\n'%stub_name)
-	bfz.write('redshift                          %.3f\n\n'%redshift)
-	bfz.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-	bfz.write('output_file                       %s\n'%(run_dir+'/broadbandz.fits'))
-	bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st'))
-	bfz.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
-	bfz.close()
 
 
+    print('\t\tSuccessfully generated %s'%filename)
 
-
-	print('\t\tSuccessfully generated %s'%filename)
-
-	return
+    return
 
 
 def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None, redshift=0.0):
 
-	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
-	#I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
-
-	bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
-
-	bfg.write('#Parameter File for Sunrise, broadband\n\n')
-	bfg.write('include_file                      %s\n\n'%stub_name)
-	bfg.write('redshift                          %.3f\n\n'%redshift)
-	bfg.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
-	bfg.write('output_file                       %s\n'%(run_dir+'/grism.fits'))
-	bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_grism'))
-	bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
-	bfg.close()
-
-
-
-
-	print('\t\tSuccessfully generated %s'%filename)
-
-	return
+    #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
+    #I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
+    
+    bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
+    
+    bfg.write('#Parameter File for Sunrise, broadband\n\n')
+    bfg.write('include_file                      %s\n\n'%stub_name)
+    bfg.write('redshift                          %.3f\n\n'%redshift)
+    bfg.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
+    bfg.write('output_file                       %s\n'%(run_dir+'/grism.fits'))
+    bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_grism'))
+    bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
+    bfg.close()
+    
+    
+    
+    
+    print('\t\tSuccessfully generated %s'%filename)
+    
+    return
 
 
 
