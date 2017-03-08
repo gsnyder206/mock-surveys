@@ -31,7 +31,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     real_redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
     scale_convert=(1.0/(gsu.ilh*(1.0 + real_redshift)))
     
-    if redshift_override is not None:
+    if redshift_override is None:
         redshift=real_redshift
     else:
         redshift=redshift_override
@@ -73,7 +73,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
             generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                              stub_name = broadband_stub, 
-                                             galprops_data = galprops_data, idx = idx)
+                                             galprops_data = galprops_data, idx = idx,redshift=redshift)
         if run_type == 'grism': 
             print('\tGenerating broadband.config file for %s...'%run_type)
             broadband_fn   = 'broadband.config'
@@ -81,7 +81,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
             generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                             stub_name = broadband_stub, 
-                                            galprops_data = galprops_data, idx = idx)
+                                            galprops_data = galprops_data, idx = idx,redshift=redshift)
 
 
 
@@ -187,13 +187,12 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     return
 
 
-def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None):
+def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
 	bf = open(run_dir+'/'+filename,'w+')
 
-	redshift = 1./galprops_data['scale'][idx] - 1
 	bf.write('#Parameter File for Sunrise, broadband\n\n')
 	bf.write('include_file                      %s\n\n'%stub_name)
 	bf.write('redshift                          %.3f\n\n'%redshift)
@@ -223,14 +222,13 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
 	return
 
 
-def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None):
+def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None, redshift=0.0):
 
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 	#I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
 
 	bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
 
-	redshift = 1./galprops_data['scale'][idx] - 1
 	bfg.write('#Parameter File for Sunrise, broadband\n\n')
 	bfg.write('include_file                      %s\n\n'%stub_name)
 	bfg.write('redshift                          %.3f\n\n'%redshift)
