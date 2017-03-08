@@ -5,8 +5,6 @@ import string
 import sys
 import struct
 import numpy as np
-import cPickle
-import asciitable
 import scipy.ndimage
 import scipy.stats as ss
 import scipy.signal
@@ -15,11 +13,9 @@ import scipy.odr as odr
 import glob
 import os
 import make_color_image
-import make_fake_wht
 import gzip
 import tarfile
 import shutil
-import cosmocalc
 import congrid
 import astropy.io.ascii as ascii
 import warnings
@@ -38,8 +34,8 @@ import h5py
 import requests
 from multiprocessing import Process, Queue, current_process
 import time
-import illustris_lightcone_catalogs as ilc
-import translate_coordinates as tc
+#import illustris_lightcone_catalogs as ilc
+#import translate_coordinates as tc
 
 ilh = 0.704
 illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
