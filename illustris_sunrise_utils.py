@@ -145,40 +145,40 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 
 def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None):
-	mf = open(run_dir+'/'+filename,'w+')
+    mf = open(run_dir+'/'+filename,'w+')
 
-	mf.write('#Parameter File for Sunrise, mcrx\n\n')
-	mf.write('include_file         %s\n\n'%stub_name)
-	mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
-	mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
-	mf.write('n_threads          		'+nthreads+'\n')
+    mf.write('#Parameter File for Sunrise, mcrx\n\n')
+    mf.write('include_file         %s\n\n'%stub_name)
+    mf.write('input_file           %s\n'%(run_dir+'/sfrhist.fits'))
+    mf.write('output_file          %s\n'%(run_dir+'/mcrx.fits'))
+    mf.write('n_threads          		'+nthreads+'\n')
 
-        #approximating Torrey and HST13887 settings
-        if cam_file is None:
-            mf.write('camerafov     120\n')
-            mf.write('ntheta        2\n')
-            mf.write('ntheta        3\n')
-            mf.write('exclude_south_pole   true \n')
-	else:
-            mf.write('camera_positions      %s\n'%(cam_file))
+    #approximating Torrey and HST13887 settings
+    if cam_file is None:
+        mf.write('camerafov     120\n')
+        mf.write('ntheta        2\n')
+        mf.write('ntheta        3\n')
+        mf.write('exclude_south_pole   true \n')
+    else:
+        mf.write('camera_positions      %s\n'%(cam_file))
 
         
-	if run_type != 'ifu':
-		mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
-	else:
-		mf.write('use_kinematics	   %s\n'%('true #False for images'))
+    if run_type != 'ifu':
+        mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
+    else:
+        mf.write('use_kinematics	   %s\n'%('true #False for images'))
 
-	#move npixels to .config file
+    #move npixels to .config file
 
-	if run_type == 'images':
-		mf.write('npixels     400\n')
-	elif run_type == 'ifu':
-		mf.write('npixels     400\n')
-	else:
-		mf.write('npixels     200\n')
+    if run_type == 'images':
+        mf.write('npixels     400\n')
+    elif run_type == 'ifu':
+        mf.write('npixels     400\n')
+    else:
+        mf.write('npixels     200\n')
 
 
-	mf.close()
+    mf.close()
 
 
 
