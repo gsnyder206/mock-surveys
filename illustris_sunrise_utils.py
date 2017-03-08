@@ -192,10 +192,11 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
 	#copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
 	bf = open(run_dir+'/'+filename,'w+')
-
+        red0=0.0
+        
 	bf.write('#Parameter File for Sunrise, broadband\n\n')
 	bf.write('include_file                      %s\n\n'%stub_name)
-	bf.write('redshift                          %.3f\n\n'%redshift)
+	bf.write('redshift                          %.3f\n\n'%red0)
 	bf.write('input_file                        %s\n'%(run_dir+'/mcrx.fits'))
 	bf.write('output_file                       %s\n'%(run_dir+'/broadband.fits'))
 	bf.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_rest'))
@@ -204,7 +205,6 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
 
 	bfz = open(run_dir+'/'+filename.replace('broadband','broadbandz'),'w+')
 
-	redshift = 1./galprops_data['scale'][idx] - 1
 	bfz.write('#Parameter File for Sunrise, broadband\n\n')
 	bfz.write('include_file                      %s\n\n'%stub_name)
 	bfz.write('redshift                          %.3f\n\n'%redshift)
