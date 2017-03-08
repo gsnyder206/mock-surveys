@@ -1,0 +1,10 @@
+#Base parameter File for Sunrise, broadband
+
+
+
+use_lyman_absorption	true
+use_counters				 	false
+filter_lambda_conversion			1e-10
+
+
+

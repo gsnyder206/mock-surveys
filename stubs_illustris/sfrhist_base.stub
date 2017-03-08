@@ -1,0 +1,44 @@
+#Base parameter file for Sunrise, sfrhist, these parameters do not change
+
+nbodycod			yt
+
+
+star_radius_factor			1.0
+
+use_mappings_sed			True
+mappings_pdr_fraction		0.2 / Amount of light from mappings PDR
+mappings_mcl				1e4
+cluster_mappings_particle	True
+
+
+CCfits_verbose 				false
+use_counters                true
+#nthreads                    8
+save_cellcodes              true
+
+
+seed			0
+
+
+
+
+use_grid_emission 	false	/ emission from particles
+#gas_tolerance   	0.1	/ no refinement based on gas
+#L_bol_tolerance		#1e100	/ no emission in grid
+#metal_tolerance     #0.1	/ using tau tolerance
+#gas_metallicity 	#0.	/ metals are explicitly included
+#n_rays_estimated	#1e7	/ [] estimated number of rays for tolerance
+#opacity             #3e-5    / [kpc^2/M_sun] guess for metal opacity
+#tau_tolerance   	#2.	/ [] resolve this optical depth
+#size_factor     	#1.0
+#max_level       	#17
+#work_chunk_levels   #8
+
+
+mcrx_data_dir   	/u/gfsnyder/sunrise_data/
+
+
+
+
+
+

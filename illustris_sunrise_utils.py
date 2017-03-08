@@ -9,7 +9,8 @@ import glob
 
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True):
 
-    snap_dir = os.path.basedir(snap_cutout)
+    snap_dir = os.path.dirname(os.path.abspath(snap_cutout))
+    
     print("Setting up sunrise run in.. ", snap_dir)
 
 

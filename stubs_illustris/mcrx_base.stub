@@ -1,0 +1,80 @@
+#Base parameter file for Sunrise, mcrx, these parameters do not change
+
+compress_images         false
+write_images_parallel   false
+
+#ray casting
+nrays_nonscatter        1e7
+nrays_scatter           1e7
+nrays_aux               1e7
+
+#IR Parameters
+nrays_ir                0  / turns off IR calculation
+integrate_ir            false
+
+#Intensity stage
+nrays_intensity          0
+n_wavelengths_intensity  25
+
+
+# accuracy
+i_min                    0.01
+i_max                    10
+ir_luminosity_percentile 0.01
+
+
+
+reference_wavelength		0.9e-6
+use_reference_for_emission	false
+check_energy_conservation	true
+
+
+n_scatter_min		0
+#n_scatter_max		inf 
+
+
+# dust scattering parameters
+grain_model             wd01_Brent_PAH
+template_pah_fraction   0.5 / [] fraction of PAH grains that emit the template
+wd01_parameter_set      DL07_MW3.1_60 / make this the default
+use_dl07_opacities      true
+dust_to_gas_ratio       0.0     / dust is in metals now
+dust_to_metal_ratio     0.4     / [] M_d/M_m from Dwek98
+#dust_to_metal_ratio 	0.0
+#dust_to_gas_ratio	0.008
+use_multiphase_model    false
+multiphase_t0_star		1.1e9	/ [yr]
+multiphase_rho_th		4.2e6	/ [Msun/kpc^3]
+
+
+# dust emission parameters
+use_grain_temp_lookup   true	/ [] Uses a lookup table to make the IR calculation ~7x faster
+use_cuda                false
+
+ir_reference_wavelength		40e-6
+ir_equilibrium_tolerance 	0.1
+
+
+# miscellaneous
+#n_threads               16
+seed                    1
+resubmit_command_variable       RESUBMIT_COMMAND
+cpu_time_margin         600
+wall_clock_margin       600   
+grain_data_directory    /u/gfsnyder/sunrise_data/crosssections
+sed_file                sed.txt 
+use_counters            false
+CCfits_verbose          false
+
+
+
+mcrx_version		v4 / Tagged version used
+mcrx_data_dir           /u/gfsnyder/sunrise_data/
+
+
+
+
+
+
+
+
