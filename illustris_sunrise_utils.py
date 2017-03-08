@@ -24,12 +24,14 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
     idx=None
 
+    real_redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
+    scale_convert=(1.0/(gsu.ilh*(1.0 + real_redshift)))
+    
     if redshift_override is not None:
-        redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
+        redshift=real_redshift
     else:
         redshift=redshift_override
 
-        
     nthreads=str(nthreads)
         
     for run_type in list_of_types:
@@ -43,7 +45,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
         generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, 
                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
-                                galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx)
+                                galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, idx = idx,scale_convert=scale_convert)
 
 
         print('\tGenerating mcrx.config file for %s...'%run_type)
@@ -88,7 +90,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None):
+def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0):
 
 	sf = open(run_dir+'/'+filename,'w+')
 	sf.write('#Parameter File for Sunrise, sfrhist\n\n')
@@ -97,7 +99,7 @@ def generate_sfrhist_config(run_dir, filename, stub_name, fits_file, galprops_da
 	sf.write('output_file          		%s\n\n'%(run_dir+'/sfrhist.fits'))
 	sf.write('n_threads          		'+nthreads+'\n')
 
-	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][idx][0], galprops_data['stars_maxndens'][idx][1], galprops_data['stars_maxndens'][idx][2]))
+	sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
 	#sf.write('grid_min					%.1f\t%.1f\t%.1f         / [kpc]\n'%(nan, nan, nan))
 	#sf.write('grid_max					%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(nan, nan, nan))
 
