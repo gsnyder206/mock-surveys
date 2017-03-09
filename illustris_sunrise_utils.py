@@ -117,11 +117,14 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     sf.write('output_file          		%s\n\n'%(int_dir+'/sfrhist.fits'))
     sf.write('n_threads          		'+nthreads+'\n')
     
+    #only one of these should be translated
     gridw=200
-    sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert, galprops_data['cm_y']*scale_convert, galprops_data['cm_z']*scale_convert))
-    sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
-    sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
-    
+    sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['pos_x']*scale_convert, galprops_data['pos_y']*scale_convert, galprops_data['pos_z']*scale_convert))
+    #sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
+    #sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
+    sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(-1.0*gridw, -1.0*gridw,-1.0*gridw))
+    sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(1.0*gridw,1.0*gridw,1.0*gridw))
+
 
     if run_type == 'images':
         sf.write('min_wavelength			%s\n'%("0.02e-6"))
@@ -251,9 +254,7 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
 
 def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None, redshift=0.0,use_scratch=False):
 
-    #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
-    #I uploaded these to '~gfsnyder/sunrise_data/' on Pleiades
-    
+
     bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
     
     if use_scratch is True:
