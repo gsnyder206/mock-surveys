@@ -127,7 +127,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             file = get(url+"/cutout.hdf5",params,savepath)
             download = True
             #add attributes to header that Sunrise needs for GFM setting.. time, Omega, npart?
-            with h5py.File(file,'w') as fo:
+            with h5py.File(file,'a') as fo:
                 header=fo['Header']
                 header.attrs['Time']=1.0/(1.0 + gsu.redshift_from_snapshot(sub['snap']))#actually scale factor
                 header.attrs['HubbleParam']=sim_obj['hubble']
@@ -140,7 +140,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             file = None
             sub = None
             download = False
-        return file, sub, download
+        return file, sub, download, sim_obj
 
 
 def process_subhalo(sim,snap,sfid,i,label,camera_obj,params=defaultparams,savepath=None,verbose=True,clobber=False,getlabel='StellarMass',resample=False):
