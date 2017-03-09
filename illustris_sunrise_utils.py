@@ -170,17 +170,18 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     mf.write('include_file         %s\n\n'%stub_name)
     mf.write('input_file           %s\n'%(int_dir+'/sfrhist.fits'))
     mf.write('output_file          %s\n'%(int_dir+'/mcrx.fits'))
-    mf.write('n_threads          		'+nthreads+'\n')
 
     #approximating Torrey and HST13887 settings
     if cam_file is None:
+        mf.write('exclude_south_pole       true \n')
         mf.write('camerafov     120\n')
         mf.write('ntheta        2\n')
         mf.write('nphi        3\n')
-        mf.write('exclude_south_pole       true \n')
     else:
         mf.write('camera_positions      %s\n'%(cam_file))
 
+
+    mf.write('n_threads          		'+nthreads+'\n')
         
     if run_type != 'ifu':
         mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
