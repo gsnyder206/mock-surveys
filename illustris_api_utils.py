@@ -96,7 +96,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
     sim_url="http://www.illustris-project.org/api/"+sim
     sim_obj=get(sim_url)
 
-    snap_url=sim_url+'/snapshots/'+str(snap)
+    snap_url=sim_url+"/snapshots/"+str(snap)
     snap_obj=get(snap_url)
 
 
