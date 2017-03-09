@@ -7,7 +7,7 @@ cameradistance		10000	/ [kpc] Camera distance from origin
 compress_images         false
 write_images_parallel   false
 
-nrays_nonscatter	1e8  // for production runs probably want 1e7 at least
+nrays_nonscatter	1e7  // for production runs probably want 1e7 at least
 
 # scatter parameters
 
@@ -43,7 +43,7 @@ check_energy_conservation	true
 
 # Aux parameters
 #nrays_aux               0 / turns off aux; not sure if aux is working now, so best to leave it off
-nrays_aux              1e8
+nrays_aux              1e7
 aux_particles_only	false
 
 # Intensity stage
@@ -81,7 +81,6 @@ use_grain_temp_lookup   true	/ [] Uses a lookup table to make the IR calculation
 
 use_kinematics		false
 
-n_threads		16
 cpu_time_margin		180
 wall_clock_margin	240
 resubmit_command_variable	RESUBMIT_COMMAND

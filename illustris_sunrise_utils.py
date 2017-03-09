@@ -11,7 +11,7 @@ import shutil
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
                                     stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                                     data_dir='$HOME/sunrise_data/',
-                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00'):
+                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=False):
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -164,8 +164,8 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     if cam_file is None:
         mf.write('camerafov     120\n')
         mf.write('ntheta        2\n')
-        mf.write('ntheta        3\n')
-        mf.write('exclude_south_pole   true \n')
+        mf.write('nphi        3\n')
+        mf.write('exclude_south_pole       true \n')
     else:
         mf.write('camera_positions      %s\n'%(cam_file))
 
