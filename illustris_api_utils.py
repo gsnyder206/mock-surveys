@@ -149,7 +149,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 for pt in ['PartType0','PartType1','PartType4','PartType5']:
                     ids_length=fo[pt]['ParticleIDs'].value.shape[0]
                     if ids_length > 0:
-                        fo[pt]['ParticleIDs'].value=np.arange(ids_length,dtype=np.uint64)
+                        fo[pt]['ParticleIDs'][:]=np.arange(ids_length,dtype=np.uint64)
 
         except:
             file = None
