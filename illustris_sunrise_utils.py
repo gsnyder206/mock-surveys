@@ -173,7 +173,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
 
     #approximating Torrey and HST13887 settings
     if cam_file is None:
-        mf.write('exclude_south_pole       true \n')
+        mf.write('exclude_south_pole       true #comment\n')
         mf.write('camerafov     120\n')
         mf.write('ntheta        2\n')
         mf.write('nphi        3\n')
