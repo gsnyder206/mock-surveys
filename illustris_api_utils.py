@@ -44,7 +44,7 @@ illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
 
 start_time = time.time()
 
-defaultparams={'stars':'ParticleIDs,Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential','bhs':'all'}
+defaultparams={'stars':'ParticleIDs,Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential,ParticleIDs','bhs':'all'}
 
 
 baseUrl = 'http://www.illustris-project.org/api/'
@@ -145,6 +145,12 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 mtable=[0,sim_obj['mass_dm'],0,0,0,0]
                 header.attrs['MassTable']=np.asarray(mtable)
                 header.attrs['Redshift']=snap_obj['redshift']
+                #fix issue with ParticleIDs.. ?
+                for pt in ['PartType0','PartType1','PartType4','PartType5']:
+                    ids_length=fo[pt]['ParticleIDs'].value.shape[0]
+                    if ids_length > 0:
+                        fo[pt]['ParticleIDs']=np.arange(ids_length,dtype=np.int64)
+
         except:
             file = None
             sub = None
