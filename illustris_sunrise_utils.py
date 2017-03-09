@@ -123,23 +123,23 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
         sf.write('min_wavelength			%s\n'%("0.02e-6"))
         sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
         
-        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel-lores128.fits"))
-        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/Patrik-imfKroupa-Zmulti-ml.fits"))
+        sf.write('mappings_sed_file			%s\n'%(data_dir+"Smodel-lores128.fits"))
+        sf.write('stellarmodelfile			%s\n'%(data_dir+"Patrik-imfKroupa-Zmulti-ml.fits"))
 
 
     elif run_type == 'ifu':
         sf.write('min_wavelength			%s\n'%("0.6450e-6"))
         sf.write('max_wavelength			%s\n\n'%("0.6650e-6"))
         
-        sf.write('mappings_sed_file			%s\n'%("/u/gfsnyder/sunrise_data/Smodel_full_hires.fits"))
-        sf.write('stellarmodelfile			%s\n'%("/u/gfsnyder/sunrise_data/logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
+        sf.write('mappings_sed_file			%s\n'%(data_dir+"Smodel_full_hires.fits"))
+        sf.write('stellarmodelfile			%s\n'%(data_dir+"logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
 
     elif run_type == 'grism':
         sf.write('min_wavelength			%s\n'%("0.02e-6"))
         sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
         
         sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
-        sf.write('stellarmodelfile			%s\n'%(data_dir+'/u/gfsnyder/sunrise_data/GFS_combined_nolines.fits'))   
+        sf.write('stellarmodelfile			%s\n'%(data_dir+'GFS_combined_nolines.fits'))   
 
 
 

@@ -1,14 +1,9 @@
 
 # emergence parameters
-ntheta			3	/ [] Number of cameras in theta direction (polar)
-nphi			2	/ [] Number of cameras in phi direction (azimuthal)
-exclude_south_pole 	true / We will get 7 cameras
 #camera_positions	cam_pos.txt / [] Use this and comment out ntheta, nphi
 			# to manually specify camera positions via a text file
 			# containing two columns: theta & phi in radians
 cameradistance		10000	/ [kpc] Camera distance from origin
-camerafov		150	/ [kpc] Full field of view of cameras
-npixels			600
 compress_images         false
 write_images_parallel   false
 
