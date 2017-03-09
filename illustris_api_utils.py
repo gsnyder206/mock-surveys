@@ -93,7 +93,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
     url = "http://www.illustris-project.org/api/"+relative_path
     #sub = get(url)
 
-    sim_url=url+sim
+    sim_url="http://www.illustris-project.org/api/"+sim
     sim_obj=get(sim_url)
 
     if savepath is not None:
