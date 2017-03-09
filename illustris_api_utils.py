@@ -36,13 +36,15 @@ from multiprocessing import Process, Queue, current_process
 import time
 #import illustris_lightcone_catalogs as ilc
 #import translate_coordinates as tc
+import gfs_sublink_utils as gsu
+
 
 ilh = 0.704
 illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
 
 start_time = time.time()
 
-defaultparams={'stars':'Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential'}
+defaultparams={'stars':'Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential','bhs':'all'}
 
 baseUrl = 'http://www.illustris-project.org/api/'
 headers = {"api-key":"117782db3bf216d7ce7a04d0c9034601"}
@@ -91,6 +93,9 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
     url = "http://www.illustris-project.org/api/"+relative_path
     #sub = get(url)
 
+    sim_url=url+sim
+    sim_obj=get(sim_url)
+
     if savepath is not None:
         savepath = os.path.join(savepath,relative_path)
         if not os.path.lexists(savepath):
@@ -122,7 +127,15 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             file = get(url+"/cutout.hdf5",params,savepath)
             download = True
             #add attributes to header that Sunrise needs for GFM setting.. time, Omega, npart?
-            
+            with h5py.File(file,'w') as fo:
+                header=fo['Header']
+                header.attrs['Time']=1.0/(1.0 + gsu.redshift_from_snapshot(sub['snap']))#actually scale factor
+                header.attrs['HubbleParam']=sim_obj['hubble']
+                header.attrs['Omega0']=sim_obj['omega_0']
+                header.attrs['OmegaLambda']=sim_obj['omega_L']
+                npart = [s['len_gas'],s['len_dm'],0,0,s['len_stars'],s['len_bh']]
+                header.attrs['NumPart_ThisFile']=np.asarray(npart)
+
         except HTTPError as h:
             file = None
             sub = None
