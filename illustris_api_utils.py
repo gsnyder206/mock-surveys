@@ -155,6 +155,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             file = None
             sub = None
             download = False
+            raise
 
         return file, sub, download
 
