@@ -44,7 +44,7 @@ illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
 
 start_time = time.time()
 
-defaultparams={'stars':'Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential','bhs':'all'}
+defaultparams={'stars':'ParticleIDs','Coordinates,Velocities,GFM_StellarFormationTime,GFM_Metallicity,GFM_InitialMass,Masses','gas':'Coordinates,Density,ElectronAbundance,Masses,Velocities,Volume,SubfindDensity,Potential,InternalEnergy,StarFormationRate,GFM_Metallicity,GFM_AGNRadiation,GFM_WindDMVelDisp,GFM_CoolingRate,NeutralHydrogenAbundance,SmoothingLength,SubfindHsml,SubfindVelDisp,NumTracers,ParticleIDs','dm':'Coordinates,Velocities,Potential','bhs':'all'}
 
 baseUrl = 'http://www.illustris-project.org/api/'
 headers = {"api-key":"117782db3bf216d7ce7a04d0c9034601"}
@@ -96,6 +96,10 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
     sim_url="http://www.illustris-project.org/api/"+sim
     sim_obj=get(sim_url)
 
+    snap_url=sim_url+'/snapshots/'+str(snap)
+    snap_obj=get(snap_url)
+
+
     if savepath is not None:
         savepath = os.path.join(savepath,relative_path)
         if not os.path.lexists(savepath):
@@ -129,18 +133,19 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             #add attributes to header that Sunrise needs for GFM setting.. time, Omega, npart?
             with h5py.File(file,'a') as fo:
                 header=fo['Header']
-                header.attrs['Time']=1.0/(1.0 + gsu.redshift_from_snapshot(sub['snap']))#actually scale factor
+                header.attrs['Time']=1.0/(1.0 + snap_obj['redshift'])#actually scale factor
                 header.attrs['HubbleParam']=sim_obj['hubble']
                 header.attrs['Omega0']=sim_obj['omega_0']
                 header.attrs['OmegaLambda']=sim_obj['omega_L']
                 npart = [sub['len_gas'],sub['len_dm'],0,0,sub['len_stars'],sub['len_bhs']]
                 header.attrs['NumPart_ThisFile']=np.asarray(npart)
-                
+                mtable=[0,sim_obj['mass_dm'],0,0,0,0]
+                header.attrs['MassTable']=np.asarray(mtable)
+                header.attrs['Redshift']=snap_obj['redshift']
         except:
             file = None
             sub = None
             download = False
-            raise
 
         return file, sub, download, sim_obj
 
