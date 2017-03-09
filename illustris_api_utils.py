@@ -95,10 +95,8 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
     #sub = get(url)
 
     sim_url="http://www.illustris-project.org/api/"+sim
-    sim_obj=get(sim_url)
 
     snap_url=sim_url+"/snapshots/"+str(snap)
-    snap_obj=get(snap_url)
 
 
     if savepath is not None:
@@ -128,8 +126,12 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
         #subhalo metadata
         try:
             sub = get(url)
+            sim_obj=get(sim_url)
+            snap_obj=get(snap_url)
+
             np.save(npyf,sub)
             file = get(url+"/cutout.hdf5",params,savepath)
+
             download = True
             #add attributes to header that Sunrise needs for GFM setting.. time, Omega, npart?
             with h5py.File(file,'a') as fo:
@@ -148,7 +150,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             sub = None
             download = False
 
-        return file, sub, download, sim_obj
+        return file, sub, download
 
 
 def process_subhalo(sim,snap,sfid,i,label,camera_obj,params=defaultparams,savepath=None,verbose=True,clobber=False,getlabel='StellarMass',resample=False):
