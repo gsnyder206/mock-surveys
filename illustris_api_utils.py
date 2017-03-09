@@ -133,13 +133,14 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 header.attrs['HubbleParam']=sim_obj['hubble']
                 header.attrs['Omega0']=sim_obj['omega_0']
                 header.attrs['OmegaLambda']=sim_obj['omega_L']
-                npart = [s['len_gas'],s['len_dm'],0,0,s['len_stars'],s['len_bh']]
+                npart = [sub['len_gas'],sub['len_dm'],0,0,sub['len_stars'],sub['len_bh']]
                 header.attrs['NumPart_ThisFile']=np.asarray(npart)
 
-        except HTTPError as h:
+        except:
             file = None
             sub = None
             download = False
+
         return file, sub, download, sim_obj
 
 
