@@ -78,7 +78,7 @@ class LightCone:
 
         self.delta_a_rad = (1.0/(self.n*self.m**2))  #small angle approx?
         self.delta_b_rad = (1.0/(self.m*self.n**2))
-        print "WARNING: I'm pretty sure you are assuming that the survey area is small, because I am making some small-angle approximations!  If you are looking for surveys of bigger than ~degree scales, please fix me!"
+        print("WARNING: I'm pretty sure you are assuming that the survey area is small, because I am making some small-angle approximations!  If you are looking for surveys of bigger than ~degree scales, please fix me!")
 
         self.square_fov_rad = (manual_fov_arcmin/60.0)*(math.pi/180.0)
         if manual_fov_arcmin==0.0:
@@ -108,27 +108,27 @@ class LightCone:
         self.ComputeBoxes()
 
     def BasicInfo(self):
-        print "\n"
-        print "Information about: ", self.name
-        print "\t Comoving Single Box L = ", self.L
-        print "\t Basic info: n,m = ", self.n, self.m
-        print "\t Approx. Comoving distance at first repeat: ", round(self.dist_firstRep,2)
-        print "\t Approx. Redshift at first repeat: ", round(self.redshift_firstRep,2)
-        print "\t Number of replications: ", self.numRep
-        print " "
-        print "\t X range [Mpc] = ", self.x_com
-        print "\t Y range [Mpc] = ", self.y_com
-        print "\t Z height [Mpc] = ", self.z_com
+        print("\n")
+        print("Information about: ", self.name)
+        print("\t Comoving Single Box L = ", self.L)
+        print("\t Basic info: n,m = ", self.n, self.m)
+        print("\t Approx. Comoving distance at first repeat: ", round(self.dist_firstRep,2))
+        print("\t Approx. Redshift at first repeat: ", round(self.redshift_firstRep,2))
+        print("\t Number of replications: ", self.numRep)
+        print(" ")
+        print("\t X range [Mpc] = ", self.x_com)
+        print("\t Y range [Mpc] = ", self.y_com)
+        print("\t Z height [Mpc] = ", self.z_com)
 
-        print "\n\t del A, arcmin: {:5.2f}".format(self.delta_a_rad*(180.0/math.pi)*60.0)
-        print "\t del B, arcmin: {:5.2f}".format(self.delta_b_rad*(180.0/math.pi)*60.0)
+        print("\n\t del A, arcmin: {:5.2f}".format(self.delta_a_rad*(180.0/math.pi)*60.0))
+        print("\t del B, arcmin: {:5.2f}".format(self.delta_b_rad*(180.0/math.pi)*60.0))
 
-        print "\n\t Direction Unit Vector: ", self.u3
-        print "\t Alpha Unit Vector: ", self.u1
-        print "\t Delta Unit Vector: ", self.u2
-        print "\t Test, should be Direction vector: ", np.cross(self.u1,self.u2)
+        print("\n\t Direction Unit Vector: ", self.u3)
+        print("\t Alpha Unit Vector: ", self.u1)
+        print("\t Delta Unit Vector: ", self.u2)
+        print("\t Test, should be Direction vector: ", np.cross(self.u1,self.u2))
 
-        print " "
+        print(" ")
 
 
     def export_runparams(self, filename,follow=False, follow_index=60, swapxy=False , swapxz=False ):
@@ -237,14 +237,14 @@ class LightCone:
         f.close()
 
     def ComputeBoxes(self):
-        print "\t Computing camera parameters for lightcone: ", self.name
+        print("\t Computing camera parameters for lightcone: ", self.name)
 
         distancetraveled=0.0
         ingress_point=self.origin
         ingress_snapindex = self.snapindex
         cmpc_from_z0 = np.interp((self.zlist)[ingress_snapindex], self.cosmology.redshift_grid, self.cosmology.comoving_mpc_grid)
 
-        print "cmpc:  ", cmpc_from_z0
+        print("cmpc:  ", cmpc_from_z0)
         
         self.boxlist.append(ReplicatedBox(self.origin,ingress_point))
         i=0
@@ -305,7 +305,7 @@ class LightCone:
 
 if __name__=="__main__":
 
-    print "Exploring some things about setting up lightcones..."
+    print("Exploring some things about setting up lightcones...")
     h=0.704
     L = 20.0/h
     #print "L = ", L, " Mpc"
@@ -322,14 +322,14 @@ if __name__=="__main__":
     delta_b_rad = (1.0/(m*n**2))
 
     skyPixel_arcsec = 0.04 #arcsec
-    print "ideal ACS-ish scale: {:8.2f}".format(skyPixel_arcsec)
+    print ("ideal ACS-ish scale: {:8.2f}".format(skyPixel_arcsec))
     Npix_A = (delta_a_rad*(180.0/math.pi)*3600.0)/skyPixel_arcsec
     Npix_B = (delta_b_rad*(180.0/math.pi)*3600.0)/skyPixel_arcsec
-    print "Npix_A: {:10.1f}".format(Npix_A)
-    print "Npix_B: {:10.1f}".format(Npix_B)
+    print ("Npix_A: {:10.1f}".format(Npix_A))
+    print ("Npix_B: {:10.1f}".format(Npix_B))
 	
     GB_per_slice = 4.0*Npix_A*Npix_B/1e9
-    print "GigaBytes per float: {:7.2f}".format(GB_per_slice)
+    print("GigaBytes per float: {:7.2f}".format(GB_per_slice))
 	
     redshift = np.logspace(-3, 1, 40)
     #print z
@@ -347,7 +347,7 @@ if __name__=="__main__":
     #data = asciitable.read('gfm_snaps.txt')
     #data = asciitable.read('snap_v_redshift.txt')
 	
-    data = asciitable.read('snap_v_redshift_Cosmo0_imagepipeline.txt')	
+    data = asciitable.read('snap_v_redshift_Cosmo0.txt')	
 	
     zlist = np.array(map(float,(data['col2'])))
 	
@@ -408,10 +408,10 @@ if __name__=="__main__":
 
 
     hudf_bigbox_wide = LightCone(75.0/h,cosmology,"Wide 75mpc repeated, 136 snaps")
-    hudf_bigbox_wide.BasicCone(7.0, 6.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_7_6_xyz_imagepipeline.txt')
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_7_6_yxz_imagepipeline.txt', swapxy=True)
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_7_6_zyx_imagepipeline.txt', swapxz=True)
+    hudf_bigbox_wide.BasicCone(9.0, 8.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
+    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_xyz.txt')
+    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_yxz.txt', swapxy=True)
+    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_zyx.txt', swapxz=True)
 
 
     #hudf_bigbox_vwide = LightCone(75.0/h,cosmology,"Very Wide 75mpc repeated, 136 snaps")
@@ -428,63 +428,63 @@ if __name__=="__main__":
     mpcgrid = cosmology.comoving_mpc_grid
     zgrid = cosmology.redshift_grid
 
-    print "{:6s},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f}".format('box', 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0)
+    print("{:6s},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f}".format('box', 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0))
     m = 10.0 ; n = 11.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
 
 
 
     m = 8.0 ; n = 9.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
 
 
     m = 6.0 ; n = 7.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
 
 
     m = 4.0 ; n = 5.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
 
 
     m = 2.0 ; n = 3.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
 
     m = 2.0 ; n = 1.0
-    print "{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*3000.0),mpcgrid,zgrid))
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*3000.0),mpcgrid,zgrid)))

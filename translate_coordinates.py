@@ -141,7 +141,7 @@ def read_configuration(filename):
         index = list(configuration_file['ARGS']).index('SNAPSHOT_MIN')
         snapshot_min = configuration_file['VALUE'][index]
 
-    else: snapshot_min = 02
+    else: snapshot_min = 2
 
     if 'CYLINDER_CAT' in configuration_file['ARGS']:
         index = list(configuration_file['ARGS']).index('CYLINDER_CAT')
