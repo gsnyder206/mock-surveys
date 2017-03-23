@@ -318,6 +318,31 @@ def get_lightcone_images(lcfile,geofile,sim='Illustris-2',clobber=False,savepath
     return
 
 
+
+
+def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
+
+    lcfile=
+    geofile=
+    sim='Illustris-1'
+    savepath='$HOME/oasis_project_hsc102/IllustrisData/'
+    label=
+
+    data = ascii.read(lcfile)
+    snapnums = np.asarray(data['col1'],dtype='str')
+    sfids = np.asarray(data['col2'],dtype='str')
+
+    for i,sn in enumerate(snapnums[0:lim]):
+        this_sfid = sfids[i]
+        #get file.  will skip download if it already exists
+        f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
+        #obtain fields, place at desired position, project, compute densities and luminosities
+        
+        #for projection, how?  use lightcone direction? if so, must save somewhere!
+
+
+    return
+
 def do_lightcone_images(savepath=None):
 
     if savepath is None:

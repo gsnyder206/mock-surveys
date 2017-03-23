@@ -665,7 +665,7 @@ if __name__=="__main__":
     catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_9_8_zyx.txt')
     '''
 
-    
+    '''
     catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_7_6_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
     catalog_xyz = catalog_xyz.process_lightcone(minz=6,maxz=20)
     catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_xyz.txt')
@@ -677,6 +677,22 @@ if __name__=="__main__":
     catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_7_6_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
     catalog_zyx = catalog_zyx.process_lightcone(minz=6,maxz=20)
     catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_zyx.txt')
-    
+    '''
+
+    magl=28.0
+    catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_xyz = catalog_xyz.process_lightcone(minz=0.5,maxz=20)
+    catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt')
+
+    '''
+    catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_yxz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_yxz = catalog_yxz.process_lightcone(minz=0.5,maxz=20)
+    catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_yxz.txt')
+
+    catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_zyx = catalog_zyx.process_lightcone(minz=0.5,maxz=20)
+    catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_zyx.txt')
+    '''
+
 
     pass
