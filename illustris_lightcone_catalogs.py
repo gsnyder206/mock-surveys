@@ -5,12 +5,10 @@ import string
 import sys
 import struct
 import matplotlib
-matplotlib.use('PDF')
 import matplotlib.pyplot as pyplot
 import matplotlib.colors as pycolors
 import matplotlib.cm as cm
 import numpy as np
-import cPickle
 import asciitable
 import scipy.ndimage
 import scipy.stats as ss
@@ -20,11 +18,9 @@ import scipy.odr as odr
 import glob
 import os
 import make_color_image
-import make_fake_wht
 import gzip
 import tarfile
 import shutil
-import cosmocalc
 import congrid
 import astropy.io.ascii as ascii
 import warnings
@@ -42,6 +38,7 @@ import gfs_sublink_utils as gsu
 
 
 ilh = 0.704
+illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
 
 
 
@@ -83,10 +80,10 @@ class lightcone_catalog:
 ## Column 19:  Square Field of View (smaller axis) at v_Ingress [Physical kpc]
 ## Column 20:  Geometrically-appropriate redshift at center of box
 ## Column 21:  Radius buffered to subtend FOV [Comoving h^-1 kpc]
-    def __init__(self,lightconefile,basedir):
+    def __init__(self,lightconefile,basedir,mass_limit=(10.0**9.5),sfr_limit=0.0,mag_limit=None):
         lc_data = ascii.read(lightconefile)
-        print "Initializing Lightcone File: ", lightconefile
-        print lc_data
+        print("Initializing Lightcone File: ", lightconefile)
+        print(lc_data)
         self.lightconefile = lightconefile
 
         self.cylinder_number = np.int32(lc_data['col1'].data)
@@ -159,11 +156,11 @@ class lightcone_catalog:
         self.camup_y = np.float32(ys)
         self.camup_z = np.float32(zs)
 
-        print "    Direction vector: ", self.camdir_x, self.camdir_y, self.camdir_z
-        print "    Up vector: ", self.camup_x, self.camup_y, self.camup_z
-        print "    B FOV, arcmin: ", self.delb_arcmin
-        print "    A FOV, arcmin: ", self.dela_arcmin
-        print "    Ls, Mpc: ", self.L_comoving, self.L_comovingh
+        print("    Direction vector: ", self.camdir_x, self.camdir_y, self.camdir_z)
+        print("    Up vector: ", self.camup_x, self.camup_y, self.camup_z)
+        print("    B FOV, arcmin: ", self.delb_arcmin)
+        print("    A FOV, arcmin: ", self.dela_arcmin)
+        print("    Ls, Mpc: ", self.L_comoving, self.L_comovingh)
 
         self.norm_degrees = self.delb_arcmin/60.0
 
@@ -171,7 +168,9 @@ class lightcone_catalog:
 
         self.basedir = basedir
 
-        self.mass_limit = 10.0**(9.5)
+        self.mass_limit = mass_limit
+        self.sfr_limit = sfr_limit
+        self.mag_limit = mag_limit
 
         return
 
@@ -180,7 +179,7 @@ class lightcone_catalog:
 #4 - stars & WIND
 #5 - BHs
 
-    def process_lightcone(self):
+    def process_lightcone(self,minz=0.0,maxz=20.0):
 
         cmd_total = 0.0
         cmx = 0.0
@@ -196,7 +195,8 @@ class lightcone_catalog:
             cmd_end = cmd_begin + cmd_thiscyl
             cmd_total = cmd_end
 
-
+            cz=self.center_redshift[i]
+                
 
             #world coordinates of ingress point
             cmx_begin = 1.0*cmx
@@ -211,20 +211,26 @@ class lightcone_catalog:
             if i > 1000:
                 continue
 
+            if cz < minz:
+                continue
+            if cz > maxz:
+                continue
+
+
             testf = 'test_'+str(cyl)+'.pdf'
             f1 = pyplot.figure(figsize=(10.5,10.5), dpi=150)
             pyplot.subplots_adjust(left=0.11, right=0.98, bottom=0.08, top=0.99,wspace=0.25,hspace=0.25)
             skip = 500
 
             #determine snapshot of interest
-            print "Processing Cylinder: ", cyl, i, self.snapshot_redshift[i]
+            print("Processing Cylinder: ", cyl, i, self.snapshot_redshift[i])
             snapnum = np.int32(self.snapshot_string[i][-3:])
-            print "    Snapshot Number: ", snapnum
+            print("    Snapshot Number: ", snapnum)
 
             #load subhalo catalogs for this snapshot
             fields=['SubhaloMass','SubhaloMassInMaxRad','SubhaloMassInRadType','SubhaloMassInMaxRadType','SubhaloPos','SubhaloSFR','SubhaloSFRinRad','SubhaloVel','SubhaloBHMass','SubhaloBHMdot','SubhaloStellarPhotometrics','SubhaloWindMass']
             subhalos = ilpy.groupcat.loadSubhalos(self.basedir,snapnum,fields=fields)
-            print "    Loaded subhalos: ", subhalos['count'], subhalos['SubhaloMassInRadType'].shape
+            print("    Loaded subhalos: ", subhalos['count'], subhalos['SubhaloMassInRadType'].shape)
 
 
             subhalos = self.periodicize(subhalos,self.L_comovingh*1000.0)
@@ -236,20 +242,38 @@ class lightcone_catalog:
             baryonmass_msun = mstar_msun + mgas_msun + mbh_msun #within 2x stellar half mass radius... best?
 
             mhalo_msun = subhalos['SubhaloMass']*(1.0e10)/ilh
-
-            print "    Mstar statistics: ", np.min(mstar_msun), np.max(mstar_msun), np.median(mstar_msun)
-            print "    Mgas  statistics: ", np.min(mgas_msun), np.max(mgas_msun), np.median(mgas_msun)
             
+            sfr = subhalos['SubhaloSFR']*1.0
+
+            gmag_ABabs=subhalos['SubhaloStellarPhotometrics'][:,4]*1.0
+            distmod=illcos.distmod(cz).value
+            gmag=gmag_ABabs+distmod
+
+
+
 
             #cull liberally by mass... how?
-            mi = np.where(baryonmass_msun > self.mass_limit)[0]
-            print "    Mbaryon > 1e9 number: ", mi.shape
+            #here, either massive OR star-forming!  probably must refine this.. how big?
 
+            if self.mag_limit is None:
+                mi = np.where(np.logical_and(baryonmass_msun > self.mass_limit, sfr >self.sfr_limit))[0]
+            else:
+                mi = np.where(np.logical_and(gmag < self.mag_limit,baryonmass_msun > 0.0))[0]
+
+
+            
             if mi.shape[0]==0:
                 cylinder_obj = None
                 self.cylinder_object_list.append(cylinder_obj)
                 continue
                 f1.close()
+
+            print("    Selected number: ", mi.shape)
+            print("    Mstar statistics: ", np.min(mstar_msun[mi]), np.max(mstar_msun[mi]), np.median(mstar_msun[mi]))
+            print("    Mgas  statistics: ", np.min(mgas_msun[mi]), np.max(mgas_msun[mi]), np.median(mgas_msun[mi]))
+            print("    Mag  statistics : ", np.min(gmag[mi]), np.max(gmag[mi]), np.median(gmag[mi]))
+
+
 
             #mi is index into subhalo catalog -- the critical index numbers we need to save!!!
             xpos = subhalos['SubhaloPos'][mi,0] #in cKpc/h of max bound part
@@ -335,7 +359,7 @@ class lightcone_catalog:
             #all values correspond to mi vector
             #cull by RA, DEC, and segment length
             ci = np.where(np.logical_and(np.logical_and(np.logical_and(np.abs(y1) <= 1.0, np.abs(y2) <= 1.0),galaxy_camera_posz <= cmd_end),galaxy_camera_posz > cmd_begin))[0]
-            print "    Found N massive galaxies in FOV: ", ci.shape
+            print("    Selected N galaxies in FOV: ", ci.shape)
             axi.plot(y1[ci],y2[ci],'or',markersize=0.7,mew=0.0)
 
 
@@ -345,12 +369,12 @@ class lightcone_catalog:
 
             #save interesting quantities
             if ci.shape[0] > 0:
-                print cyl, cmd_begin, np.min(galaxy_camera_posz[ci])
-                print cyl, cmd_end, np.max(galaxy_camera_posz[ci])
+                print(cyl, cmd_begin, np.min(galaxy_camera_posz[ci]))
+                print(cyl, cmd_end, np.max(galaxy_camera_posz[ci]))
 
                 cylinder_obj = cylinder_catalog(snapnum,subhalos,mi,ci,RA_deg,DEC_deg, self.snapshot_redshift[i],
                                                 galaxy_camera_posx,galaxy_camera_posy,galaxy_camera_posz,self.center_redshift[i],
-                                                galaxy_camera_velx,galaxy_camera_vely,galaxy_camera_velz,cyl)
+                                                galaxy_camera_velx,galaxy_camera_vely,galaxy_camera_velz,cyl,gmag[mi])
             else:
                 cylinder_obj = None
 
@@ -376,7 +400,7 @@ class lightcone_catalog:
         new_y = copy.copy(ypos)
         new_z = copy.copy(zpos)
 
-        print "Periodicizing..."
+        print("Periodicizing...")
 
         new_subhalos['SubFindID'] = np.concatenate((sid,sid))
         new_subhalos['SubFindID'] = np.concatenate((new_subhalos['SubFindID'],sid))
@@ -432,7 +456,7 @@ class lightcone_catalog:
         return new_subhalos
 
     def output_catalog(self,outfile):
-        print "    Saving catalog: ", outfile
+        print("    Saving catalog: ", outfile)
 
         fobj = open(outfile,'w')
 
@@ -483,6 +507,7 @@ class lightcone_catalog:
         fobj.write('## Column 36: [km/s] Galaxy motion in transverse Camera Y direction \n')
         fobj.write('## Column 37: [km/s] Galaxy motion in line-of-sight Camera Z direction ; the Peculiar Velocity \n')
         fobj.write('## Column 38: [km/s] Cosmological expansion velocity at true z (Column 10 measures Column 37+38)\n')
+        fobj.write('## Column 39: [AB Mag] Apparent total rest-frame g-band magnitude (BC03) \n')
 
         for cylobj in self.cylinder_object_list:
             if cylobj is not None:
@@ -493,7 +518,7 @@ class lightcone_catalog:
 
 
 class cylinder_catalog:
-    def __init__(self,snapnum,subhalos,mi,ci,RA_deg,DEC_deg,snapz,galaxy_camera_posx,galaxy_camera_posy,galaxy_camera_posz,centerz,galaxy_camera_velx,galaxy_camera_vely,galaxy_camera_velz,cyl):
+    def __init__(self,snapnum,subhalos,mi,ci,RA_deg,DEC_deg,snapz,galaxy_camera_posx,galaxy_camera_posy,galaxy_camera_posz,centerz,galaxy_camera_velx,galaxy_camera_vely,galaxy_camera_velz,cyl,gmag):
 
         #fields=['SubhaloMass','SubhaloMassInMaxRad','SubhaloMassInRadType','SubhaloMassInMaxRadType','SubhaloPos','SubhaloSFR','SubhaloSFRinRad','SubhaloVel','SubhaloBHMass','SubhaloBHMdot','SubhaloStellarPhotometrics','SubhaloWindMass']
 
@@ -580,6 +605,7 @@ class cylinder_catalog:
         self.imag = subhalos['SubhaloStellarPhotometrics'][self.subhalo_index,6]
         self.zmag = subhalos['SubhaloStellarPhotometrics'][self.subhalo_index,7]
 
+        self.gmag_apparent=gmag[ci]
 
         #self.total_redshift =
         
@@ -594,25 +620,25 @@ class cylinder_catalog:
                        '{:12.8f}  {:12.8f}  {:12.4e}  {:8.4f}  '\
                        '{:10.4f}  {:10.4f}  {:16.4f}  {:16.4f}  {:16.4f}  {:12.8f}  {:12.8f}  {:8d}'\
                        '{:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}  {:16.4f}  {:10.4e}'\
-                       '  {:10.4f}  {:10.4f}  {:16.4f}  {:8.2f}  {:8.2f}  {:8.2f}  {:8.2f}    {:8.2f}  {:8.2f}  {:8.2f}  {:12.4e}'\
+                       '  {:10.4f}  {:10.4f}  {:16.4f}  {:8.2f}  {:8.2f}  {:8.2f}  {:8.2f}    {:8.2f}  {:8.2f}  {:8.2f}  {:12.4e}  {:8.2f}'\
                        '\n'.format(self.snapshot_number[i],shi,self.RA_deg[i],self.DEC_deg[i],self.RA_kpc[i],self.DEC_kpc[i],self.observed_RA_kpc[i],self.observed_DEC_kpc[i],
                                    self.cosmological_redshift[i],self.galaxy_observed_z[i],self.galaxy_peculiar_z[i],self.kpc_per_arcsec[i],
                                    self.galaxy_comoving_x_mpc[i],self.galaxy_comoving_y_mpc[i],self.galaxy_comoving_z_mpc[i],self.angdiam_mpc[i],self.observed_angdiam_mpc[i],self.snapz[i],self.center_z[i],self.cylinder_number[i],
                                    self.mstar_msun[i],self.mgas_msun[i],self.mhalo_msun[i],self.mbh_msun[i],self.baryonmass_msun[i],self.sfr[i],self.bhmdot[i],
                                    self.galaxy_camera_posx[i],self.galaxy_camera_posy[i],self.galaxy_camera_posz[i],
                                    self.gmag[i],self.rmag[i],self.imag[i],self.zmag[i],
-                                   self.galaxy_camera_velx[i],self.galaxy_camera_vely[i],self.galaxy_camera_velz[i],self.hubble_velocity[i])
+                                   self.galaxy_camera_velx[i],self.galaxy_camera_vely[i],self.galaxy_camera_velz[i],self.hubble_velocity[i],self.gmag_apparent[i])
             outobj.write(thisline)
 
 
         return
 
 
-def process_lightcone_catalog(lightcone=None,basedir=None):
+def process_lightcone_catalog(lightcone=None,basedir=None,mass_limit=10.0**9.5,sfr_limit=0.0,mag_limit=None):
     assert (lightcone is not None) and (basedir is not None)
     assert os.path.lexists(basedir)
 
-    catalog_object = lightcone_catalog(lightcone,basedir)
+    catalog_object = lightcone_catalog(lightcone,basedir,mass_limit=mass_limit,sfr_limit=sfr_limit,mag_limit=mag_limit)
 
 
 
@@ -624,27 +650,33 @@ def process_lightcone_catalog(lightcone=None,basedir=None):
 
 if __name__=="__main__":
     
-    #catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-2/")
-    #catalog_xyz = catalog_xyz.process_lightcone()
-    #catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-2_RADEC_hudfwide_75Mpc_7_6_xyz_corners.txt')
+    magl=35.0
+    '''
+    catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_9_8_xyz.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_xyz = catalog_xyz.process_lightcone(minz=6,maxz=20)
+    catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_9_8_xyz.txt')
 
-    #catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_yxz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-2/")
-    #catalog_yxz = catalog_yxz.process_lightcone()
-    #catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-2_RADEC_hudfwide_75Mpc_7_6_yxz_corners.txt')
+    catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_9_8_yxz.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_yxz = catalog_yxz.process_lightcone(minz=6,maxz=20)
+    catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_9_8_yxz.txt')
 
-    #catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-2/")
-    #catalog_zyx = catalog_zyx.process_lightcone()
-    #catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-2_RADEC_hudfwide_75Mpc_7_6_zyx_corners.txt')
+    catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_9_8_zyx.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_zyx = catalog_zyx.process_lightcone(minz=6,maxz=20)
+    catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_9_8_zyx.txt')
+    '''
 
-    catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/")
-    catalog_xyz = catalog_xyz.process_lightcone()
-    catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-1_RADEC_hudfwide_75Mpc_7_6_xyz_corners.txt')
+    
+    catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_7_6_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_xyz = catalog_xyz.process_lightcone(minz=6,maxz=20)
+    catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_xyz.txt')
 
-    #catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_yxz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/")
-    #catalog_yxz = catalog_yxz.process_lightcone()
-    #catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-1_RADEC_hudfwide_75Mpc_7_6_yxz_corners.txt')
+    catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_7_6_fixedh_yxz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_yxz = catalog_yxz.process_lightcone(minz=6,maxz=20)
+    catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_yxz.txt')
 
-    #catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/hudfwide_75Mpc_7_6_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/")
-    #catalog_zyx = catalog_zyx.process_lightcone()
-    #catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/Illustris-1_RADEC_hudfwide_75Mpc_7_6_zyx_corners.txt')
+    catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudfwide_75Mpc_7_6_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
+    catalog_zyx = catalog_zyx.process_lightcone(minz=6,maxz=20)
+    catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_zyx.txt')
+    
+
     pass
