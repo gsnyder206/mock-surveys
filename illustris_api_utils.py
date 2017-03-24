@@ -322,10 +322,10 @@ def get_lightcone_images(lcfile,geofile,sim='Illustris-2',clobber=False,savepath
 
 def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
 
-    lcfile='$HOME/PythonCode/mock-surveys/Lightcones/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt'
-    geofile='$HOME/PythonCode/mock-surveys/Lightcones/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt'
+    lcfile=os.path.expandvars('$HOME/PythonCode/mock-surveys/Lightcones/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt')
+    geofile=os.path.expandvars('$HOME/PythonCode/mock-surveys/Lightcones/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt')
     sim='Illustris-1'
-    savepath='$HOME/oasis_project_hsc102/IllustrisData/'
+    savepath=os.path.expandvars('$HOME/oasis_project_hsc102/IllustrisData/')
     label='FIELDA_11_10'
 
     data = ascii.read(lcfile)
