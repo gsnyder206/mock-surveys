@@ -36,6 +36,7 @@ import time
 #import illustris_lightcone_catalogs as ilc
 #import translate_coordinates as tc
 import gfs_sublink_utils as gsu
+import illustris_sunrise_utils as isu
 
 
 ilh = 0.704
@@ -334,10 +335,21 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     snapnums = np.asarray(data['col1'],dtype='str')
     sfids = np.asarray(data['col2'],dtype='str')
 
+    x_mpc=np.asarray(data['col28'],dtype='str')
+    y_mpc=np.asarray(data['col29'],dtype='str')
+    z_mpc=np.asarray(data['col30'],dtype='str')
+
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
+        pos_mpc={}
+        pos_mpc['x']=x_mpc[i]
+        pos_mpc['y']=y_mpc[i]
+        pos_mpc['z']=z_mpc[i]
+        
         #get file.  will skip download if it already exists
         f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
+        submitline = isu.setup_sunrise_lightcone_run(f,s,label,geofile,pos_mpc)
+        
         #obtain fields, place at desired position, project, compute densities and luminosities
         if i % 100==0:
             print('    Completed.. ',i)

@@ -8,6 +8,15 @@ import shutil
 #this function takes as inputs the return values of illustris_api_utils.get_subhalo()
 #this is a snapshot file and subhalo metadata object
 
+def setup_sunrise_lightcone_run(snap_cutout,subhalo_object,geofile,label,pos_mpc,verbose=True,clobber=True,
+                                    data_dir='$HOME/sunrise_data/',
+                                    nthreads=24,use_scratch=True):
+
+
+    return
+
+
+
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
                                     stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                                     data_dir='$HOME/sunrise_data/',
