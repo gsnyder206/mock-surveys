@@ -12,7 +12,6 @@ import scipy as sp
 import scipy.odr as odr
 import glob
 import os
-import make_color_image
 import gzip
 import tarfile
 import shutil
