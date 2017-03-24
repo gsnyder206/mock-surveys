@@ -340,7 +340,8 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         #get file.  will skip download if it already exists
         f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
         #obtain fields, place at desired position, project, compute densities and luminosities
-        
+        if i % 100==0:
+            print('    Completed.. ',i)
         #for projection, how?  use lightcone direction? if so, must save somewhere!
 
 
