@@ -20,7 +20,7 @@ def setup_sunrise_lightcone_run(snap_cutout,subhalo_object,geofile,label,pos_mpc
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
                                     stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                                     data_dir='$HOME/sunrise_data/',
-                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=False):
+                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=True):
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -207,7 +207,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     elif run_type == 'ifu':
         mf.write('npixels     400\n')
     else:
-        mf.write('npixels     200\n')
+        mf.write('npixels     400\n')
 
 
     mf.close()
