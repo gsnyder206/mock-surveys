@@ -86,7 +86,7 @@ def get(path, params=None,savepath=None):
 
 
 
-def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,clobber=False):
+def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,clobber=False,getparent=False):
 
 
     relative_path = sim+"/snapshots/" + str(snap) + "/subhalos/" + str(sfid)
@@ -126,6 +126,9 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
         #subhalo metadata
         try:
             sub = get(url)
+            if getparent is True:
+                url=sub['related']['parent_halo']
+                
             sim_obj=get(sim_url)
             snap_obj=get(snap_url)
 
