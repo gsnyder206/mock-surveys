@@ -126,8 +126,11 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
         #subhalo metadata
         try:
             sub = get(url)
+            particledata=sub
             if getparent is True:
                 url=sub['related']['parent_halo']
+                halo=get(url)
+                particledata=halo
                 
             sim_obj=get(sim_url)
             snap_obj=get(snap_url)
@@ -143,7 +146,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 header.attrs['HubbleParam']=sim_obj['hubble']
                 header.attrs['Omega0']=sim_obj['omega_0']
                 header.attrs['OmegaLambda']=sim_obj['omega_L']
-                npart = [sub['len_gas'],sub['len_dm'],0,0,sub['len_stars'],sub['len_bhs']]
+                npart = [particledata['len_gas'],particledata['len_dm'],0,0,particledata['len_stars'],particledata['len_bhs']]
                 header.attrs['NumPart_ThisFile']=np.asarray(npart)
                 mtable=[0,sim_obj['mass_dm'],0,0,0,0]
                 header.attrs['MassTable']=np.asarray(mtable)
