@@ -166,7 +166,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             download = False
             raise
 
-        return file, sub, download
+        return file, sub, download, particledata
 
 
 def process_subhalo(sim,snap,sfid,i,label,camera_obj,params=defaultparams,savepath=None,verbose=True,clobber=False,getlabel='StellarMass',resample=False):
