@@ -130,6 +130,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             if getparent is True:
                 url=sub['related']['parent_halo']
                 halo=get(url)
+                print(halo)
                 particledata=halo
                 
             sim_obj=get(sim_url)
