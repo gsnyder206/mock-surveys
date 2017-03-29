@@ -130,8 +130,6 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             if getparent is True:
                 url=sub['related']['parent_halo']
                 halo=get(url)
-                print(halo)
-                particledata=halo
                 
             sim_obj=get(sim_url)
             snap_obj=get(snap_url)
@@ -154,7 +152,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 header.attrs['MassTable']=np.asarray(mtable)
                 header.attrs['Redshift']=snap_obj['redshift']
                 #fix issue with ParticleIDs.. ?
-                for i,pt in zip(['PartType0','PartType1','PartType4','PartType5'],[0,1,4,5]):
+                for pt,i in zip(['PartType0','PartType1','PartType4','PartType5'],[0,1,4,5]):
                     #quantities exist?
                     nquant=len(fo[pt].keys())
                     if nquant > 0:
@@ -173,7 +171,7 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
             download = False
             raise
 
-        return file, sub, download, particledata
+        return file, sub, download
 
 
 def process_subhalo(sim,snap,sfid,i,label,camera_obj,params=defaultparams,savepath=None,verbose=True,clobber=False,getlabel='StellarMass',resample=False):
