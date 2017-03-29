@@ -147,19 +147,25 @@ def get_subhalo(sim,snap,sfid,params=defaultparams,savepath=None,verbose=True,cl
                 header.attrs['HubbleParam']=sim_obj['hubble']
                 header.attrs['Omega0']=sim_obj['omega_0']
                 header.attrs['OmegaLambda']=sim_obj['omega_L']
-                npart = [particledata['len_gas'],particledata['len_dm'],0,0,particledata['len_stars'],particledata['len_bhs']]
-                header.attrs['NumPart_ThisFile']=np.asarray(npart)
+                #npart = [particledata['len_gas'],particledata['len_dm'],0,0,particledata['len_stars'],particledata['len_bhs']]
+                npart=[0,0,0,0,0,0]
+                #header.attrs['NumPart_ThisFile']=np.asarray(npart)
                 mtable=[0,sim_obj['mass_dm'],0,0,0,0]
                 header.attrs['MassTable']=np.asarray(mtable)
                 header.attrs['Redshift']=snap_obj['redshift']
                 #fix issue with ParticleIDs.. ?
-                for pt in ['PartType0','PartType1','PartType4','PartType5']:
+                for i,pt in zip(['PartType0','PartType1','PartType4','PartType5'],[0,1,4,5]):
                     #quantities exist?
                     nquant=len(fo[pt].keys())
                     if nquant > 0:
                         ids_length=fo[pt]['ParticleIDs'].value.shape[0]
                         if ids_length > 0:
                             fo[pt]['ParticleIDs'][:]=np.arange(ids_length,dtype=np.uint64)
+                    else:
+                        ids_length=0
+                    npart[i]=ids_length
+                    
+                header.attrs['NumPart_ThisFile']=np.asarray(npart)
 
         except:
             file = None
