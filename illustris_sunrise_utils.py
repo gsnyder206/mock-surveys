@@ -115,7 +115,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False):
     if use_scratch is True:
-        int_dir=os.path.expandvars('/scratch/$USER/$SLURM_JOBID')
+        int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -169,7 +169,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False):
     if use_scratch is True:
-        int_dir=os.path.expandvars('/scratch/$USER/$SLURM_JOBID')
+        int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -228,7 +228,7 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
         
 
     if use_scratch is True:
-        int_dir=os.path.expandvars('/scratch/$USER/$SLURM_JOBID')
+        int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -267,7 +267,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_
     bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
     
     if use_scratch is True:
-        int_dir=os.path.expandvars('/scratch/$USER/$SLURM_JOBID')
+        int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
