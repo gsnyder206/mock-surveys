@@ -71,7 +71,7 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
     
         bsubf.write('#SBATCH --export=ALL\n')
         bsubf.write('#SBATCH --job-name=sunrise_'+run_type+'\n')
-        bsubf.write('#SBATCH --output='+run_dir+'/sunrise_slurm.out\n')
+        bsubf.write('#SBATCH --output='+filepath.rstrip('.sbatch')+'_slurm.out'+'\n')
         bsubf.write('\n')
     
     bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
