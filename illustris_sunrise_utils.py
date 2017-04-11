@@ -156,7 +156,7 @@ def generate_campos(run_dir,this_z,geofile,pos_mpc):
     fov_radians = math.asin(fov_kpc/(camdist_mpc*1.0e3))
     
     cf = open(run_dir+'/cam_pos.txt','w+')  #pos, dir, up, fov radians
-    cf.write('{:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f}\n'.format(campos_x,campos_y,campos_z,camdir_x,camdir_y,camdir_z,camup_x,camup_y,camup_z,fov_radians))
+    cf.write('{:12.4f} {:12.4f} {:12.4f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.10f}\n'.format(campos_x,campos_y,campos_z,camdir_x,camdir_y,camdir_z,camup_x,camup_y,camup_z,fov_radians))
     cf.write('\n')
     cf.close()
     
