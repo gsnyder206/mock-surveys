@@ -93,9 +93,9 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
         #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
     if use_scratch is True:
-        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/*.fits .')
+        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/*.fits .\n')
 
-    
+    bsubf.write('\n')
     bsubf.write('\n')
     bsubf.close()
 
