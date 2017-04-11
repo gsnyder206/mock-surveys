@@ -146,16 +146,15 @@ def generate_campos(run_dir,this_z,geofile,pos_mpc):
     camup_z = np.float32(zs)
 
     camdist_mpc = pos_mpc['z']   #physical mpc in camera coords
-    print(camdist_mpc,camdir_x)
     
-    campos_x= 1.0*camdir_x*camdist_mpc*10.0**3  #want in kpc
-    campos_y= 1.0*camdir_y*camdist_mpc*10.0**3
-    campos_z= 1.0*camdir_z*camdist_mpc*10.0**3
+    campos_x= -1.0*camdir_x*camdist_mpc*10.0**3  #want in kpc
+    campos_y= -1.0*camdir_y*camdist_mpc*10.0**3
+    campos_z= -1.0*camdir_z*camdist_mpc*10.0**3
 
     fov = 0.001
     
     cf = open(run_dir+'/cam_pos.txt','w+')  #pos, dir, up, fov radians
-    cf.write('{:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f}\n'.format(campos_x,campos_y,campos_z,camdir_x,camdir_y,camdir_z,camup_x,camup_y,camup_z,fov))
+    cf.write('{:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f} {:12.6f}\n'.format(campos_x,campos_y,campos_z,camdir_x,camdir_y,camdir_z,camup_x,camup_y,camup_z,fov))
     cf.write('\n')
     cf.close()
     
