@@ -9,7 +9,7 @@ import shutil
 #this is a snapshot file and subhalo metadata object
 
 def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True,verbose=True,clobber=True,
-                                        data_dir='$HOME/sunrise_data/',stub_dir='$HOME/PythonCode/mock-surveys/stubs_lightcones/'
+                                        data_dir='$HOME/sunrise_data/',stub_dir='$HOME/PythonCode/mock-surveys/stubs_lightcones/',
                                         nthreads=24,use_scratch=True,run_type='images'):
 
 
