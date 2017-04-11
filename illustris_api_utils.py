@@ -366,11 +366,10 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
         if i % 100==0:
             submitcount=submitcount+1
-            
             sfile=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=False)
             print('    Completed.. ',i)
-        
-        sfile = isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True)
+        else:
+            sfile = isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True)
         
         #obtain fields, place at desired position, project, compute densities and luminosities
 
