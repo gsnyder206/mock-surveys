@@ -43,6 +43,57 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
                                          galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='48:00:00',use_scratch=use_scratch,append=append,isnap=sfid)
 
 
+
+    if not os.path.lexists(run_dir):
+        os.mkdir(run_dir)
+
+    for sf in stub_files:
+        shutil.copy(sf,run_dir)
+            
+    sfrhist_fn   = 'sfrhist.config'
+    sfrhist_stub = 'sfrhist_base.stub'
+
+    generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
+                            stub_name = sfrhist_stub,  fits_file = fits_file, 
+                            galprops_data = galprops_data, run_type = run_type,
+                            nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch,isnap=sfid)
+
+
+    mcrx_fn   = 'mcrx.config'
+    mcrx_stub = 'mcrx_base.stub'
+
+    generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
+                         stub_name = mcrx_stub,
+                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=None , idx = idx,use_scratch=use_scratch,isnap=sfid)
+
+
+        
+    if run_type == 'images': 
+        broadband_fn   = 'broadband.config'
+        broadband_stub = 'broadband_base.stub'
+
+        generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
+                                         stub_name = broadband_stub, 
+                                         galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
+    if run_type == 'grism': 
+        broadband_fn   = 'broadband.config'
+        broadband_stub = 'broadband_base.stub'
+
+        generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
+                                        stub_name = broadband_stub, 
+                                        galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
+
+
+
+
+
+
+    
+    #setup sfrhist
+    #setup mcrx
+    #setup broadband
+
+    #TEST WITH SUBSET OF OBJECTS/CATALOGS
     
     
 
@@ -202,9 +253,12 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False):
+def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False,isnap=None):
     if use_scratch is True:
-        int_dir='/scratch/$USER/$SLURM_JOBID'
+        if isnap is not None:
+            int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
+        else:
+            int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -256,9 +310,12 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None):
     if use_scratch is True:
-        int_dir='/scratch/$USER/$SLURM_JOBID'
+        if isnap is not None:
+            int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
+        else:
+            int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -308,7 +365,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     return
 
 
-def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0,use_scratch=False):
+def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0,use_scratch=False,isnap=None):
 
     #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
@@ -317,7 +374,10 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
         
 
     if use_scratch is True:
-        int_dir='/scratch/$USER/$SLURM_JOBID'
+        if isnap is not None:
+            int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
+        else:
+            int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
@@ -350,13 +410,16 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
     return
 
 
-def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None, redshift=0.0,use_scratch=False):
+def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None, redshift=0.0,use_scratch=False,isnap=None):
 
 
     bfg = open(run_dir+'/'+filename.replace('broadband','broadbandgrism'),'w+')
     
     if use_scratch is True:
-        int_dir='/scratch/$USER/$SLURM_JOBID'
+        if isnap is not None:
+            int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
+        else:
+            int_dir='/scratch/$USER/$SLURM_JOBID'
     else:
         int_dir=run_dir
 
