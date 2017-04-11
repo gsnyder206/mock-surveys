@@ -146,7 +146,8 @@ def generate_campos(run_dir,this_z,geofile,pos_mpc):
     camup_z = np.float32(zs)
 
     camdist_mpc = pos_mpc['z']   #physical mpc in camera coords
-
+    print(camdist_mpc)
+    
     campos_x= -1.0*camdir_x*camdist_mpc*1.0e3  #want in kpc
     campos_y= -1.0*camdir_y*camdist_mpc*1.0e3
     campos_z= -1.0*camdir_z*camdist_mpc*1.0e3
