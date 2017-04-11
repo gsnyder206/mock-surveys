@@ -34,6 +34,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
     run_dir = snap_dir+'/%s'%run_type
 
+    print(subhalo_object)
     sfid=subhalo_object['SubfindID']
         
     print('\tGenerating sunrise.sbatch file for %s...'%run_type)
