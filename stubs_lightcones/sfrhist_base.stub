@@ -24,7 +24,7 @@ mappings_mcl		1e6
 # Use this high-resolution version for kinematics (N/A currently)
 bhmodelfile		~gsnyder/sunrise_data/newbhmodel_hires.fits
 
-bh_radiative_efficiency	10.
+bh_radiative_efficiency	0.2
 #bh_radiative_efficiency 0. / turn AGN off
 
 #ic_snapshot_directory	./ / Initial snapshots for individual progenitors
