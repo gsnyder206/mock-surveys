@@ -9,9 +9,9 @@ import make_color_image
 import numpy.random as random
 import gfs_sublink_utils as gsu
 import numpy as np
+import congrid
 
-
-def make_simple_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=None,noisemaxfact=0.05,alph=1.0,Q=1.0):
+def make_simple_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=None,noisemaxfact=0.05,alph=1.0,Q=1.0,rotate=False,resize=None):
 
     go=pyfits.open(bbfile)
     
@@ -65,6 +65,9 @@ def make_simple_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
     for i,l in enumerate(lamb[g141_i]):
         di=int( (l-min_lam)/delta_lam )
         this_cube=small_cube[i,:,:]*l**2  #convert to Janskies-like
+        if rotate is True:
+            this_cube = np.rot90(this_cube)
+
         #if i==17:
         #    this_cube[30,30] = 1.0e3
         #print(i,l/(1.0+redshift),int(di),np.sum(this_cube),this_cube.shape,output_image.shape,output_image[di:di+imw_cross,:].shape)
@@ -74,24 +77,26 @@ def make_simple_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
     output_image=scipy.ndimage.gaussian_filter(output_image,sigma=[4,psf_impix/2.355])
     
     new_thing = np.transpose(np.flipud(output_image))
-    
+    if resize is not None:
+        new_thing = congrid.congrid(new_thing, resize)
     
     nr = noisemaxfact*np.max(new_thing)*random.randn(new_thing.shape[0],new_thing.shape[1])
     
-    thing=make_color_image.make_interactive(new_thing+nr,new_thing+nr,new_thing+nr,alph=alph,Q=Q)
-    thing=1.0-np.fliplr(np.transpose(thing,axes=[1,0,2]))
-    
+    #thing=make_color_image.make_interactive(new_thing+nr,new_thing+nr,new_thing+nr,alph=alph,Q=Q)
+    #thing=1.0-np.fliplr(np.transpose(thing,axes=[1,0,2]))
+    thing=np.fliplr(new_thing+nr)
 
     f=plt.figure(figsize=(25,6))
+    f.subplots_adjust(wspace=0.0,hspace=0.0,top=0.99,right=0.99,left=0,bottom=0)
     axi=f.add_subplot(1,1,1)
-    axi.imshow( (thing),aspect='auto',origin='left',interpolation='nearest')
+    axi.imshow( (thing),aspect='auto',origin='left',interpolation='nearest',cmap='Greys_r')
     f.savefig(outname+'.png',dpi=500)
     plt.close(f)
 
     #[ybox[0]:ybox[1],xbox[0]:xbox[1]]
     #[50:125,120:820,:]
 
-    new_hdu=pyfits.PrimaryHDU(new_thing)
+    new_hdu=pyfits.PrimaryHDU(thing)
     new_list=pyfits.HDUList([new_hdu])
     new_list.writeto(outname+'.fits',clobber=True)
 

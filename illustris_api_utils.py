@@ -350,20 +350,30 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     y_mpc=np.asarray(data['col29'],dtype='str')
     z_mpc=np.asarray(data['col30'],dtype='str')
 
+    redshift = np.float64(np.asarray(data['col10'],dtype='str'))
+    
+    submitcount=0
+    
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
         pos_mpc={}
         pos_mpc['x']=x_mpc[i]
         pos_mpc['y']=y_mpc[i]
         pos_mpc['z']=z_mpc[i]
+        this_z=redshift[i]
         
         #get file.  will skip download if it already exists
         f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
-        submitline = isu.setup_sunrise_lightcone_run(f,s,label,geofile,pos_mpc)
+        if i % 100==0:
+            submitcount=submitcount+1
+            
+            sfile=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=False)
+            print('    Completed.. ',i)
+        
+        sfile = isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True)
         
         #obtain fields, place at desired position, project, compute densities and luminosities
-        if i % 100==0:
-            print('    Completed.. ',i)
+
         #for projection, how?  use lightcone direction? if so, must save somewhere!
 
 

@@ -225,6 +225,11 @@ class lightcone_catalog:
             #determine snapshot of interest
             print("Processing Cylinder: ", cyl, i, self.snapshot_redshift[i])
             snapnum = np.int32(self.snapshot_string[i][-3:])
+            if snapnum==53:
+                snapnum=52
+            if snapnum==55:
+                snapnum=54
+            
             print("    Snapshot Number: ", snapnum)
 
             #load subhalo catalogs for this snapshot
@@ -680,19 +685,21 @@ if __name__=="__main__":
     '''
 
     magl=28.0
+    minz=0.0
+    
     catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
-    catalog_xyz = catalog_xyz.process_lightcone(minz=0.5,maxz=20)
+    catalog_xyz = catalog_xyz.process_lightcone(minz=minz,maxz=20)
     catalog_xyz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt')
 
-    '''
+    
     catalog_yxz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_yxz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
-    catalog_yxz = catalog_yxz.process_lightcone(minz=0.5,maxz=20)
+    catalog_yxz = catalog_yxz.process_lightcone(minz=minz,maxz=20)
     catalog_yxz.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_yxz.txt')
 
     catalog_zyx = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_zyx_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)
-    catalog_zyx = catalog_zyx.process_lightcone(minz=0.5,maxz=20)
+    catalog_zyx = catalog_zyx.process_lightcone(minz=minz,maxz=20)
     catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_wfirst_75Mpc_11_10_zyx.txt')
-    '''
+
 
 
     pass

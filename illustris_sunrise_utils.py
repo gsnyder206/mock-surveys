@@ -8,12 +8,100 @@ import shutil
 #this function takes as inputs the return values of illustris_api_utils.get_subhalo()
 #this is a snapshot file and subhalo metadata object
 
-def setup_sunrise_lightcone_run(snap_cutout,subhalo_object,geofile,label,pos_mpc,verbose=True,clobber=True,
-                                    data_dir='$HOME/sunrise_data/',
-                                    nthreads=24,use_scratch=True):
+def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True,verbose=True,clobber=True,
+                                        data_dir='$HOME/sunrise_data/',stub_dir='$HOME/PythonCode/mock-surveys/stubs_lightcones/'
+                                        nthreads=24,use_scratch=True,run_type='images'):
 
 
-    return
+    fits_file = os.path.abspath(snap_cutout)
+    galprops_data = subhalo_object
+    
+    snap_dir = os.path.dirname(fits_file)
+    
+    stub_dir = os.path.expandvars(stub_dir)
+    data_dir = os.path.expandvars(data_dir)
+    
+    print("Using stubs in.. ",stub_dir)
+    stub_files = np.asarray(glob.glob(os.path.join(stub_dir,'*')))
+
+    real_redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
+    scale_convert=(1.0/(gsu.ilh*(1.0 + real_redshift)))
+
+    #put object at "observed" redshift
+    redshift=this_z
+    
+    nthreads=str(nthreads)
+
+    run_dir = snap_dir+'/%s'%run_type
+
+        
+    print('\tGenerating sunrise.sbatch file for %s...'%run_type)
+    sbatch_fn   = 'sunrise_'+run_type+'_'+str(submitcount)+'.sbatch'
+    
+    final_fn = generate_sbatch_lightcone(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
+                                         galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='48:00:00',use_scratch=use_scratch,append=append)
+
+
+    
+    
+
+    return final_fn
+
+
+
+
+
+def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_type, savepath, ncpus='24', queue='compute',
+                              email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0,account='hsc102',use_scratch=False,append=True):
+
+    
+    filepath=savepath+'/'+filename
+
+    if append is True:
+        bsubf = open(filepath,'a')
+    else:
+        bsubf = open(filepath, 'w+')
+        
+        bsubf.write('#!/bin/bash\n')
+        bsubf.write('#SBATCH -A '+account+'\n')
+        bsubf.write('#SBATCH --partition='+queue+'\n')
+        bsubf.write('#SBATCH -t '+walltime+'\n')
+        bsubf.write('#SBATCH --nodes=1\n')
+        bsubf.write('#SBATCH --ntasks-per-node='+ncpus+'\n')
+    
+        bsubf.write('#SBATCH --export=ALL\n')
+        bsubf.write('#SBATCH --job-name=sunrise_'+run_type+'\n')
+        bsubf.write('#SBATCH --output='+run_dir+'/sunrise_slurm.out\n')
+        bsubf.write('\n')
+    
+    bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
+    bsubf.write('/home/gsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
+    bsubf.write('/home/gsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
+    if run_type=='images':
+        bsubf.write('/home/gsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
+        bsubf.write('/home/gsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+        #bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
+    elif run_type=='ifu':
+        bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('gzip -9 mcrx.fits\n')
+    elif run_type=='grism':
+        bsubf.write('/home/gsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
+        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+
+    if use_scratch is True:
+        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/*.fits .')
+
+    
+    bsubf.write('\n')
+    bsubf.close()
+
+    return filepath
+
+
 
 
 
