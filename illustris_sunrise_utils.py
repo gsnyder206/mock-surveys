@@ -130,6 +130,8 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
         bsubf.write('\n')
     
     bsubf.write('cd '+run_dir+' \n')   #go to directory where job should run
+    if use_scratch is True:
+        bsubf.write('mkdir -p /scratch/$USER/$SLURM_JOBID/'+str(isnap)+'\n')
     bsubf.write('/home/gsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
     bsubf.write('/home/gsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
     if run_type=='images':
