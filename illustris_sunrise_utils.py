@@ -59,6 +59,9 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
                             nthreads=nthreads,scale_convert=scale_convert,use_scratch=use_scratch,isnap=sfid)
 
 
+
+    #generate_campos()
+    
     mcrx_fn   = 'mcrx.config'
     mcrx_stub = 'mcrx_base.stub'
 
