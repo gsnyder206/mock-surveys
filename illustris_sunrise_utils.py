@@ -56,7 +56,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
                             stub_name = sfrhist_stub,  fits_file = fits_file, 
                             galprops_data = galprops_data, run_type = run_type,
-                            nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch,isnap=sfid)
+                            nthreads=nthreads,scale_convert=scale_convert,use_scratch=use_scratch,isnap=sfid)
 
 
     mcrx_fn   = 'mcrx.config'
@@ -64,7 +64,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
     generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                          stub_name = mcrx_stub,
-                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=None , idx = idx,use_scratch=use_scratch,isnap=sfid)
+                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=None ,use_scratch=use_scratch,isnap=sfid)
 
 
         
@@ -74,14 +74,14 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
         generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                          stub_name = broadband_stub, 
-                                         galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
+                                         galprops_data = galprops_data,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
     if run_type == 'grism': 
         broadband_fn   = 'broadband.config'
         broadband_stub = 'broadband_base.stub'
 
         generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                         stub_name = broadband_stub, 
-                                        galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
+                                        galprops_data = galprops_data,redshift=redshift,use_scratch=use_scratch,isnap=sfid)
 
 
 
