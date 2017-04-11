@@ -346,7 +346,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     snapnums = np.asarray(data['col1'],dtype='str')
     sfids = np.asarray(data['col2'],dtype='str')
 
-    x_mpc=np.asarray(data['col28'],dtype='str')
+    x_mpc=np.asarray(data['col28'],dtype='str')   #physical mpc
     y_mpc=np.asarray(data['col29'],dtype='str')
     z_mpc=np.asarray(data['col30'],dtype='str')
 

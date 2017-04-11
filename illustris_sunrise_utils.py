@@ -32,12 +32,12 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     
     nthreads=str(nthreads)
 
-    run_dir = snap_dir+'/%s'%run_type
+    run_dir = snap_dir+'/'+run_type+'_'+label
 
     sfid=subhalo_object['id']
         
     print('\tGenerating sunrise.sbatch file for %s...'%run_type)
-    sbatch_fn   = 'sunrise_'+run_type+'_'+str(submitcount)+'.sbatch'
+    sbatch_fn   = 'sunrise_'+run_type+'_'+label+'_'+str(submitcount)+'.sbatch'
     
     final_fn = generate_sbatch_lightcone(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
                                          galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='48:00:00',use_scratch=use_scratch,append=append,isnap=sfid)
@@ -60,7 +60,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
 
 
-    #generate_campos()
+    generate_campos(run_dir,this_z,geofile,pos_mpc)
     
     mcrx_fn   = 'mcrx.config'
     mcrx_stub = 'mcrx_base.stub'
@@ -104,6 +104,60 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
 
 
+
+def generate_campos(run_dir,this_z,geofile,pos_mpc):
+
+    lines = open(geofile,'r')
+    for l in lines:
+        if "Comoving Single Box L" in l:
+            L_comoving = np.float32(l.split()[-1])
+            L_comovingh = round(L_comoving*ilh,4)
+
+        if "Delta Unit Vector" in l:
+            ss = l.split("[")[-1].split("]")[0].split()
+            xs = ss[0]
+            ys = ss[1]
+            zs = ss[2]   
+
+        if "Direction Unit Vector" in l:
+            ss = l.split("[")[-1].split("]")[0].split()
+            xd = ss[0]
+            yd = ss[1]
+            zd = ss[2]
+        if "del B" in l:
+            delb_arcmin = np.float32(l.split()[-1])
+        if "del A" in l:
+            dela_arcmin = np.float32(l.split()[-1])
+    lines.close()
+    assert xs is not None
+    assert xd is not None
+    assert L_comoving is not None
+
+    #camdir
+    #just the direction unit vector from the lightcone file
+    camdir_x = np.float32(xd)
+    camdir_y = np.float32(yd)
+    camdir_z = np.float32(zd)
+    #camup
+    #just the delta unit vector from the lightcone file
+    camup_x = np.float32(xs)
+    camup_y = np.float32(ys)
+    camup_z = np.float32(zs)
+
+    camdist_mpc = pos_mpc['z']   #physical mpc in camera coords
+
+    campos_x= -1.0*camdir_x*camdist_mpc*1.0e3  #want in kpc
+    campos_y= -1.0*camdir_y*camdist_mpc*1.0e3
+    campos_z= -1.0*camdir_z*camdist_mpc*1.0e3
+
+    fov = 0.001
+    
+    cf = open(run_dir+'/cam_pos.txt','w+')  #pos, dir, up, fov radians
+    cf.write('{:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f} {:8.3f}\n'.format(campos_x,campos_y,campos_z,camdir_x,camdir_y,camdir_z,camup_x,camup_y,camup_z,fov))
+    cf.write('\n')
+    cf.close()
+    
+    return
 
 
 def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_type, savepath, ncpus='24', queue='compute',
