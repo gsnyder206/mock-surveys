@@ -22,7 +22,7 @@ mappings_mcl		1e6
 
 #bhmodelfile		~gsnyder/sunrise_data/newbhmodel.fits
 # Use this high-resolution version for kinematics (N/A currently)
-bhmodelfile		~gsnyder/sunrise_data/bhmodel_nlr_only.fits
+bhmodelfile		/home/gsnyder/sunrise_data/bhmodel_nlr_only.fits
 
 bh_radiative_efficiency	0.2
 #bh_radiative_efficiency 0. / turn AGN off
