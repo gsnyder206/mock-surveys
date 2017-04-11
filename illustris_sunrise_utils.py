@@ -34,12 +34,13 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
     run_dir = snap_dir+'/%s'%run_type
 
+    sfid=subhalo_object['SubfindID']
         
     print('\tGenerating sunrise.sbatch file for %s...'%run_type)
     sbatch_fn   = 'sunrise_'+run_type+'_'+str(submitcount)+'.sbatch'
     
     final_fn = generate_sbatch_lightcone(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
-                                         galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='48:00:00',use_scratch=use_scratch,append=append)
+                                         galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='48:00:00',use_scratch=use_scratch,append=append,isnap=sfid)
 
 
     
@@ -93,7 +94,7 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
         #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
     if use_scratch is True:
-        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/*.fits .\n')
+        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/'+str(isnap)+'/*.fits .\n')
 
     bsubf.write('\n')
     bsubf.write('\n')
