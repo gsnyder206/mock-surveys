@@ -399,7 +399,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     final_fov_arcsec = np.float64(npix_int)*pixsize_arcsec
 
     icfo= open(image_catalog_file,'w')
-    icfo.write('sim, snap, sfid, z, RA, DEC, origin_i, origin_j, pos_i, pos_j, pixsize_arcsec, final_fov_arcsec, full_npix, this_npix, this_fov_kpc, run_dir\n')
+    icfo.write('sim snap sfid z RA DEC origin_i origin_j pos_i pos_j pixsize_arcsec final_fov_arcsec full_npix this_npix this_fov_kpc run_dir\n')
     subfo=open(os.path.join(lightcone_dir,'submit_all_'+label+'.sh'),'w')
 
     for i,sn in enumerate(snapnums[0:lim]):
