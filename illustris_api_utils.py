@@ -398,9 +398,8 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     npix_int = np.int64(npix_float)
     final_fov_arcsec = np.float64(npix_int)*pixsize_arcsec
 
-    submitfiles=[]
-
     icfo= open(image_catalog_file,'w')
+    subfo=open(os.path.join(lightcone_dir,'submit_all_'+label+'.sh'),'w')
 
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
@@ -416,28 +415,30 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         if i % 100==0:
             submitcount=submitcount+1
             ret_dict=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=False,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
-            sfile=ret_dict['submitfile']
-            submitfiles.append(sfile)
+            subfo.write('sbatch '+ret_dict['submitfile']+'\n')
             print('    Completed.. ',i)
         else:
             ret_dict= isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=True,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
             #obtain fields, place at desired position, project, compute densities and luminosities
 
-        pos_i = np.int64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
-        pos_j = np.int64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
         this_npix=ret_dict['this_npix']
         this_fov_kpc=ret_dict['fov_kpc']
 
-        icfo.write('{:12s} {:8d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} '
+        pos_i = np.float64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        pos_j = np.float64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        origin_i = np.int64( np.round(pos_i - this_npix/2.0)  )
+        origin_j = np.int64( np.round(pos_j - this_npix/2.0)  )
+
+        icfo.write('{:12s} {:8d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:12.6f} {:12.6f} '
                    '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
                                                                                np.float64(this_z),
-                                                                               ra_deg[i],dec_deg[i],pos_i,pos_j,
+                                                                               ra_deg[i],dec_deg[i],origin_i,origin_j,pos_i,pos_j,
                                                                                pixsize_arcsec,final_fov_arcsec,
                                                                                npix_int,this_npix,this_fov_kpc,ret_dict['run_dir']))
 
         #store sim, snap, sfid, z, RA, DEC, i, j, pixsize_arcsec, final_fov_arcsec, full_npix, this_npix, this_fov_kpc
 
-
+    subfo.close()
     icfo.close()
 
     return
