@@ -12,8 +12,10 @@ import math
 
 def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True,verbose=True,clobber=True,
                                         data_dir='$HOME/sunrise_data/',stub_dir='$HOME/PythonCode/mock-surveys/stubs_lightcones/',
-                                        nthreads=24,use_scratch=True,run_type='images'):
+                                        nthreads=24,use_scratch=True,run_type='images',pixsize_arcsec=0.032,rad_fact=10.0):
 
+    #TBD--smart FOV and Npix customization-- want large enough field at ~JWST resolution?  0.016 arcsec?  half NC-short pix?
+    # fov = 2x max extent?
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -32,6 +34,14 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     #put object at "observed" redshift
     redshift=this_z
     
+
+    halfmassradstars = s['halfmassrad_stars']/(gsu.ilh*(1.0 + real_redshift))   #physical kpc
+    desired_fov_kpc = rad_fact*halfmassradstars
+    desired_fov_arcsec = desired_fov_kpc/(gsu.illcos.kpc_proper_per_arcmin(this_z).value)
+    npix_int = np.int64(desired_fov_arcsec/pixsize_arcsec)+1
+    final_fov_arcsec = npix_int*pixsize_arcsec
+    final_fov_kpc = final_fov_arcsec*(gsu.illcos.kpc_proper_per_arcmin(this_z).value)
+
     nthreads=str(nthreads)
 
     run_dir = snap_dir+'/'+run_type+'_'+label
@@ -62,14 +72,14 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
 
 
-    generate_campos(run_dir,this_z,geofile,pos_mpc)
+    generate_campos(run_dir,this_z,geofile,pos_mpc,fov_kpc=final_fov_kpc)
     
     mcrx_fn   = 'mcrx.config'
     mcrx_stub = 'mcrx_base.stub'
 
     generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                          stub_name = mcrx_stub,
-                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid)
+                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid,npix=npix_int)
 
 
         
@@ -100,14 +110,18 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
     #TEST WITH SUBSET OF OBJECTS/CATALOGS
     
-    
+    return_dict={}
+    return_dict['submitfile']=final_fn
+    return_dict['this_npix']=npix_int
+    return_dict['fov_kpc']=final_fov_kpc
 
-    return final_fn
+
+    return return_dict
 
 
 
 
-def generate_campos(run_dir,this_z,geofile,pos_mpc):
+def generate_campos(run_dir,this_z,geofile,pos_mpc,fov_kpc=120.0):
 
     lines = open(geofile,'r')
     for l in lines:
@@ -152,7 +166,6 @@ def generate_campos(run_dir,this_z,geofile,pos_mpc):
     campos_y= -1.0*camdir_y*camdist_mpc*10.0**3
     campos_z= -1.0*camdir_z*camdist_mpc*10.0**3
 
-    fov_kpc = 120.0 #kpc
     fov_radians = math.asin(fov_kpc/(camdist_mpc*1.0e3))
     
     cf = open(run_dir+'/cam_pos.txt','w+')  #pos, dir, up, fov radians
@@ -372,7 +385,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None,npix=400):
     if use_scratch is True:
         if isnap is not None:
             int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
@@ -411,11 +424,11 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     #move npixels to .config file
 
     if run_type == 'images':
-        mf.write('npixels     400\n')
+        mf.write('npixels     '+str(npix)+'\n')
     elif run_type == 'ifu':
-        mf.write('npixels     400\n')
+        mf.write('npixels     '+str(npix)+'\n')
     else:
-        mf.write('npixels     400\n')
+        mf.write('npixels     '+str(npix)+'\n')
 
 
     mf.close()

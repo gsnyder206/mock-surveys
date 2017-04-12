@@ -341,6 +341,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     sim='Illustris-1'
     savepath=os.path.expandvars('$HOME/oasis_project_hsc102/IllustrisData/')
     label='FIELDA_11_10'
+    rad_fact=10.0  #image fov will be this times the stellar half-mass radius
 
     data = ascii.read(lcfile)
     snapnums = np.asarray(data['col1'],dtype='str')
@@ -351,9 +352,53 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     z_mpc=np.float64(np.asarray(data['col30'],dtype='str'))
 
     redshift = np.float64(np.asarray(data['col10'],dtype='str'))
-    
+    ra_deg=np.float64(np.asarray(data['col3'],dtype='str'))
+    dec_deg=np.float64(np.asarray(data['col4'],dtype='str'))
+
     submitcount=0
+
+    #save image geometry -- npix, fov somewhere for image reconstruction?
+    lightcone_dir=os.path.join(savepath,label)
+    if not os.path.lexists(lightcone_dir):
+        os.mkdir(lightcone_dir)
+
+    image_catalog_file=os.path.join(lightcone_dir,label+'_imageinfo.txt')
+    pixsize_arcsec=0.032
+    lines = open(geofile,'r')
+    for l in lines:
+        if "Comoving Single Box L" in l:
+            L_comoving = np.float32(l.split()[-1])
+            L_comovingh = round(L_comoving*gsu.ilh,4)
+
+        if "Delta Unit Vector" in l:
+            ss = l.split("[")[-1].split("]")[0].split()
+            xs = ss[0]
+            ys = ss[1]
+            zs = ss[2]   
+
+        if "Direction Unit Vector" in l:
+            ss = l.split("[")[-1].split("]")[0].split()
+            xd = ss[0]
+            yd = ss[1]
+            zd = ss[2]
+        if "del B" in l:
+            delb_arcmin = np.float32(l.split()[-1])
+        if "del A" in l:
+            dela_arcmin = np.float32(l.split()[-1])
+    lines.close()
+    assert xs is not None
+    assert xd is not None
+    assert L_comoving is not None
     
+    full_fov_arcsec=60.0*delb_arcmin
+    npix_float = full_fov_arcsec/pixsize_arcsec
+    npix_int = np.int64(npix_float)
+    final_fov_arcsec = np.float64(npix_int)*pixsize_arcsec
+
+    submitfiles=[]
+
+    icfo= open(image_catalog_file,'w')
+
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
         pos_mpc={}
@@ -364,17 +409,30 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         
         #get file.  will skip download if it already exists
         f,s,d = get_subhalo(sim,sn,this_sfid,savepath=savepath,verbose=verbose,clobber=clobber)
+
         if i % 100==0:
             submitcount=submitcount+1
-            sfile=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=False)
+            ret_dict=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=False,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
+            sfile=ret_dict['submitfile']
+            submitfiles.append(sfile)
             print('    Completed.. ',i)
         else:
-            sfile = isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,savepath,append=True)
-        
-        #obtain fields, place at desired position, project, compute densities and luminosities
+            ret_dict= isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=True,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
+            #obtain fields, place at desired position, project, compute densities and luminosities
 
-        #for projection, how?  use lightcone direction? if so, must save somewhere!
+        pos_i = np.int64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        pos_j = np.int64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        this_npix=ret_dict['this_npix']
+        this_fov_kpc=ret_dict['fov_kpc']
 
+        icfo.write('{:12s} {:12d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:10.6f} {:16.4f} {:10d} {:10d} {:12.6f}\n'.format(sim,sn,this_sfid,this_z,
+                                                                                                                            ra_deg[i],dec_deg[i],pos_i,pos_j,
+                                                                                                                            pixsize_arcsec,final_fov_arcsec,
+                                                                                                                            npix_int,this_npix,this_fov_kpc))
+        #store sim, snap, sfid, z, RA, DEC, i, j, pixsize_arcsec, final_fov_arcsec, full_npix, this_npix, this_fov_kpc
+
+
+    icfo.close()
 
     return
 
