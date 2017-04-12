@@ -46,8 +46,12 @@ def build_lightcone_images(image_info_file,run_type='images'):
     lightcone_dir=os.path.abspath(os.path.dirname(image_info_file))
     print('Constructing lightcone data from: ', lightcone_dir)
 
-    output_dir = os.path.join(lightcone_dir,image_info_file.rstrip('.txt'))
+    output_dir = os.path.join(lightcone_dir,os.path.basename(image_info_file).rstrip('.txt'))
     print('Saving lightcone outputs in: ', output_dir)
+    if not os.path.lexists(output_dir):
+        os.mkdir(output_dir)
+
+    image_fitsfile=os.path.join(output_dir,'lightcone_images.fits')
 
     N_filters = cubeshape[0]
     N_aux=auxcube.shape[0]
@@ -97,6 +101,10 @@ def build_lightcone_images(image_info_file,run_type='images'):
 
         image_cube[:,i0:i1,j0:j1] = sub_cube1 + this_subcube
 
+
+    primary_hdu=pyfits.PrimaryHDU(image_cube)
+    output_list=pyfits.HDUList([primary_hdu,filters_hdu])
+    output_list.writeto(image_fitsfile,overwrite=True)
 
 
     #convert units before saving.. or save both?
