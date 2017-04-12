@@ -77,9 +77,15 @@ def build_lightcone_images(image_info_file,run_type='images'):
         if i0+this_npix > full_npix:
             i1=full_npix
             i_tc1= full_npix-i0   #this_npix - (i0+this_npix-full_npix)
+        else:
+            i1=i0+this_npix
+
         if j0+this_npix > full_npix:
             j1=full_npix
             j_tc1= full_npix-j0
+        else:
+            j1=j0+this_npix
+
 
         sub_cube1=image_cube[:,i0:i1,j0:j1]
         this_subcube=this_cube[:,i_tc:i_tc1,j_tc:j_tc1]
