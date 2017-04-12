@@ -425,10 +425,12 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         this_npix=ret_dict['this_npix']
         this_fov_kpc=ret_dict['fov_kpc']
 
-        pos_i = np.float64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
-        pos_j = np.float64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
-        origin_i = np.int64( np.round(pos_i - this_npix/2.0)  )
+        obj_pos_i = np.float64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        obj_pos_j = np.float64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
+        origin_i = np.int64( np.round(pos_i - this_npix/2.0)  )  #aligns object to grid
         origin_j = np.int64( np.round(pos_j - this_npix/2.0)  )
+        pos_i = origin_i + this_npix/2.0   #final true position of subhalo
+        pos_j = origin_j + this_npix/2.0
 
         icfo.write('{:12s} {:8d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:12.6f} {:12.6f} '
                    '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
