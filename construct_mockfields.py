@@ -7,11 +7,11 @@ import shutil
 import math
 import astropy
 import astropy.io.fits as pyfits
-import matplotlib
-import matplotlib.pyplot as plt
+#import matplotlib
+#import matplotlib.pyplot as plt
 import scipy
 import scipy.ndimage
-import make_color_image
+#import make_color_image
 import numpy.random as random
 import congrid
 import tarfile
