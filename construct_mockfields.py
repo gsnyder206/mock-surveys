@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import scipy
 import scipy.ndimage
 import make_color_image
-import np.random as random
+import numpy.random as random
 import congrid
 import tarfile
 import string
