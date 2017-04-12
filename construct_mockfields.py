@@ -56,7 +56,11 @@ def build_lightcone_images(image_info_file,run_type='images'):
     aux_cube = np.zeros((N_aux,full_npix,full_npix),dtype=np.float64)
 
     for origin_i,origin_j,run_dir,this_npix in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix']):
-        this_cube = pyfits.open(os.path.join(run_dir,'broadbandz.fits'))['CAMERA0-BROADBAND-NONSCATTER'].data
+        try:
+            this_cube = pyfits.open(os.path.join(run_dir,'broadbandz.fits'))['CAMERA0-BROADBAND-NONSCATTER'].data
+        except:
+            print('Missing file, ', run_dir)
+            continue
         i_tc=0
         j_tc=0
         i_tc1=this_npix
