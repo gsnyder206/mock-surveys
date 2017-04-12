@@ -425,10 +425,11 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         this_npix=ret_dict['this_npix']
         this_fov_kpc=ret_dict['fov_kpc']
 
-        icfo.write('{:12s} {:12d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:10.6f} {:16.4f} {:10d} {:10d} {:12.6f}\n'.format(sim,sn,this_sfid,this_z,
-                                                                                                                            ra_deg[i],dec_deg[i],pos_i,pos_j,
-                                                                                                                            pixsize_arcsec,final_fov_arcsec,
-                                                                                                                            npix_int,this_npix,this_fov_kpc))
+        icfo.write('{:12s} {:12d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:10.6f} {:16.4f} {:10d} {:10d} {:12.6f}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
+                                                                                                                                     np.float64(this_z),
+                                                                                                                                     ra_deg[i],dec_deg[i],pos_i,pos_j,
+                                                                                                                                     pixsize_arcsec,final_fov_arcsec,
+                                                                                                                                     npix_int,this_npix,this_fov_kpc))
         #store sim, snap, sfid, z, RA, DEC, i, j, pixsize_arcsec, final_fov_arcsec, full_npix, this_npix, this_fov_kpc
 
 
