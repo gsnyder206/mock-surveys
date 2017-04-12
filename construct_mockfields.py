@@ -105,7 +105,7 @@ def build_lightcone_images(image_info_file,run_type='images'):
     filters_data=filters_hdu.data
     for i,filname in enumerate(filters_data['filter']):
         print(filname)
-        outname=os.path.join(output_dir,images_filelabel+'_'+filname.replace('/','-')+'.fits')
+        outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
         print('saving:', outname)
 
         primary_hdu=pyfits.PrimaryHDU(image_cube[i,:,:])
