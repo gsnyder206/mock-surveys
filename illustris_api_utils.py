@@ -427,8 +427,8 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
 
         obj_pos_i = np.float64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
         obj_pos_j = np.float64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
-        origin_i = np.int64( np.round(pos_i - this_npix/2.0)  )  #aligns object to grid
-        origin_j = np.int64( np.round(pos_j - this_npix/2.0)  )
+        origin_i = np.int64( np.round(obj_pos_i - this_npix/2.0)  )  #aligns object to grid
+        origin_j = np.int64( np.round(obj_pos_j - this_npix/2.0)  )
         pos_i = origin_i + this_npix/2.0   #final true position of subhalo
         pos_j = origin_j + this_npix/2.0
 
