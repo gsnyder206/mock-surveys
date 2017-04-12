@@ -30,4 +30,15 @@ def build_lightcone_images(image_info_file):
     data=ascii.read(image_info_file)
     print(data)
 
+    full_npix=data['full_npix'][0]
+
+    #get expected shape
+    test_file=os.path.join(run_dir[0],'broadbandz.fits')
+    tfo =pyfits.open(test_file)
+    print(tfo.info())
+    cube=tfo['CAMERA0-BROADBAND-NONSCATTER'].data
+    cubeshape=cube.shape
+    print(cubeshape)
+
+
     return
