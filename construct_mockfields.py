@@ -51,7 +51,7 @@ def build_lightcone_images(image_info_file,run_type='images'):
     if not os.path.lexists(output_dir):
         os.mkdir(output_dir)
 
-    image_fitsfile=os.path.join(output_dir,'lightcone_images.fits')
+    image_filelabel='lightcone_images'
 
     N_filters = cubeshape[0]
     N_aux=auxcube.shape[0]
@@ -102,9 +102,15 @@ def build_lightcone_images(image_info_file,run_type='images'):
         image_cube[:,i0:i1,j0:j1] = sub_cube1 + this_subcube
 
 
-    primary_hdu=pyfits.PrimaryHDU(image_cube)
-    output_list=pyfits.HDUList([primary_hdu,filters_hdu])
-    output_list.writeto(image_fitsfile,overwrite=True)
+    filters_data=filters_hdu.data
+    for i,filname in enumerate(filters_data['filter']):
+        print(filname)
+        outname=os.path.join(output_dir,images_filelabel+'_'+filname.replace('/','-')+'.fits')
+        print('saving:', outname)
+
+        primary_hdu=pyfits.PrimaryHDU(image_cube[i,:,:])
+        output_list=pyfits.HDUList([primary_hdu])
+        output_list.writeto(outname,overwrite=True)
 
 
     #convert units before saving.. or save both?
