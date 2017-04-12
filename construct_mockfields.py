@@ -65,9 +65,15 @@ def build_lightcone_images(image_info_file,run_type='images'):
         if origin_i < 0:
             i0=0
             i_tc=-1*origin_i
+        else:
+            i0=origin_i
+
         if origin_j < 0:
             j0=0
             j_tc=-1*origin_j
+        else:
+            j0=origin_j
+
         if i0+this_npix > full_npix:
             i1=full_npix
             i_tc1= full_npix-i0   #this_npix - (i0+this_npix-full_npix)
