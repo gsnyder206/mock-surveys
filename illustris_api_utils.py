@@ -362,6 +362,9 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     if not os.path.lexists(lightcone_dir):
         os.mkdir(lightcone_dir)
 
+    shutil.copy(lcfile,lightcone_dir)
+    shutil.copy(geofile,lightcone_dir)
+
     image_catalog_file=os.path.join(lightcone_dir,label+'_imageinfo.txt')
     pixsize_arcsec=0.032
     lines = open(geofile,'r')
