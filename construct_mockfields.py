@@ -25,7 +25,7 @@ import astropy.io.ascii as ascii
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
-def build_lightcone_images(image_info_file):
+def build_lightcone_images(image_info_file,run_type='images'):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -40,5 +40,11 @@ def build_lightcone_images(image_info_file):
     cubeshape=cube.shape
     print(cubeshape)
 
+
+    lightcone_dir=os.path.dirname(image_info_file)
+    print('Constructing lightcone data from: ', lightcone_dir)
+
+    output_dir = os.path.join(lightcone_dir,image_info_file.rstrip('.txt'))
+    print('Saving lightcone outputs in: ', lightcone_dir)
 
     return

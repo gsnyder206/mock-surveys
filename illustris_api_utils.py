@@ -342,6 +342,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     savepath=os.path.expandvars('$HOME/oasis_project_hsc102/IllustrisData/')
     label='FIELDA_11_10'
     rad_fact=10.0  #image fov will be this times the stellar half-mass radius
+    run_type='images'
 
     data = ascii.read(lcfile)
     snapnums = np.asarray(data['col1'],dtype='str')
@@ -365,7 +366,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     shutil.copy(lcfile,lightcone_dir)
     shutil.copy(geofile,lightcone_dir)
 
-    image_catalog_file=os.path.join(lightcone_dir,label+'_imageinfo.txt')
+    image_catalog_file=os.path.join(lightcone_dir,label+'_'+run_type+'.txt')
     pixsize_arcsec=0.032
     lines = open(geofile,'r')
     for l in lines:
@@ -415,11 +416,11 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
 
         if i % 100==0:
             submitcount=submitcount+1
-            ret_dict=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=False,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
+            ret_dict=isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=False,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact,run_type=run_type)
             subfo.write('sbatch '+ret_dict['submitfile']+'\n')
             print('    Completed.. ',i)
         else:
-            ret_dict= isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=True,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact)
+            ret_dict= isu.setup_sunrise_lightcone(f,s,label,this_z,geofile,pos_mpc,submitcount,lightcone_dir,append=True,pixsize_arcsec=pixsize_arcsec,rad_fact=rad_fact,run_type=run_type)
             #obtain fields, place at desired position, project, compute densities and luminosities
 
         this_npix=ret_dict['this_npix']
