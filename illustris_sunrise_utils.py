@@ -114,7 +114,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     return_dict['submitfile']=final_fn
     return_dict['this_npix']=npix_int
     return_dict['fov_kpc']=final_fov_kpc
-
+    return_dict['run_dir']=run_dir
 
     return return_dict
 
