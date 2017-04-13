@@ -47,6 +47,13 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     final_fov_arcsec = npix_int*pixsize_arcsec
     final_fov_kpc = final_fov_arcsec*(gsu.illcos.kpc_proper_per_arcmin(this_z).value/60.0)
 
+    mgas = subhalo_object['mass_gas']
+    if mgas==0.0:
+        aux_part_only=True
+    else:
+        aux_part_only=False
+
+
     nthreads=str(nthreads)
 
     run_dir = snap_dir+'/'+run_type+'_'+label
@@ -388,7 +395,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None,npix=400):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None,npix=400,aux_part_only=False):
     if use_scratch is True:
         if isnap is not None:
             int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
@@ -433,6 +440,10 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     else:
         mf.write('npixels     '+str(npix)+'\n')
 
+    if aux_part_only is True:
+        mf.write('aux_particles_only      true \n')
+    else:
+        mf.write('aux_particles_only      false \n')
 
     mf.close()
 

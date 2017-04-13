@@ -43,7 +43,6 @@ check_energy_conservation	true
 # Aux parameters
 #nrays_aux               0 / turns off aux; not sure if aux is working now, so best to leave it off
 nrays_aux              1e7
-aux_particles_only	false
 
 # Intensity stage
 nrays_intensity		0  #1e5
