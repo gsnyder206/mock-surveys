@@ -403,6 +403,9 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     icfo.write('sim snap sfid z RA DEC origin_i origin_j pos_i pos_j pixsize_arcsec final_fov_arcsec full_npix this_npix this_fov_kpc halfmassrad_factor run_dir\n')
     subfo=open(os.path.join(lightcone_dir,'submit_all_'+label+'.sh'),'w')
 
+    if lim==-1:
+        lim=snapnums.shape[0]
+
     for i,sn in enumerate(snapnums[0:lim]):
         this_sfid = sfids[i]
         pos_mpc={}
