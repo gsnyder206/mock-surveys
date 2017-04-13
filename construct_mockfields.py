@@ -111,7 +111,8 @@ def build_lightcone_images(image_info_file,run_type='images'):
 
 
     success=np.asarray(success)
-    data.add_column(data=success,name='success')
+    newcol=astropy.table.column.Column(data=success,name='success')
+    data.add_column(newcol)
     ascii.write(data,output=success_catalog)
 
     filters_data=filters_hdu.data
