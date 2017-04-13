@@ -433,12 +433,14 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         pos_i = origin_i + this_npix/2.0   #final true position of subhalo
         pos_j = origin_j + this_npix/2.0
 
+        used_radfact=ret_dict['rad_fact']
+
         icfo.write('{:12s} {:8d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:12.6f} {:12.6f} '
-                   '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
+                   '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:12.6f} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
                                                                                np.float64(this_z),
                                                                                ra_deg[i],dec_deg[i],origin_i,origin_j,pos_i,pos_j,
                                                                                pixsize_arcsec,final_fov_arcsec,
-                                                                               npix_int,this_npix,this_fov_kpc,ret_dict['run_dir']))
+                                                                               npix_int,this_npix,this_fov_kpc,used_radfact,ret_dict['run_dir']))
 
 
     subfo.close()

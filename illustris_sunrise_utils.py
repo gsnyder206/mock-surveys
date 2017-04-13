@@ -38,7 +38,9 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     halfmassradstars = subhalo_object['halfmassrad_stars']/(gsu.ilh*(1.0 + real_redshift))   #physical kpc
     mstar = subhalo_object['mass_stars']*(1.0e10)/gsu.ilh
 
-    desired_fov_kpc = min(50.0, rad_fact+mstar/1.0e9)*halfmassradstars
+    used_rad_fact=min(50.0,rad_fact+mstar/5.0e9)
+
+    desired_fov_kpc = used_rad_fact*halfmassradstars
 
     desired_fov_arcsec = desired_fov_kpc/(gsu.illcos.kpc_proper_per_arcmin(this_z).value/60.0)
     npix_int = np.int64(desired_fov_arcsec/pixsize_arcsec)+1
@@ -118,6 +120,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     return_dict['this_npix']=npix_int
     return_dict['fov_kpc']=final_fov_kpc
     return_dict['run_dir']=run_dir
+    return_dict['rad_fact']=used_rad_fact
 
     return return_dict
 
