@@ -91,7 +91,8 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
 
     generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                          stub_name = mcrx_stub,
-                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid,npix=npix_int)
+                         galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, 
+                         cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid,npix=npix_int,aux_part_only=aux_part_only)
 
 
         
