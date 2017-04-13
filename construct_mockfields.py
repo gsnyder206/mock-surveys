@@ -51,6 +51,8 @@ def build_lightcone_images(image_info_file,run_type='images'):
     if not os.path.lexists(output_dir):
         os.mkdir(output_dir)
 
+    success_catalog=os.path.join(output_dir,os.path.basename(image_info_file).rstrip('.txt')+'_success.txt'
+
     image_filelabel='lightcone_image'
 
     N_filters = cubeshape[0]
@@ -59,13 +61,17 @@ def build_lightcone_images(image_info_file,run_type='images'):
     image_cube = np.zeros((N_filters,full_npix,full_npix),dtype=np.float64)
     aux_cube = np.zeros((N_aux,full_npix,full_npix),dtype=np.float64)
 
+    success=[]
+
     for origin_i,origin_j,run_dir,this_npix in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix']):
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
             bblist.close()
+            success.append(True)
         except:
             print('Missing file, ', run_dir)
+            success.append(False)
             continue
         i_tc=0
         j_tc=0
@@ -103,6 +109,10 @@ def build_lightcone_images(image_info_file,run_type='images'):
 
         image_cube[:,i0:i1,j0:j1] = sub_cube1 + this_subcube
 
+
+    success=np.asarray(success)
+    data.add_column(data=success,name='success')
+    ascii.write(data,output=success_catalog)
 
     filters_data=filters_hdu.data
     for i,filname in enumerate(filters_data['filter']):
