@@ -442,9 +442,9 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
         mf.write('npixels     '+str(npix)+'\n')
 
     if aux_part_only is True:
-        mf.write('aux_particles_only      true \n')
+        mf.write('aux_particles_only      true\n')
     else:
-        mf.write('aux_particles_only      false \n')
+        mf.write('aux_particles_only      false\n')
 
     mf.close()
 
