@@ -428,6 +428,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
 
         this_npix=ret_dict['this_npix']
         this_fov_kpc=ret_dict['fov_kpc']
+        nrays=ret_dict['nrays']
 
         obj_pos_i = np.float64( (ra_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
         obj_pos_j = np.float64( (dec_deg[i]*3600.0 + full_fov_arcsec/2.0)/pixsize_arcsec )
@@ -439,11 +440,11 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
         used_radfact=ret_dict['rad_fact']
 
         icfo.write('{:12s} {:8d} {:12d} {:12.6f} {:12.6f} {:12.6f} {:10d} {:10d} {:12.6f} {:12.6f} '
-                   '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:12.6f} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
+                   '{:10.6f} {:16.4f} {:10d} {:10d} {:12.6f} {:12.6f} {:12d} {:100s}\n'.format(sim,np.int64(sn),np.int64(this_sfid),
                                                                                np.float64(this_z),
                                                                                ra_deg[i],dec_deg[i],origin_i,origin_j,pos_i,pos_j,
                                                                                pixsize_arcsec,final_fov_arcsec,
-                                                                               npix_int,this_npix,this_fov_kpc,used_radfact,ret_dict['run_dir']))
+                                                                               npix_int,this_npix,this_fov_kpc,used_radfact,nrays,ret_dict['run_dir']))
 
 
     subfo.close()

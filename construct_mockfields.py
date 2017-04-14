@@ -63,6 +63,8 @@ def build_lightcone_images(image_info_file,run_type='images'):
 
     success=[]
 
+    #for bigger files, may need to split by filter first
+
     for origin_i,origin_j,run_dir,this_npix in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix']):
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
@@ -116,6 +118,7 @@ def build_lightcone_images(image_info_file,run_type='images'):
     ascii.write(data,output=success_catalog)
 
     filters_data=filters_hdu.data
+
     for i,filname in enumerate(filters_data['filter']):
         print(filname)
         outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')

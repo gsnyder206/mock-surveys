@@ -6,7 +6,6 @@ camera_positions	cam_pos.txt / [] Use this and comment out ntheta, nphi
 compress_images         false
 write_images_parallel   false
 
-nrays_nonscatter	1e7  // for production runs probably want 1e7 at least
 
 # scatter parameters
 

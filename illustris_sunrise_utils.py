@@ -47,6 +47,9 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     final_fov_arcsec = npix_int*pixsize_arcsec
     final_fov_kpc = final_fov_arcsec*(gsu.illcos.kpc_proper_per_arcmin(this_z).value/60.0)
 
+    nrays=max( np.int64( (1.0e7)*((npix_int/200.0)**2.0)**0.67 ), np.int64(1e7) )
+
+
     mgas = subhalo_object['mass_gas']
     if mgas==0.0:
         aux_part_only=True
@@ -92,7 +95,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                          stub_name = mcrx_stub,
                          galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, 
-                         cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid,npix=npix_int,aux_part_only=aux_part_only)
+                         cam_file='cam_pos.txt' ,use_scratch=use_scratch,isnap=sfid,npix=npix_int,aux_part_only=aux_part_only,nrays=nrays)
 
 
         
@@ -129,6 +132,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     return_dict['fov_kpc']=final_fov_kpc
     return_dict['run_dir']=run_dir
     return_dict['rad_fact']=used_rad_fact
+    return_dict['nrays']=nrays
 
     return return_dict
 
@@ -396,7 +400,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
 
 
 
-def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None,npix=400,aux_part_only=False):
+def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, run_type, nthreads='1',cam_file=None, idx = None,use_scratch=False,isnap=None,npix=400,aux_part_only=False,nrays=1e7):
     if use_scratch is True:
         if isnap is not None:
             int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
@@ -445,6 +449,8 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
         mf.write('aux_particles_only      true\n')
     else:
         mf.write('aux_particles_only      false\n')
+
+    mf.write('nrays_nonscatter        '+str(nrays)+'\n')
 
     mf.close()
 
