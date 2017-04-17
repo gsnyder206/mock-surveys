@@ -60,16 +60,20 @@ photfnu_Jy = np.asarray([1.96e-7,9.17e-8,1.97e-7,4.14e-7,
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
-def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None):
+def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
 
     print('Processing:  ', filname)
 
-    pbi= filters_to_analyze==filname
-    this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
-    this_psf_pixsize_arcsec=psf_pix_arcsec[pbi][0]
-    this_psf_fwhm=psf_fwhm[pbi][0]
-    this_photfnu_Jy=photfnu_Jy[pbi][0]
-    print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, photfnu_Jy)
+    try:
+        pbi= filters_to_analyze==filname
+        this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
+        this_psf_pixsize_arcsec=psf_pix_arcsec[pbi][0]
+        this_psf_fwhm=psf_fwhm[pbi][0]
+        this_photfnu_Jy=photfnu_Jy[pbi][0]
+        print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, this_photfnu_Jy)
+    except:
+        print('Missing filter info, skipping: ', filname)
+        continue
 
 
     full_npix=data['full_npix'][0]
@@ -103,12 +107,16 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     #for bigger files, may need to split by filter first
     index=np.arange(n_galaxies)
 
-    for origin_i,origin_j,run_dir,this_npix,num in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],index):
+    for origin_i,origin_j,run_dir,this_npix,this_z,num in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],data['z'],index):
         if lim is not None:
             if num > lim:
                 success.append(False)
                 continue
-        
+        if minz is not None:
+            if this_z < minz:
+                success.append(False)
+                continue
+
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
@@ -239,7 +247,7 @@ def build_lightcone_images(image_info_file,run_type='images',lim=None):
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
             data.add_column(newcol)
-            ascii.write(data,output=success_catalog)
+            ascii.write(data,output=success_catalog,overwrite=True)
 
 
     #convert units before saving.. or save both?
