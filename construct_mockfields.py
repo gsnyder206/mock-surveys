@@ -73,8 +73,7 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
         print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, this_photfnu_Jy)
     except:
         print('Missing filter info, skipping: ', filname)
-        continue
-
+        return None
 
     full_npix=data['full_npix'][0]
     pixsize_arcsec=data['pixsize_arcsec'][0]
