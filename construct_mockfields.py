@@ -17,6 +17,7 @@ import congrid
 import tarfile
 import string
 import astropy.io.ascii as ascii
+from astropy.convolution import *
 
 
 filters_to_analyze = np.asarray(['hst/acs_f435w','hst/acs_f606w','hst/acs_f775w','hst/acs_f850lp',
@@ -63,6 +64,25 @@ def process_single_filter(data,filname,fil_index,output_dir):
 
 
     full_npix=data['full_npix'][0]
+    pixsize_arcsec=data['pixsize_arcsec'][0]
+
+    desired_pixsize_arcsec=this_psf_pixsize_arcsec
+
+    full_fov=full_npix*pixsize_arcsec
+
+    desired_npix=full_fov/desired_pixsize_arcsec
+
+    orig_psf_kernel = pyfits.open(this_psf_file)[0].data ; print(orig_psf_kernel.shape)
+
+    #psf kernel shape must be odd for astropy.convolve??
+    if orig_psf_kernel.shape[0] % 2 == 0:
+        new_psf_shape = orig_psf_kernel.shape[0]-1
+        psf_kernel = congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
+    else:
+        psf_kernel = orig_psf_kernel
+        
+    assert( psf_kernel.shape[0] % 2 != 0)
+
 
     image_cube = np.zeros((full_npix,full_npix),dtype=np.float64)
 
@@ -119,13 +139,22 @@ def process_single_filter(data,filname,fil_index,output_dir):
 
 
     #convolve here
+    
+    #first, re-grid to desired scale
+
+    new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
+    conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True)
 
 
     outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
     print('saving:', outname)
 
-    primary_hdu=pyfits.PrimaryHDU(image_cube)
-    output_list=pyfits.HDUList([primary_hdu])
+    primary_hdu=pyfits.PrimaryHDU(conv_im)
+    primary_hdu.header['FILTER']=filname.replace('/','-')
+    
+    psf_hdu = pyfits.ImageHDU(psf_kernel)
+
+    output_list=pyfits.HDUList([primary_hdu,psf_hdu])
     output_list.writeto(outname,overwrite=True)
     output_list.close()
 
