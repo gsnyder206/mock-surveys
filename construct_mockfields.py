@@ -19,6 +19,8 @@ import string
 import astropy.io.ascii as ascii
 from astropy.convolution import *
 
+sq_arcsec_per_sr = 42545170296.0
+c = 3.0e8
 
 filters_to_analyze = np.asarray(['hst/acs_f435w','hst/acs_f606w','hst/acs_f775w','hst/acs_f850lp',
                       'hst/wfc3_f105w','hst/wfc3_f125w','hst/wfc3_f160w',
@@ -52,7 +54,7 @@ psf_fwhm = np.asarray([0.10,0.11,0.12,0.13,0.14,0.17,0.20,0.11,0.11,0.11,0.11,0.
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
-def process_single_filter(data,filname,fil_index,output_dir,lim=None):
+def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None):
 
     print('Processing:  ', filname)
 
@@ -152,15 +154,25 @@ def process_single_filter(data,filname,fil_index,output_dir,lim=None):
     #first, re-grid to desired scale
 
     new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
+
     conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True,allow_huge=True)
 
+
+    pixel_Sr = (desired_pixsize_arcsec**2)/sq_arcsec_per_sr  #pixel area in steradians:  Sr/pixel
+    to_nJy_per_Sr = (1.0e9)*(1.0e14)*(eff_lambda_microns**2)/c   #((pixscale/206265.0)^2)*
+    #sigma_nJy = 0.3*(2.0**(-0.5))*((1.0e9)*(3631.0/5.0)*10.0**(-0.4*self.maglim))*self.Pix_arcsec*(3.0*self.FWHM_arcsec)
+    to_nJy_per_pix = to_nJy_per_Sr*pixel_Sr
+        
+    final_im=conv_im*to_nJy_per_pix
 
     outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
     print('saving:', outname)
 
     primary_hdu=pyfits.PrimaryHDU(conv_im)
     primary_hdu.header['FILTER']=filname.replace('/','-')
-    
+    primary_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
+
+
     psf_hdu = pyfits.ImageHDU(psf_kernel)
 
     output_list=pyfits.HDUList([primary_hdu,psf_hdu])
@@ -207,9 +219,10 @@ def build_lightcone_images(image_info_file,run_type='images',lim=None):
 
 
     filters_data=filters_hdu.data
+    print(filters_data.columns)
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,filname,i,output_dir,lim=lim)
+        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lim=lim)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
