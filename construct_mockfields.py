@@ -200,7 +200,7 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     return success
 
 
-def build_lightcone_images(image_info_file,run_type='images',lim=None):
+def build_lightcone_images(image_info_file,run_type='images',lim=None,minz=None):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -241,7 +241,7 @@ def build_lightcone_images(image_info_file,run_type='images',lim=None):
     lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim)
+        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
