@@ -185,6 +185,8 @@ def generate_campos(run_dir,this_z,geofile,pos_mpc,fov_kpc=120.0):
     campos_y= -1.0*camdir_y*camdist_mpc*10.0**3
     campos_z= -1.0*camdir_z*camdist_mpc*10.0**3
 
+    #update camdir here to dither image?
+    
     fov_radians = math.asin(fov_kpc/(camdist_mpc*1.0e3))
     
     cf = open(run_dir+'/cam_pos.txt','w+')  #pos, dir, up, fov radians
