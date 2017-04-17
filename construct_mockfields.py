@@ -52,7 +52,7 @@ psf_fwhm = np.asarray([0.10,0.11,0.12,0.13,0.14,0.17,0.20,0.11,0.11,0.11,0.11,0.
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
-def process_single_filter(data,filname,fil_index,output_dir):
+def process_single_filter(data,filname,fil_index,output_dir,lim=None):
 
     print('Processing:  ', filname)
 
@@ -65,6 +65,7 @@ def process_single_filter(data,filname,fil_index,output_dir):
 
     full_npix=data['full_npix'][0]
     pixsize_arcsec=data['pixsize_arcsec'][0]
+    n_galaxies=data['full_npix'].shape[0]
 
     desired_pixsize_arcsec=this_psf_pixsize_arcsec
 
@@ -89,8 +90,14 @@ def process_single_filter(data,filname,fil_index,output_dir):
     success=[]
 
     #for bigger files, may need to split by filter first
+    index=np.arange(n_galaxies)
 
-    for origin_i,origin_j,run_dir,this_npix in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix']):
+    for origin_i,origin_j,run_dir,this_npix,num in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],index):
+        if lim is not None:
+            if num > lim:
+                success.append(False)
+                continue
+        
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
@@ -161,7 +168,7 @@ def process_single_filter(data,filname,fil_index,output_dir):
     return success
 
 
-def build_lightcone_images(image_info_file,run_type='images'):
+def build_lightcone_images(image_info_file,run_type='images',lim=None):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -200,7 +207,7 @@ def build_lightcone_images(image_info_file,run_type='images'):
     filters_data=filters_hdu.data
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,filname,i,output_dir)
+        success=process_single_filter(data,filname,i,output_dir,lim=lim)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
