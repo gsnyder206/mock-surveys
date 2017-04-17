@@ -77,7 +77,7 @@ def process_single_filter(data,filname,fil_index,output_dir):
     #psf kernel shape must be odd for astropy.convolve??
     if orig_psf_kernel.shape[0] % 2 == 0:
         new_psf_shape = orig_psf_kernel.shape[0]-1
-        psf_kernel = congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
+        psf_kernel = congrid.congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
     else:
         psf_kernel = orig_psf_kernel
         
