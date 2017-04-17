@@ -189,9 +189,11 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     abzp= - 2.5*(-9.0) + 2.5*np.log10(3631.0)  #images in nanoJanskies
     primary_hdu.header['ABZP']=(abzp, 'AB mag zeropoint')
     primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
-
+    primary_hdu.header['EXTNAME']='IMAGE'
 
     psf_hdu = pyfits.ImageHDU(psf_kernel)
+    psf_hdu.header['EXTNAME']='MODELPSF'
+    psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
     output_list=pyfits.HDUList([primary_hdu,psf_hdu])
     output_list.writeto(outname,overwrite=True)

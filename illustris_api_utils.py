@@ -341,7 +341,7 @@ def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
     sim='Illustris-1'
     savepath=os.path.expandvars('$HOME/oasis_project_hsc102/IllustrisData/')
     label='FIELDA_11_10'
-    rad_fact=10.0  #image fov will be this times the stellar half-mass radius
+    rad_fact=20.0  #image fov will be this times the stellar half-mass radius
     run_type='images'
 
     data = ascii.read(lcfile)
