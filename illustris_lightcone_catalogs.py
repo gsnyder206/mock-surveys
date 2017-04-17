@@ -684,7 +684,7 @@ if __name__=="__main__":
     catalog_zyx.output_catalog('/astro/snyder_lab2/Illustris/Lightcones/CEERS/Illustris-1_RADEC_ceers_75Mpc_7_6_zyx.txt')
     '''
 
-    magl=28.0
+    magl=32.0
     minz=0.0
     
     catalog_xyz = process_lightcone_catalog(lightcone="/astro/snyder_lab2/Illustris/Lightcones/CEERS/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt",basedir="/astro/snyder_lab2/Illustris/Illustris-1/",mag_limit=magl)

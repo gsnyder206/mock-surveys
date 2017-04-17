@@ -47,7 +47,13 @@ psf_pix_arcsec = np.asarray([0.03,0.03,0.03,0.03,0.06,0.06,0.06,0.0317,0.0317,0.
 psf_fwhm = np.asarray([0.10,0.11,0.12,0.13,0.14,0.17,0.20,0.11,0.11,0.11,0.11,0.12,0.15,0.18,0.25,0.18,0.07,0.08,0.13,
             0.035*5.61,0.035*7.57,0.035*9.90,0.035*11.30,0.035*12.75,0.035*14.96,0.035*17.90,0.035*20.65,0.035*25.11])
 
-
+#photfnu units Jy; flux in 1 ct/s
+photfnu_Jy = [1.96e-7,9.17e-8,1.97e-7,4.14e-7,
+              1.13e-7,1.17e-7,1.52e-7,
+              5.09e-8,3.72e-8,3.17e-8,2.68e-8,2.64e-8,2.25e-8,2.57e-8,2.55e-8,
+              9.52e-8,8.08e-7,4.93e-7,1.52e-7,
+              5.75e-8,3.10e-8,4.21e-8,1.39e-7,
+              4.65e-8,4.48e-8,5.88e-8,4.98e-8,1.15e-7]
 
 #construct real illustris lightcones from individual images
 
@@ -62,7 +68,8 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
     this_psf_pixsize_arcsec=psf_pix_arcsec[pbi][0]
     this_psf_fwhm=psf_fwhm[pbi][0]
-    print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm)
+    this_photfnu_Jy=photfnu_Jy[pbi][0]
+    print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, photfnu_Jy)
 
 
     full_npix=data['full_npix'][0]
@@ -171,6 +178,10 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     primary_hdu=pyfits.PrimaryHDU(conv_im)
     primary_hdu.header['FILTER']=filname.replace('/','-')
     primary_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
+    primary_hdu.header['UNIT']=('nanoJanskies','per pixel')
+    abzp= - 2.5*(-9.0) + 2.5*np.log10(3631.0)  #images in nanoJanskies
+    primary_hdu.header['ABZP']=(abzp, 'AB mag zeropoint')
+    primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
 
 
     psf_hdu = pyfits.ImageHDU(psf_kernel)
