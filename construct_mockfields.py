@@ -56,9 +56,9 @@ def process_single_filter(data,filname,fil_index,output_dir):
     print('Processing:  ', filname)
 
     pbi= filters_to_analyze==filname
-    this_psf_file=os.path.join(psf_dir,psf_names[pbi])
-    this_psf_pixsize_arcsec=psf_pix_arcsec[pbi]
-    this_psf_fwhm=psf_fwhm[pbi]
+    this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
+    this_psf_pixsize_arcsec=psf_pix_arcsec[pbi][0]
+    this_psf_fwhm=psf_fwhm[pbi][0]
     print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm)
 
 
