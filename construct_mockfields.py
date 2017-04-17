@@ -220,9 +220,10 @@ def build_lightcone_images(image_info_file,run_type='images',lim=None):
 
     filters_data=filters_hdu.data
     print(filters_data.columns)
+    lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lim=lim)
+        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
