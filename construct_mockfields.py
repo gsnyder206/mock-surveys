@@ -111,7 +111,7 @@ def process_single_filter(data,filname,fil_index,output_dir):
 
 
         sub_cube1=image_cube[i0:i1,j0:j1]
-        this_subcube=this_cube[i,i_tc:i_tc1,j_tc:j_tc1]
+        this_subcube=this_cube[fil_index,i_tc:i_tc1,j_tc:j_tc1]
         print(run_dir, this_subcube.shape)
 
         image_cube[i0:i1,j0:j1] = sub_cube1 + this_subcube
