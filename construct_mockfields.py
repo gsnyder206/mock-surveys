@@ -73,7 +73,9 @@ def process_single_filter(data,filname,fil_index,output_dir,lim=None):
 
     desired_npix=full_fov/desired_pixsize_arcsec
 
-    orig_psf_kernel = pyfits.open(this_psf_file)[0].data ; print(orig_psf_kernel.shape)
+    print('Orig pix: ', full_npix, ' Desired pix: ', desired_npix)
+
+    orig_psf_kernel = pyfits.open(this_psf_file)[0].data 
 
     #psf kernel shape must be odd for astropy.convolve??
     if orig_psf_kernel.shape[0] % 2 == 0:
@@ -150,7 +152,7 @@ def process_single_filter(data,filname,fil_index,output_dir,lim=None):
     #first, re-grid to desired scale
 
     new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
-    conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True)
+    conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True,allow_huge=True)
 
 
     outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
