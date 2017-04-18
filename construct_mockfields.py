@@ -18,6 +18,7 @@ import tarfile
 import string
 import astropy.io.ascii as ascii
 from astropy.convolution import *
+import copy
 
 sq_arcsec_per_sr = 42545170296.0
 c = 3.0e8
@@ -62,6 +63,8 @@ photfnu_Jy = np.asarray([1.96e-7,9.17e-8,1.97e-7,4.14e-7,
 
 def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
 
+    data=copy.copy(data)
+    
     print('Processing:  ', filname)
 
     try:
@@ -200,8 +203,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
     
-    #newcol=astropy.table.column.Column(data=success,name='success')
-    #data.add_column(newcol)
+    newcol=astropy.table.column.Column(data=success,name='success')
+    data.add_column(newcol)
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     
