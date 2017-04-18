@@ -224,7 +224,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     table_hdu = pyfits.table_to_hdu(new_data)
     table_hdu.header['EXTNAME']='Catalog'
     
-    output_list=pyfits.HDUList([primary_hdu,nopsf_hdu,psf_hdu])
+    output_list=pyfits.HDUList([primary_hdu,nopsf_hdu,psf_hdu,table_hdu])
     output_list.writeto(outname,overwrite=True)
     output_list.close()
 
