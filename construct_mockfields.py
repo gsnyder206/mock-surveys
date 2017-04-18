@@ -61,6 +61,50 @@ photfnu_Jy = np.asarray([1.96e-7,9.17e-8,1.97e-7,4.14e-7,
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
+lcfile_cols={'col1':'snapshot',
+             'col2':'SubfindID',
+             'col3':'ra_deg',
+             'col4':'dec_deg',
+             'col5':'ra_kpc',
+             'col6':'dec_kpc',
+             'col7':'ra_kpc_inferred',
+             'col8':'dec_kpc_inferred',
+             'col9':'true_z',
+             'col10':'inferred_z',
+             
+             'col11':'peculiar_z',
+             'col12':'true_kpc_per_arcsec',
+             'col13':'X_cmpc',
+             'col14':'Y_cmpc',
+             'col15':'Z_cmpc',
+             'col16':'ADD_cmpc',
+             'col17':'ADD_cmpc_inferred',
+             'col18':'snapshot_z',
+             'col19':'geometric_z',
+             'col20':'cylinder_number',
+
+             'col21':'mstar_msun_rad',
+             'col22':'mgas_msun_rad',
+             'col23':'subhalo_mass_msun',
+             'col24':'bhmass_msun_rad',
+             'col25':'mbary_msun_rad',
+             'col26':'sfr_msunperyr_rad',
+             'col27':'bhrate_code',
+             'col28':'camX_mpc',
+             'col29':'camY_mpc',
+             'col30':'camZ_mpc',
+             
+             'col31':'g_AB_absmag',
+             'col32':'r_AB_absmag',
+             'col33':'i_AB_absmag',
+             'col34':'z_AB_absmag',
+             'col35':'v_kms_camX',
+             'col36':'v_kms_camY',
+             'col37':'v_kms_camZ',
+             'col38':'v_kms_hubble',
+             'col39':'g_AB_appmag'}
+
+
 def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
 
     data=copy.copy(data)
@@ -209,8 +253,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
 
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
+    lc_df.rename(columns=lcfile_cols,inplace=True)
     
-    print(lc_df.shape,data_df.shape)
     assert(lc_df.shape[0]==data_df.shape[0])
     
     new_df=lc_df.join(data_df)
