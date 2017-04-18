@@ -202,9 +202,11 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     psf_hdu.header['EXTNAME']='MODELPSF'
     psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
-    
-    newcol=astropy.table.column.Column(data=success,name='success')
-    data.add_column(newcol)
+
+    if np.sum(np.asarray(data.colnames)=='success')==0:
+        newcol=astropy.table.column.Column(data=success,name='success')
+        data.add_column(newcol)
+
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     
@@ -215,7 +217,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
 
     failures = new_df.where(new_df['success']==False).dropna()
     successes=new_df.drop(failures.index)
-    print('N successes: ', successes.size)
+    print('N successes: ', successes.shape[0])
     
     new_data=astropy.table.Table.from_pandas(successes)
 
