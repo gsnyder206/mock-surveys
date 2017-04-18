@@ -328,15 +328,21 @@ def get_lightcone_images(lcfile,geofile,sim='Illustris-2',clobber=False,savepath
 
 
 
-def prep_lightcone_data(lim=-1,clobber=False,verbose=True):
+def prep_lightcone_data(lim=-1,clobber=False,verbose=True,
+                        lcfile='$HOME/PythonCode/mock-surveys/Lightcones/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt',
+                        geofile='$HOME/PythonCode/mock-surveys/Lightcones/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt',
+                        sim='Illustris-1',
+                        savepath='$HOME/oasis_project_hsc102/IllustrisData/',
+                        label='FIELDA_11_10',
+                        rad_fact=20.0,
+                        run_type='images'):
 
-    lcfile=os.path.expandvars('$HOME/PythonCode/mock-surveys/Lightcones/Illustris-1_RADEC_wfirst_75Mpc_11_10_xyz.txt')
-    geofile=os.path.expandvars('$HOME/PythonCode/mock-surveys/Lightcones/hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt')
-    sim='Illustris-1'
-    savepath=os.path.expandvars('$HOME/oasis_project_hsc102/IllustrisData/')
-    label='FIELDA_11_10'
-    rad_fact=20.0  #image fov will be this times the stellar half-mass radius
-    run_type='images'
+
+
+    
+    lcfile=os.path.expandvars(lcfile)
+    geofile=os.path.expandvars(geofile)
+    savepath=os.path.expandvars(savepath)    
 
     data = ascii.read(lcfile)
     snapnums = np.asarray(data['col1'],dtype='str')
