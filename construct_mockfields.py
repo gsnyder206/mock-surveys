@@ -200,8 +200,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
     
-    newcol=astropy.table.column.Column(data=success,name='success')
-    data.add_column(newcol)
+    #newcol=astropy.table.column.Column(data=success,name='success')
+    #data.add_column(newcol)
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     
