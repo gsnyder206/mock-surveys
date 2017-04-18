@@ -60,7 +60,7 @@ photfnu_Jy = np.asarray([1.96e-7,9.17e-8,1.97e-7,4.14e-7,
 #in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
 
 
-def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
+def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
 
     print('Processing:  ', filname)
 
@@ -178,7 +178,8 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     to_nJy_per_pix = to_nJy_per_Sr*pixel_Sr
         
     final_im=conv_im*to_nJy_per_pix
-
+    nopsf_im=new_image*to_nJy_per_pix
+    
     outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
     print('saving:', outname)
 
@@ -191,18 +192,40 @@ def process_single_filter(data,filname,fil_index,output_dir,image_filelabel,eff_
     primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
     primary_hdu.header['EXTNAME']='IMAGE'
 
+    nopsf_hdu=pyfits.ImageHDU(nopsf_im)
+    nopsf_hdu.header['EXTNAME']='NOPSF'
+    
     psf_hdu = pyfits.ImageHDU(psf_kernel)
     psf_hdu.header['EXTNAME']='MODELPSF'
     psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
-    output_list=pyfits.HDUList([primary_hdu,psf_hdu])
+    
+    newcol=astropy.table.column.Column(data=success,name='success')
+    data.add_column(newcol)
+    data_df=data.to_pandas()
+    lc_df = lcdata.to_pandas()
+    
+    assert(lc_df.size==data_df.size)
+    
+    new_df=lc_df.join(data_df)
+
+    failures = new_df.where(new_df['success']==False).dropna()
+    successes=new_df.drop(failures.index)
+    print('N successes: ', successes.size)
+    
+    new_data=astropy.table.Table.from_pandas(successes)
+
+    table_hdu = pyfits.table_to_hdu(new_data)
+    table_hdu.header['EXTNAME']='Catalog'
+    
+    output_list=pyfits.HDUList([primary_hdu,nopsf_hdu,psf_hdu])
     output_list.writeto(outname,overwrite=True)
     output_list.close()
 
     return success
 
 
-def build_lightcone_images(image_info_file,run_type='images',lim=None,minz=None):
+def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -236,14 +259,14 @@ def build_lightcone_images(image_info_file,run_type='images',lim=None,minz=None)
     #N_aux=auxcube.shape[0]
     #aux_cube = np.zeros((N_aux,full_npix,full_npix),dtype=np.float64)
 
-
+    lcdata=ascii.read(lightcone_file)
 
     filters_data=filters_hdu.data
     print(filters_data.columns)
     lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim,minz=minz)
+        success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')

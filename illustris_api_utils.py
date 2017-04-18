@@ -1,5 +1,3 @@
-import cProfile
-import pstats
 import math
 import string
 import sys
@@ -19,7 +17,6 @@ import congrid
 import astropy.io.ascii as ascii
 import warnings
 import subprocess
-import photutils
 import astropy
 import astropy.cosmology
 import astropy.io.fits as pyfits
@@ -28,13 +25,10 @@ from astropy.cosmology import WMAP7,z_at_value
 from astropy.coordinates import SkyCoord
 import copy
 import medianstats_bootstrap as msbs
-#import illustris_python as ilpy
 import h5py
 import requests
 from multiprocessing import Process, Queue, current_process
 import time
-#import illustris_lightcone_catalogs as ilc
-#import translate_coordinates as tc
 import gfs_sublink_utils as gsu
 import illustris_sunrise_utils as isu
 

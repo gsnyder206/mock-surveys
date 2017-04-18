@@ -269,7 +269,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
 
     
-    list_of_types = ['images','grism']
+    list_of_types = ['images']
 
     idx=None
 
@@ -558,12 +558,13 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
     bsubf.write('/home/gsnyder/bin/sfrhist sfrhist.config > sfrhist.out 2> sfrhist.err\n')
     bsubf.write('/home/gsnyder/bin/mcrx mcrx.config > mcrx.out 2> mcrx.err\n')
     if run_type=='images':
+        #for these, may want to use:  https://github.com/gsnyder206/synthetic-image-morph/blob/master/tng/filters_lsst_light.txt
         bsubf.write('/home/gsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
         bsubf.write('/home/gsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
-        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
-        #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
+        
+        bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/mock_panstarrs.py\n'))  #doesn't exist yet!
+        #follow this code below to write mock_panstarrs:
         #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
-        #bsubf.write('pigz -9 -p '+str(ncpus)+' broadband.fits\n')
     elif run_type=='ifu':
         bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         #bsubf.write('gzip -9 mcrx.fits\n')
@@ -573,13 +574,18 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
     if use_scratch is True:
-        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/*.fits .')
+        bsubf.write('cp /scratch/$USER/$SLURM_JOBID/broadband*.fits .')
 
     
     bsubf.write('\n')
     bsubf.close()
 
     return os.path.abspath(run_dir+'/'+filename)
+
+
+
+
+
 
 
 #will need a generate_sbatch for slurm jobs on Comet
