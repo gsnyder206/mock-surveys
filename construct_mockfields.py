@@ -205,8 +205,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     
-    print(lc_df.size,data_df.size)
-    assert(lc_df.size==data_df.size)
+    print(lc_df.shape,data_df.shape)
+    assert(lc_df.shape[0]==data_df.shape[0])
     
     new_df=lc_df.join(data_df)
 
