@@ -110,6 +110,10 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     data=copy.copy(data)
     
     print('Processing:  ', filname)
+    full_npix=data['full_npix'][0]
+    pixsize_arcsec=data['pixsize_arcsec'][0]
+    n_galaxies=data['full_npix'].shape[0]
+
 
     try:
         pbi= filters_to_analyze==filname
@@ -118,13 +122,14 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         this_psf_fwhm=psf_fwhm[pbi][0]
         this_photfnu_Jy=photfnu_Jy[pbi][0]
         print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, this_photfnu_Jy)
+        do_psf=True
     except:
-        print('Missing filter info, skipping: ', filname)
-        return None
+        print('Missing filter info, skipping PSF: ', filname)
+        do_psf=False
+        this_psf_pixsize_arcsec=pixsize_arcsec
+        #return None
+    
 
-    full_npix=data['full_npix'][0]
-    pixsize_arcsec=data['pixsize_arcsec'][0]
-    n_galaxies=data['full_npix'].shape[0]
 
     desired_pixsize_arcsec=this_psf_pixsize_arcsec
 
@@ -134,16 +139,17 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
 
     print('Orig pix: ', full_npix, ' Desired pix: ', desired_npix)
 
-    orig_psf_kernel = pyfits.open(this_psf_file)[0].data 
+    if do_psf is True:
+        orig_psf_kernel = pyfits.open(this_psf_file)[0].data 
 
-    #psf kernel shape must be odd for astropy.convolve??
-    if orig_psf_kernel.shape[0] % 2 == 0:
-        new_psf_shape = orig_psf_kernel.shape[0]-1
-        psf_kernel = congrid.congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
-    else:
-        psf_kernel = orig_psf_kernel
+        #psf kernel shape must be odd for astropy.convolve??
+        if orig_psf_kernel.shape[0] % 2 == 0:
+            new_psf_shape = orig_psf_kernel.shape[0]-1
+            psf_kernel = congrid.congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
+        else:
+            psf_kernel = orig_psf_kernel
         
-    assert( psf_kernel.shape[0] % 2 != 0)
+        assert( psf_kernel.shape[0] % 2 != 0)
 
 
     image_cube = np.zeros((full_npix,full_npix),dtype=np.float64)
@@ -225,35 +231,36 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
 
     new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
 
-    conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True,allow_huge=True)
-
-
     pixel_Sr = (desired_pixsize_arcsec**2)/sq_arcsec_per_sr  #pixel area in steradians:  Sr/pixel
     to_nJy_per_Sr = (1.0e9)*(1.0e14)*(eff_lambda_microns**2)/c   #((pixscale/206265.0)^2)*
     #sigma_nJy = 0.3*(2.0**(-0.5))*((1.0e9)*(3631.0/5.0)*10.0**(-0.4*self.maglim))*self.Pix_arcsec*(3.0*self.FWHM_arcsec)
     to_nJy_per_pix = to_nJy_per_Sr*pixel_Sr
         
-    final_im=conv_im*to_nJy_per_pix
     nopsf_im=new_image*to_nJy_per_pix
+
+    if do_psf is True:
+        conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True,allow_huge=True)
+        final_im=conv_im*to_nJy_per_pix
     
     outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'_'+image_suffix+'_v1_lightcone.fits')
     print('saving:', outname)
 
-    primary_hdu=pyfits.PrimaryHDU(conv_im)
+    primary_hdu=pyfits.PrimaryHDU(nopsf_im)
     primary_hdu.header['FILTER']=filname.replace('/','-')
     primary_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
     primary_hdu.header['UNIT']=('nanoJanskies','per pixel')
     abzp= - 2.5*(-9.0) + 2.5*np.log10(3631.0)  #images in nanoJanskies
     primary_hdu.header['ABZP']=(abzp, 'AB mag zeropoint')
     primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
-    primary_hdu.header['EXTNAME']='IMAGE'
+    primary_hdu.header['EXTNAME']='IMAGE_NOPSF'
 
-    nopsf_hdu=pyfits.ImageHDU(nopsf_im)
-    nopsf_hdu.header['EXTNAME']='NOPSF'
-    
-    psf_hdu = pyfits.ImageHDU(psf_kernel)
-    psf_hdu.header['EXTNAME']='MODELPSF'
-    psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
+    if do_psf is True:
+        psfim_hdu=pyfits.ImageHDU(final_im)
+        psfim_hdu.header['EXTNAME']='IMAGE_PSF'
+        
+        psf_hdu = pyfits.ImageHDU(psf_kernel)
+        psf_hdu.header['EXTNAME']='MODELPSF'
+        psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
 
 
     if np.sum(np.asarray(data.colnames)=='success')==0:
@@ -276,8 +283,12 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
 
     table_hdu = pyfits.table_to_hdu(new_data)
     table_hdu.header['EXTNAME']='Catalog'
-    
-    output_list=pyfits.HDUList([primary_hdu,nopsf_hdu,psf_hdu,table_hdu])
+
+    if do_psf is True:
+        output_list=pyfits.HDUList([primary_hdu,psfim_hdu,psf_hdu,table_hdu])
+    else:
+        output_list=pyfits.HDUList([primary_hdu,table_hdu])
+
     output_list.writeto(outname,overwrite=True)
     output_list.close()
 
