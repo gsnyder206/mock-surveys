@@ -251,7 +251,9 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     primary_hdu.header['UNIT']=('nanoJanskies','per pixel')
     abzp= - 2.5*(-9.0) + 2.5*np.log10(3631.0)  #images in nanoJanskies
     primary_hdu.header['ABZP']=(abzp, 'AB mag zeropoint')
-    primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
+    if do_psf is True:
+        primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
+        
     primary_hdu.header['EXTNAME']='IMAGE_NOPSF'
 
     if do_psf is True:
