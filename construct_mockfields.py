@@ -236,7 +236,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     final_im=conv_im*to_nJy_per_pix
     nopsf_im=new_image*to_nJy_per_pix
     
-    outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'_'+image_suffix+'.fits')
+    outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'_'+image_suffix+'_v1_lightcone.fits')
     print('saving:', outname)
 
     primary_hdu=pyfits.PrimaryHDU(conv_im)
@@ -284,7 +284,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     return success
 
 
-def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_illustris_'):
+def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_illustris'):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -310,7 +310,7 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
         os.mkdir(output_dir)
 
 
-    image_suffix=os.path.basename(image_info_file).rstrip('.txt')
+    image_suffix=os.path.basename(image_info_file).rstrip('_images.txt')
         
     success_catalog=os.path.join(output_dir,os.path.basename(image_info_file).rstrip('.txt')+'_success.txt')
 
