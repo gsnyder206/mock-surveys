@@ -115,6 +115,10 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     n_galaxies=data['full_npix'].shape[0]
 
 
+    if filname.find('WFI')==0:
+        fn=filname[-4:]
+        filname='wfirst/wfidrm15_'+fn
+        
     try:
         pbi= filters_to_analyze==filname
         this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
