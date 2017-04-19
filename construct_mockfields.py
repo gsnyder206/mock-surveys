@@ -166,12 +166,18 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
+            cube_npix=this_cube.shape[-1]
+            assert(cube_npix==this_npix)
             bblist.close()
             success.append(True)
         except:
-            print('Missing file, ', run_dir)
+            print('Missing file or mismatched shape, ', run_dir, cube_npix, this_npix)
             success.append(False)
             continue
+
+
+
+            
         i_tc=0
         j_tc=0
         i_tc1=this_npix
