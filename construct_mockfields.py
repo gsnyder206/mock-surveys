@@ -295,9 +295,15 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     else:
         output_list=pyfits.HDUList([primary_hdu,table_hdu])
 
-    output_list.writeto(outname,overwrite=True)
+
+
+    tempfile=os.path.join(os.path.expandvars('/scratch/$USER/$SLURM_JOBID'),os.path.basename(outname))
+    print('saving to scratch first.. , ', tempfile)
+    output_list.writeto(tempfile,overwrite=True)
     output_list.close()
 
+    shutil.copy(tempfile,output_dir)
+    
     return success
 
 
