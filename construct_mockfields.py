@@ -105,7 +105,7 @@ lcfile_cols={'col1':'snapshot',
              'col39':'g_AB_appmag'}
 
 
-def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,eff_lambda_microns,lim=None,minz=None):
+def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,image_suffix,eff_lambda_microns,lim=None,minz=None):
 
     data=copy.copy(data)
     
@@ -166,9 +166,12 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
+            bblist.close()
+
+            #if catalog and image have different npix, this is a failure somewhere
             cube_npix=this_cube.shape[-1]
             assert(cube_npix==this_npix)
-            bblist.close()
+            
             success.append(True)
         except:
             print('Missing file or mismatched shape, ', run_dir, cube_npix, this_npix)
@@ -233,7 +236,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     final_im=conv_im*to_nJy_per_pix
     nopsf_im=new_image*to_nJy_per_pix
     
-    outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'.fits')
+    outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'_'+image_suffix+'.fits')
     print('saving:', outname)
 
     primary_hdu=pyfits.PrimaryHDU(conv_im)
@@ -281,7 +284,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     return success
 
 
-def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None):
+def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_illustris_'):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -306,9 +309,10 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
     if not os.path.lexists(output_dir):
         os.mkdir(output_dir)
 
-    success_catalog=os.path.join(output_dir,os.path.basename(image_info_file).rstrip('.txt')+'_success.txt')
 
-    image_filelabel='lightcone_image'
+    image_suffix=os.path.basename(image_info_file).rstrip('.txt')
+        
+    success_catalog=os.path.join(output_dir,os.path.basename(image_info_file).rstrip('.txt')+'_success.txt')
 
     N_filters = cubeshape[0]
 
@@ -322,7 +326,7 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
     lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
-        success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,lambda_eff_microns[i],lim=lim,minz=minz)
+        success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,image_suffix,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
             success=np.asarray(success)
             newcol=astropy.table.column.Column(data=success,name='success')
