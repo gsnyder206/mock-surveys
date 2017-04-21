@@ -67,7 +67,7 @@ def setup_sunrise_lightcone(snap_cutout,subhalo_object,label,this_z,geofile,pos_
     sbatch_fn   = 'sunrise_'+run_type+'_'+label+'_'+str(submitcount)+'.sbatch'
     
     final_fn = generate_sbatch_lightcone(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
-                                         galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='04:00:00',use_scratch=use_scratch,append=append,isnap=sfid)
+                                         galprops_data = galprops_data, run_type = run_type,savepath=savepath,ncpus=nthreads,walltime='08:00:00',use_scratch=use_scratch,append=append,isnap=sfid)
 
 
 
