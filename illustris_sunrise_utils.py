@@ -240,6 +240,8 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
     if use_scratch is True:
         bsubf.write('cp /scratch/$USER/$SLURM_JOBID/'+str(isnap)+'/*.fits .\n')
 
+    bsubf.write('tar cf textfiles.tar simpar *.config *.stub *.txt *.out *.err *.hpmout --remove-files\n')
+
     bsubf.write('\n')
     bsubf.write('\n')
     bsubf.close()
