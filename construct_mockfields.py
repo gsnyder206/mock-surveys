@@ -349,6 +349,9 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
     lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
+        if filname.find('jwst')==-1:
+            continue
+
         success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,image_suffix,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
             success=np.asarray(success)
