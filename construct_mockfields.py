@@ -237,6 +237,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     new_i=pos_i*desired_npix/full_npix
     new_j=pos_j*desired_npix/full_npix
 
+    print(new_i.shape,len(success),data['pos_i'].shape)
+    
     pixel_Sr = (desired_pixsize_arcsec**2)/sq_arcsec_per_sr  #pixel area in steradians:  Sr/pixel
     to_nJy_per_Sr = (1.0e9)*(1.0e14)*(eff_lambda_microns**2)/c   #((pixscale/206265.0)^2)*
     #sigma_nJy = 0.3*(2.0**(-0.5))*((1.0e9)*(3631.0/5.0)*10.0**(-0.4*self.maglim))*self.Pix_arcsec*(3.0*self.FWHM_arcsec)
