@@ -163,7 +163,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     #for bigger files, may need to split by filter first
     index=np.arange(n_galaxies)
 
-    for origin_i,origin_j,run_dir,this_npix,this_z,num in zip(data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],data['z'],index):
+    for pos_i,pos_j,origin_i,origin_j,run_dir,this_npix,this_z,num in zip(data['pos_i'],data['pos_j'],data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],data['z'],index):
         if lim is not None:
             if num > lim:
                 success.append(False)
@@ -234,6 +234,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     #first, re-grid to desired scale
 
     new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
+    new_i=pos_i*desired_npix/full_npix
+    new_j=pos_j*desired_npix/full_npix
 
     pixel_Sr = (desired_pixsize_arcsec**2)/sq_arcsec_per_sr  #pixel area in steradians:  Sr/pixel
     to_nJy_per_Sr = (1.0e9)*(1.0e14)*(eff_lambda_microns**2)/c   #((pixscale/206265.0)^2)*
@@ -273,6 +275,14 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         newcol=astropy.table.column.Column(data=success,name='success')
         data.add_column(newcol)
 
+        newicol=astropy.table.column.Column(data=new_i,name='new_i')
+        newjcol=astropy.table.column.Column(data=new_j,name='new_j')
+
+        data.add_column(newicol)
+        data.add_column(newjcol)
+
+
+
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     lc_df.rename(columns=lcfile_cols,inplace=True)
@@ -286,6 +296,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     print('N successes: ', successes.shape[0])
     
     new_data=astropy.table.Table.from_pandas(successes)
+
+
 
     table_hdu = pyfits.table_to_hdu(new_data)
     table_hdu.header['EXTNAME']='Catalog'
