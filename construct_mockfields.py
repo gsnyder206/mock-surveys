@@ -234,8 +234,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     #first, re-grid to desired scale
 
     new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
-    new_i=pos_i*desired_npix/full_npix
-    new_j=pos_j*desired_npix/full_npix
+    new_i=data['pos_i']*desired_npix/full_npix
+    new_j=data['pos_j']*desired_npix/full_npix
 
     print(new_i.shape,len(success),data['pos_i'].shape)
     
