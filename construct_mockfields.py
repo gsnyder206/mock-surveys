@@ -320,7 +320,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     return success
 
 
-def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_illustris'):
+def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_illustris',jwst_only=False):
 
     data=ascii.read(image_info_file)
     print(data)
@@ -362,8 +362,9 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
     lambda_eff_microns = filters_data['lambda_eff']*1.0e6
 
     for i,filname in enumerate(filters_data['filter']):
-        if filname.find('jwst')==-1:
-            continue
+        if jwst_only is True:
+            if filname.find('jwst')==-1:
+                continue
 
         success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,image_suffix,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
