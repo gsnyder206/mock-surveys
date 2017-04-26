@@ -1,17 +1,15 @@
 ## Illustris Mock Deep Fields
-### Created by Gregory Snyder
-### Space Telescope Science Institute
+### Created by Gregory Snyder, Space Telescope Science Institute
 
 Files with names:
-hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
-hlsp_misty_<sim>_<telescope>-<instrument>_<filter>_<geometry/selection>_<version>_<type>.fits
+* hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
+* hlsp_misty_<sim>_<telescope>-<instrument>_<filter>_<geometry/selection>_<version>_<type>.fits
 
-Acknowledgements:
-These are based on the Illustris Project hydrodynamical simulations:
-Lightcone image presented by: Vogelsberger et al. 2014
-Data release paper and documentation:  illustris-project.org ; Nelson et al. 2015
-Lightcone application for hydro sims described by: Snyder et al. 2017
-Mock HST and JWST machinery supported by HST#13887
+Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
+* Lightcone image presented by: Vogelsberger et al. 2014
+* Data release paper and documentation:  illustris-project.org ; Nelson et al. 2015
+* Lightcone application for hydro sims described by: Snyder et al. 2017
+* Mock HST and JWST machinery supported by HST#13887
 
 FITS files contain the following HDUs:
 0-"IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
@@ -41,8 +39,7 @@ For HDU 3, here is the column documentation:
 'ra_kpc_inferred'	      same as previous but for inferred redshift
 'dec_kpc_inferred'	      --
 'true_z'		      true cosmological redshift
-'inferred_z'		      inferred cosmological redshift (true z + peculiar v/c)
-            		       
+'inferred_z'		      inferred cosmological redshift (true z + peculiar v/c)           		       
 'peculiar_z'		      peculiar v/c
 'true_kpc_per_arcsec'	      kpc per arcsec at true redshift
 'X_cmpc'		      galaxy X position in observer frame [comoving Mpc]
@@ -53,7 +50,6 @@ For HDU 3, here is the column documentation:
 'snapshot_z'		      redshift of Illustris snapshot from which this subhalo is drawn
 'geometric_z'		      estimated redshift at the comoving distance in the center of the lightcone path through this snapshot
 'cylinder_number'	      index of snapshot repetition for this subhalo
-
 'mstar_msun_rad'	      stellar mass in 2X stellar half-mass radius [Msun]
 'mgas_msun_rad'		      gas mass in 2X stellar half-mass radius [Msun]
 'subhalo_mass_msun'	      total mass in subhalo [Msun]
@@ -64,7 +60,6 @@ For HDU 3, here is the column documentation:
 'camX_mpc'		      galaxy X position in camera frame [physical Mpc]
 'camY_mpc'		      galaxy Y position in camera frame [physical Mpc]
 'camZ_mpc'		      galaxy Z position in camera frame [physical Mpc]
-             		      
 'g_AB_absmag'		      rest-frame SDSS-g AB absolute magnitude
 'r_AB_absmag'		      rest-frame SDSS-r AB absolute magnitude
 'i_AB_absmag'		      rest-frame SDSS-i AB absolute magnitude
