@@ -12,10 +12,10 @@ Acknowledgements.  These are based on the Illustris Project hydrodynamical simul
 * Mock HST and JWST machinery supported by HST#13887
 
 FITS files contain the following HDUs:
-0-"IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
-1-"IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
-2-"MODELPSF"   :  [Optional] The PSF model at the same pixel scale as HDUs 0 and 1
-3-"Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers and image positions
+0. "IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
+1. "IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
+2. "MODELPSF"   :  [Optional] The PSF model at the same pixel scale as HDUs 0 and 1
+3. "Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers and image positions
 
 In HDU 0-"IMAGE_NOPSF", the header contains the following useful cards, for example:
 FILTER  = 'jwst-nircam_f200w'                                                   
