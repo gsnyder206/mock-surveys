@@ -1,19 +1,19 @@
-## Illustris Mock Deep Fields
+# Illustris Mock Deep Fields
 #### Created by Gregory Snyder, Space Telescope Science Institute
 
-##### Files with names:
+#### Files with names:
 * hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
 * hlsp_misty_sim_telescope-instrument_filter_(geometry/selection)_version_type.fits
 
-##### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
+#### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
 
-##### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
+#### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
 * Lightcone image presented by: Vogelsberger et al. 2014
 * Data release paper and documentation:  <http://illustris-project.org> ; Nelson et al. 2015
 * Lightcone application for hydro sims described by: [Snyder et al. 2017](http://adsabs.harvard.edu/abs/2017MNRAS.468..207S)
 * Mock HST and JWST machinery supported by [HST#13887](http://adsabs.harvard.edu/abs/2014hst..prop13887S)
 
-##### FITS files contain the following HDUs:
+#### FITS files contain the following HDUs:
 
 0. "IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
 1. "IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
