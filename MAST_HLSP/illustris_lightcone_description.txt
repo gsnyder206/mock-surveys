@@ -6,6 +6,8 @@
 * hlsp_misty_sim_telescope-instrument_filter_(geometry/selection)_version_type.fits
 
 #### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
+#### Demo file:  (jwst-nircam_f277w via Dropbox)[https://www.dropbox.com/s/puubem9bu8j8x21/hlsp_misty_illustris_jwst-nircam_f277w_FIELDA_11_10_v1_lightcone.fits?dl=1]
+
 
 #### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
 * Lightcone image presented by: Vogelsberger et al. 2014
