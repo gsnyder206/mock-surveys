@@ -3,7 +3,7 @@
 
 Files with names:
 * hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
-* hlsp_misty_<sim>_<telescope>-<instrument>_<filter>_<geometry/selection>_<version>_<type>.fits
+* hlsp_misty_\*<sim>_<telescope>-<instrument>_<filter>_<geometry/selection>_<version>_<type>\*.fits
 
 Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
 * Lightcone image presented by: Vogelsberger et al. 2014
