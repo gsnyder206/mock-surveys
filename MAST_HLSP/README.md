@@ -9,7 +9,7 @@
 
 ##### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
 * Lightcone image presented by: Vogelsberger et al. 2014
-* Data release paper and documentation:  <illustris-project.org> ; Nelson et al. 2015
+* Data release paper and documentation:  < illustris-project.org> ; Nelson et al. 2015
 * Lightcone application for hydro sims described by: [Snyder et al. 2017](http://adsabs.harvard.edu/abs/2017MNRAS.468..207S)
 * Mock HST and JWST machinery supported by [HST#13887](http://adsabs.harvard.edu/abs/2014hst..prop13887S)
 
