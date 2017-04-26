@@ -1,5 +1,5 @@
 ## Illustris Mock Deep Fields
-#### Created by Gregory Snyder, Space Telescope Science Institute
+#### Created by Gregory Snyder, Space Telescope Science Institute, gsnyder@stsci.edu
 
 ##### Files with names:
 * hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
