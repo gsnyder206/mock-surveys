@@ -1,0 +1,26 @@
+Files with names:
+hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
+hlsp_misty_<sim>_<telescope>-<instrument>_<filter>_<geometry>_<version>_<type>.fits
+
+These are based on the Illustris Project hydrodynamical simulations:
+Lightcone image presented by: Vogelsberger et al. 2014
+Lightcone application for hydro sims described by: Snyder et al. 2017
+Mock HST and JWST machinery supported by HST#13887
+
+FITS files contain the following HDUs:
+0-"IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
+1-"IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
+2-"MODELPSF"   :  [Optional] The PSF model at the same pixel scale as HDUs 0 and 1
+3-"Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers and image positions
+
+In HDU 0-"IMAGE_NOPSF", the header contains the following useful cards, for example:
+FILTER  = 'jwst-nircam_f200w'                                                   
+PIXSIZE =               0.0317 / arcsec                                         
+UNIT    = 'nanoJanskies'       / per pixel                                      
+ABZP    =    31.40006562228223 / AB mag zeropoint                               
+PHOTFNU =             2.64E-08 / Jy; approx flux[Jy] at 1 count/sec             
+EXTNAME = 'IMAGE_NOPSF'  
+
+These values, especially PHOTFNU, are highly approximate and should be confirmed by the user using an ETC before applying to any analyses.
+
+For HDUs 1-2, I produced these only for HST and JWST filters, as I have not yet fully propagated the WFIRST filters and PSF characteristics. These might be a good test bed for "in-situ" data simulation methods.  Also it might make sense to wait for the hardware to stabilize a bit more before fully installing these assumptions in a pipeline.
