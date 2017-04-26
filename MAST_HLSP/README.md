@@ -19,6 +19,7 @@ FITS files contain the following HDUs:
 3. "Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers and image positions
 
 In HDU 0-"IMAGE_NOPSF", the header contains the following useful cards, for example:
+
 FILTER  = 'jwst-nircam_f200w'                                                   
 PIXSIZE =               0.0317 / arcsec                                         
 UNIT    = 'nanoJanskies'       / per pixel                                      
