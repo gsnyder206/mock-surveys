@@ -5,6 +5,9 @@
 * hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
 * hlsp_misty_sim_telescope-instrument_filter_(geometry/selection)_version_type.fits
 
+#### On Central Storage at STScI:
+* /astro/snyder_lab2/Illustris/Lightcones/Lightcone_Catalog_Images/
+
 #### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
 #### Demo file:  [jwst-nircam_f277w via Dropbox](https://www.dropbox.com/s/puubem9bu8j8x21/hlsp_misty_illustris_jwst-nircam_f277w_FIELDA_11_10_v1_lightcone.fits?dl=1)
 
