@@ -82,23 +82,23 @@ For HDU 3, here is the column documentation:
 Below are columns joined during the image construction process:
 
 * 'sim'			      simulation name (e.g., 'Illustris-1')
-* 'snap'			      Illustris snapshot number (same as 'snapshot')
-* 'sfid'			      Illustris subhalo Subfind ID number (same as 'SubfindID')
+* 'snap'		      Illustris snapshot number (same as 'snapshot')
+* 'sfid'		      Illustris subhalo Subfind ID number (same as 'SubfindID')
 * 'z'			      true cosmological redshift (same as 'true_z')
 * 'RA'			      same as 'ra_deg'
 * 'DEC'			      same as 'dec_deg'
 * 'origin_i'		      Internal variable describing the image array location to place the origin of this galaxy's image [Internal-- does not describe final image]
 * 'origin_j'		      Internal variable describing the image array location to place the origin of this galaxy's image [Internal-- does not describe final image]
-* 'pos_i'			      position of this subhalo in array rows  [it appears that (pos_j,pos_i) is the correct placement in Python terms] [Internal-- does not describe final image]
-* 'pos_j'			      position of this subhalo in array columns  [it appears that (pos_j,pos_i) is the correct placement in Python terms] [Internal-- does not describe final image]
+* 'pos_i'		      position of this subhalo in array rows  [it appears that (pos_j,pos_i) is the correct placement in Python terms] [Internal-- does not describe final image]
+* 'pos_j'		      position of this subhalo in array columns  [it appears that (pos_j,pos_i) is the correct placement in Python terms] [Internal-- does not describe final image]
 * 'pixsize_arcsec'	      pixel size of image [Arcsec-- Internal--does not describe final image]
 * 'final_fov_arcsec'	      final field-of-view of image [Arcsec]
 * 'full_npix'		      total number of pixels across image [Internal-- does not describe final image]
 * 'this_npix'		      number of pixels in this galaxy's sub-image [Internal-- does not describe final image]
-* 'this_fov_kpc'		      field-of-view of this galaxy's image in physical kpc
+* 'this_fov_kpc'	      field-of-view of this galaxy's image in physical kpc
 * 'halfmassrad_factor'	      factor describing this galaxy's field of view in units of its stellar half-mass radius
-* 'nrays'			      number of rays used to render this galaxy's image
+* 'nrays'		      number of rays used to render this galaxy's image
 * 'run_dir'		      internal run directory for locating this galaxy's sub-image
 * 'success'		      whether or not this galaxy is rendered in the final image (should all be True; Falses were dropped from this table before saving)
-* 'new_i'			      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
-* 'new_j'			      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
+* 'new_i'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
+* 'new_j'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]

@@ -276,6 +276,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         newcol=astropy.table.column.Column(data=success,name='success')
         data.add_column(newcol)
 
+    if np.sum(np.asarray(data.colnames)=='new_i')==0:
         newicol=astropy.table.column.Column(data=new_i,name='new_i')
         newjcol=astropy.table.column.Column(data=new_j,name='new_j')
 
@@ -369,8 +370,8 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
         success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,image_suffix,lambda_eff_microns[i],lim=lim,minz=minz)
         if i==0:
             success=np.asarray(success)
-            newcol=astropy.table.column.Column(data=success,name='success')
-            data.add_column(newcol)
+            #newcol=astropy.table.column.Column(data=success,name='success')
+            #data.add_column(newcol)
             ascii.write(data,output=success_catalog,overwrite=True)
 
 
