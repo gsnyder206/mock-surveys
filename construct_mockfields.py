@@ -177,7 +177,8 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
-            this_mag = (bblist['FILTERS'].data['AB_mag_nonscatter0'])[fil_index]
+            this_mag = ((bblist['FILTERS'].data)['AB_mag_nonscatter0'])[fil_index]
+            
             bblist.close()
 
             #if catalog and image have different npix, this is a failure somewhere
