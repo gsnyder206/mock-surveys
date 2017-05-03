@@ -159,6 +159,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
     image_cube = np.zeros((full_npix,full_npix),dtype=np.float64)
 
     success=[]
+    mag=[]
 
     #for bigger files, may need to split by filter first
     index=np.arange(n_galaxies)
@@ -176,6 +177,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         try:
             bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
             this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
+            this_mag = (bblist['FILTERS'].data['AB_mag_nonscatter0'])[fil_index]
             bblist.close()
 
             #if catalog and image have different npix, this is a failure somewhere
@@ -183,6 +185,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
             assert(cube_npix==this_npix)
             
             success.append(True)
+            mag.append(this_mag)
         except:
             print('Missing file or mismatched shape, ', run_dir, cube_npix, this_npix)
             success.append(False)
@@ -283,8 +286,9 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         data.add_column(newicol)
         data.add_column(newjcol)
 
-
-
+    magcol=astropy.table.column.Column(data=mag,name='AB_absmag_'+filname.replace('/','-'))
+    data.add_column(magcol)
+    
     data_df=data.to_pandas()
     lc_df = lcdata.to_pandas()
     lc_df.rename(columns=lcfile_cols,inplace=True)
