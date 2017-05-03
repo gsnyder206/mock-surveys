@@ -331,8 +331,15 @@ def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=
     test_file=os.path.join(data['run_dir'][0],'broadbandz.fits')
     tfo =pyfits.open(test_file)
     print(tfo.info())
-    cube=tfo['CAMERA0-BROADBAND-NONSCATTER'].data
-    cubeshape=cube.shape
+
+    try:
+        cube=tfo['CAMERA0-BROADBAND-NONSCATTER'].data
+        cubeshape=cube.shape
+    except:
+        square=tfo['CAMERA0-PARAMETERS'].data
+        nf=tfo['FILTERS'].data.shape[0]
+        cubeshape=(nf,square.shape[0],square.shape[0])
+        
     print(cubeshape)
     auxcube=tfo['CAMERA0-AUX'].data
 
