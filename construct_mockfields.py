@@ -168,10 +168,12 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
         if lim is not None:
             if num > lim:
                 success.append(False)
+                mag.append(99.0)
                 continue
         if minz is not None:
             if this_z < minz:
                 success.append(False)
+                mag.append(99.0)
                 continue
 
         try:
