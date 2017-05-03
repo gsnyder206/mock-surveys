@@ -188,7 +188,7 @@ def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelab
             success.append(True)
             mag.append(this_mag)
         except:
-            print('Missing file or mismatched shape, ', run_dir, cube_npix, this_npix)
+            print('Missing file or mismatched shape, ', run_dir, this_npix)
             success.append(False)
             continue
 
