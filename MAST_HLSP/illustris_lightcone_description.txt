@@ -102,3 +102,4 @@ Below are columns joined during the image construction process:
 * 'success'		      whether or not this galaxy is rendered in the final image (should all be True; Falses were dropped from this table before saving)
 * 'new_i'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
 * 'new_j'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
+* 'AB_absmag_jwst-nircam_f200w'	       (example name only) observed-frame perfectly measured total absolute magnitude in this filter for this galaxy [AB units]	       
