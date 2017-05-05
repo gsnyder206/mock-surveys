@@ -9,7 +9,7 @@
 * /astro/snyder_lab2/Illustris/Lightcones/Lightcone_Catalog_Images/
 
 #### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
-#### Demo file:  [jwst-nircam_f277w via Dropbox](https://www.dropbox.com/s/puubem9bu8j8x21/hlsp_misty_illustris_jwst-nircam_f277w_FIELDA_11_10_v1_lightcone.fits?dl=1)
+#### Demo file:  [hst-wfc3_f160w via Dropbox](https://www.dropbox.com/s/1i6fqufzk13z37c/hlsp_misty_illustris_hst-wfc3_f160w_MAG30_FIELDA_11_10_v1_lightcone.fits?dl=1)
 
 
 #### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
@@ -18,27 +18,45 @@
 * Lightcone application for hydro sims described by: [Snyder et al. 2017](http://adsabs.harvard.edu/abs/2017MNRAS.468..207S)
 * Mock HST and JWST machinery supported by [HST#13887](http://adsabs.harvard.edu/abs/2014hst..prop13887S)
 
+#### The filenames indicate the mission, instrument, and filter combination of each image. The geometry/selection of these three fields is derived from the three ``Thin'' lightcones defined in Snyder et al. (2017), for example MAG30_FIELDA_11_10_v1 corresponds to Field A from that paper. The string MAG30 refers to the selection of Illustris subhalos included in the mock image.  For these files, the selection is based on the rest-frame g-band apparent magnitude of the source, such that g < 30.0.
+
 #### FITS files contain the following HDUs:
 
 0. "IMAGE_NOPSF":  Raw image without PSF or noise.  Header documented below.
-1. "IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
-2. "MODELPSF"   :  [Optional] The PSF model at the same pixel scale as HDUs 0 and 1
-3. "Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers and image positions
+1. "SimulationAssumptions":  URL links to Illustris documentation and API.
+2. "MockDataAssumptions":    Header contains code and parameter choices for creating mock images.
+3. "IMAGE_PSF"  :  [Optional] Same image, now convolved with model PSF from TinyTim or WebbPSF.
+4. "MODELPSF"   :  [Optional] The PSF model at the same pixel scale as HDU 3 "IMAGE_PSF".
+5. "Catalog"    :  Lightcone Catalog, containing intrinsic simulation info, including galaxy ID numbers, image positions, and other info.
+6. "CatalogDocumentation": Strings containing explainers of catalog columns (same as below)
 
 In HDU 0-"IMAGE_NOPSF", the header contains the following useful cards, for example:
-
-FILTER  = 'jwst-nircam_f200w'                                                   
-PIXSIZE =               0.0317 / arcsec                                         
+FILTER  = 'F160W   '           / filter                                         
+PIXSIZE =                 0.06 / arcsec                                         
 UNIT    = 'nanoJanskies'       / per pixel                                      
 ABZP    =    31.40006562228223 / AB mag zeropoint                               
-PHOTFNU =             2.64E-08 / Jy; approx flux[Jy] at 1 count/sec             
-EXTNAME = 'IMAGE_NOPSF'  
+PHOTFNU =             1.52E-07 / Jy; approx flux[Jy] at 1 count/sec             
+EXTNAME = 'IMAGE_NOPSF'                                                         
+DOI     = 'https://doi.org/10.1093/mnras/stx487'                                
+AUTHOR  = 'Gregory F. Snyder'                                                   
+PAPER   = 'Snyder et al. 2017, MNRAS, 468, 207'                                 
+DATE    = '2017-05-04T15:00:38.186163'                                          
+MISSION = 'HST     '           / Mission/telescope                              
+INSTR   = 'WFC3    '           / Instrument                                     
+HIERARCH TELESCOPE = 'HST     ' / Mission/telescope                             
+HIERARCH INSTRUMENT = 'WFC3    ' / Instrument                                   
+ALLFIL  = 'hst-wfc3_f160w'                                                      
+SIM_NAME= 'Illustris-1'                                                         
+SIM_DATA= 'http://www.illustris-project.org'                                    
+IMTYPE  = 'Survey  '           / type of image source                           
+REDSHIFT= '0.5-20  '           / Redshift of object or survey 
+
 
 These values, especially PHOTFNU, are highly approximate and should be confirmed by the user using an ETC before applying to any analyses.
 
-For HDUs 1-2, I produced these only for HST and JWST filters, as I have not yet fully propagated the WFIRST filters and PSF characteristics. These might be a good test bed for "in-situ" data simulation methods.  Also it might make sense to wait for the hardware to stabilize a bit more before fully installing these assumptions in a pipeline.
+For HDUs 3-4, I produced these only for HST and JWST filters, as I have not yet fully propagated the WFIRST filters and PSF characteristics. These might be a good test bed for "in-situ" data simulation methods.  Also it might make sense to wait for the hardware to stabilize a bit more before fully installing these assumptions in a pipeline.
 
-For HDU 3, here is the column documentation:
+For HDU 5, here is the column documentation:
 * 'snapshot' 	       	      Illustris snapshot number
 * 'SubfindID'		      Illustris subhalo Subfind ID number
 * 'ra_deg'		      arbitrary right ascension in degrees
@@ -78,9 +96,6 @@ For HDU 3, here is the column documentation:
 * 'v_kms_camZ'		      line-of-sight (peculiar) velocity [km/s]
 * 'v_kms_hubble'		      true cosmological expansion velocity [km/s]
 * 'g_AB_appmag'		      rest-frame SDSS-g AB apparent magnitude
-
-Below are columns joined during the image construction process:
-
 * 'sim'			      simulation name (e.g., 'Illustris-1')
 * 'snap'		      Illustris snapshot number (same as 'snapshot')
 * 'sfid'		      Illustris subhalo Subfind ID number (same as 'SubfindID')
@@ -103,3 +118,5 @@ Below are columns joined during the image construction process:
 * 'new_i'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
 * 'new_j'		      position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]
 * 'AB_absmag_jwst-nircam_f200w'	       (example name only) observed-frame perfectly measured total absolute magnitude in this filter for this galaxy [AB units]	       
+
+

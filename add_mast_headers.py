@@ -83,7 +83,8 @@ cat_dict={'snapshot' 	      :'Illustris snapshot number',
           'run_dir'		      :'internal run directory for locating this galaxy sub-image',
           'success'		      :'whether or not this galaxy is rendered in the final image (should all be True; Falses were dropped from this table before saving)',
           'new_i'		      :'position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]',
-          'new_j'		      :'position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]'}
+          'new_j'		      :'position of galaxy in image pixel units [final version-- use this one]  [it appears that (pos_j,pos_i) is the correct placement in Python terms]',
+          'AB_absmag'                 :'total absolute magnitude (AB system) of galaxy in this filter'}
 
 
 if __name__=="__main__":
