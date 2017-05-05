@@ -32,6 +32,7 @@ The filenames indicate the mission, instrument, and filter combination of each i
 6. "CatalogDocumentation": Strings containing explainers of catalog columns (same as below)
 
 In HDU 0-"IMAGE_NOPSF", the header contains the following useful cards, for example:
+
 FILTER  = 'F160W   '           / filter                                         
 PIXSIZE =                 0.06 / arcsec                                         
 UNIT    = 'nanoJanskies'       / per pixel                                      
