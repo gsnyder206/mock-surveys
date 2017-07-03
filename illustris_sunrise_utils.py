@@ -375,7 +375,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     list_of_types = ['images','grism']
 
     galprops_data = np.load(prop_file)[()]
-    idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
+    idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(fits_file))[0][0]
 
     cam_file = fits_file.rstrip('.fits')+'.cameras'
 
