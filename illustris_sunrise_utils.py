@@ -683,7 +683,7 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         bsubf.write('/home/gsnyder/bin/broadband broadbandz.config > broadbandz.out 2> broadbandz.err\n')
         bsubf.write('/home/gsnyder/bin/broadband broadband.config > broadband.out 2> broadband.err\n')
         
-        bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/mock_panstarrs.py\n'))  #doesn't exist yet!
+        #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/mock_panstarrs.py\n'))  #doesn't exist yet!
         #follow this code below to write mock_panstarrs:
         #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
     elif run_type=='ifu':
