@@ -375,6 +375,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     list_of_types = ['images','grism']
 
     galprops_data = np.load(prop_file)[()]
+    #oh wow
     dirdir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(fits_file))))
     dirdirdir=os.path.join(dirdir,os.path.basename(dirdir))
     print('checking.. ', dirdir, dirdirdir, fits_file)
@@ -385,6 +386,9 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
     #real_redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
     #scale_convert=(1.0/(gsu.ilh*(1.0 + real_redshift)))
+
+    #I think this always works in physical kpc anyway?  think further if need other redshifts
+    scale_convert=1.0
 
     real_redshift=pyfits.open(snap_fits)['YT'].header['REDSHIFT']
 
