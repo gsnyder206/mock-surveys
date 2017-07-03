@@ -352,7 +352,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 
-def setup_sunrise_enzo(snap_fits,verbose=True,clobber=True,
+def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
                        stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                        data_dir='$HOME/sunrise_data/',
                        nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=True):
@@ -369,10 +369,15 @@ def setup_sunrise_enzo(snap_fits,verbose=True,clobber=True,
     print("Using stubs in.. ",stub_dir)
     stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
 
+
+
     
     list_of_types = ['images','grism']
 
-    idx=None
+    galprops_data = np.load(prop_file)[()]
+    idx = np.argwhere(galprops_data['snap_files']==os.path.abspath(snapfile))[0][0]
+
+    cam_file = fits_file.rstrip('.fits')+'.cameras'
 
     #real_redshift=gsu.redshift_from_snapshot( subhalo_object['snap'] )
     #scale_convert=(1.0/(gsu.ilh*(1.0 + real_redshift)))
@@ -413,7 +418,7 @@ def setup_sunrise_enzo(snap_fits,verbose=True,clobber=True,
 
         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                              stub_name = mcrx_stub,
-                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=None , idx = idx,use_scratch=use_scratch)
+                             galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file , idx = idx,use_scratch=use_scratch)
 
 
         
@@ -468,7 +473,11 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     
     #only one of these should be translated
     gridw=200
-    sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['pos_x']*scale_convert, galprops_data['pos_y']*scale_convert, galprops_data['pos_z']*scale_convert))
+    if idx==None:
+        sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['pos_x']*scale_convert, galprops_data['pos_y']*scale_convert, galprops_data['pos_z']*scale_convert))
+    else:
+        sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][idx][0], galprops_data['stars_maxndens'][idx][1], galprops_data['stars_maxndens'][idx][2]))
+
     #sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
     #sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
     sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(-1.0*gridw, -1.0*gridw,-1.0*gridw))
