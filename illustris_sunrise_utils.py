@@ -376,7 +376,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
     galprops_data = np.load(prop_file)[()]
     dirdir=os.path.dirname(os.path.dirname(os.path.abspath(fits_file)))
-    dirdirdir=dirdir+os.path_basename(dirdir)
+    dirdirdir=dirdir+os.path.basename(dirdir)
     print('checking.. ', dirdir, dirdirdir, fits_file)
 
     idx = np.argwhere( galprops_data['snap_files']==dirdirdir )[0][0]
