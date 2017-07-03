@@ -5,6 +5,8 @@ import glob
 import gfs_sublink_utils as gsu
 import shutil
 import math
+import astropy
+import astropy.io.fits as pyfits
 
 #this function takes as inputs the return values of illustris_api_utils.get_subhalo()
 #this is a snapshot file and subhalo metadata object
