@@ -353,7 +353,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
 
 def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
-                       stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
+                       stub_dir='$HOME/PythonCode/mock-surveys/stubs_enzo/',
                        data_dir='$HOME/sunrise_data/',
                        nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=True):
 
@@ -367,7 +367,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     data_dir = os.path.expandvars(data_dir)
     
     print("Using stubs in.. ",stub_dir)
-    stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
+    stub_files = np.asarray(glob.glob(os.path.join(stub_dir,'*')))
 
 
 
