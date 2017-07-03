@@ -1,0 +1,199 @@
+InitCondFile        ../ICs/L75n1820/ICs_ph
+OutputDir           /ccc/scratch/cont005/ra0844/springev/Illustris/L75n1820C/output/ 
+EnergyFile          energy.txt
+InfoFile            info.txt
+TimingsFile         timings.txt
+CpuFile             cpu.txt
+RestartFile         restart
+SnapshotFileBase    snap
+OutputListFilename  ExpansionList_128 
+
+%---- File formats
+ICFormat           1
+SnapFormat         3 
+
+%---- CPU-time limits
+TimeLimitCPU           96600.0   
+CpuTimeBetRestartFile  30000.0
+ResubmitOn        0
+ResubmitCommand   my-scriptfile 
+
+%----- Memory alloction
+MaxMemSize        3500 3400 
+BufferSize        300        % in MByte
+BufferSizeGravity 500        % in MByte
+
+%---- Caracteristics of run
+TimeBegin           0.0078125  % Begin of the simulation
+TimeMax	            1.0        % End of the simulation
+
+%---- Basic code options that set the type of simulation
+ComovingIntegrationOn    1 
+PeriodicBoundariesOn     1
+CoolingOn		 1
+StarformationOn	     	 1
+
+%---- Cosmological parameters
+Omega0	              0.2726
+OmegaLambda           0.7274
+OmegaBaryon           0.0456 
+HubbleParam           0.704 
+BoxSize               75000.0
+
+%---- Output frequency and output paramaters
+OutputListOn              1 
+TimeBetSnapshot           0.0
+TimeOfFirstSnapshot       0.0
+TimeBetStatistics         0.01
+NumFilesPerSnapshot       512 
+NumFilesWrittenInParallel 512
+
+%---- Accuracy of time integration
+TypeOfTimestepCriterion  0 
+ErrTolIntAccuracy        0.012 
+CourantFac               0.3
+MaxRMSDisplacementFac    0.125
+MaxSizeTimestep          0.005
+MinSizeTimestep          0.0 
+
+%---- Parameters for star formation model
+CritPhysDensity      0       % critical physical density for star formation (in cm^(-3))
+MaxSfrTimescale      2.27    % in internal time units (1.5)
+CritOverDensity      57.7    % overdensity threshold value
+TempSupernova        5.73e7  % in Kelvin (1.0e8)
+TempClouds           1000.0  % in Kelvin
+FactorSN             0.1     % changed internally
+FactorEVP            573.0   % (1000.0)
+TemperatureThresh    0 
+
+%---- Treatment of empty space and temperature limits
+InitGasTemp                           244.8095 
+MinGasTemp                            5.0
+MinimumDensityOnStartUp               1.0e-20
+LimitUBelowThisDensity                0.0
+LimitUBelowCertainDensityToThisValue  0.0
+MinEgySpec                            0.0
+
+%---- Tree algorithm, force accuracy, domain update frequency
+TypeOfOpeningCriterion                1
+ErrTolTheta                           0.7
+ErrTolForceAcc                        0.0025
+MultipleDomains                       8 
+TopNodeFactor                         3
+MaxTimeBinsWithoutDomainDecomposition 6  5  ; changed from 5 to 6 at step 180371
+ 
+%---- Initial density estimate
+DesNumNgb              64 
+MaxNumNgbDeviation     1 
+
+%---- System of units
+UnitLength_in_cm         3.085678e21        ;  1.0 kpc
+UnitMass_in_g            1.989e43           ;  1.0e10 solar masses
+UnitVelocity_in_cm_per_s 1e5                ;  1 km/sec
+GravityConstantInternal  0
+
+%---- Gravitational softening lengths
+MinGasHsmlFractional   0.1   
+SofteningGas           1.0 
+SofteningHalo          1.0 
+SofteningDisk  	       1.0 
+SofteningBulge         1.0
+SofteningStars         1.0 
+SofteningBndry         1.0 
+SofteningGasMaxPhys       0.5
+SofteningHaloMaxPhys      1.0 
+SofteningDiskMaxPhys      0.5
+SofteningBulgeMaxPhys     0.5 
+SofteningStarsMaxPhys     0.5 
+SofteningBndryMaxPhys     0.5 
+GasSoftFactor          2.5 
+
+%----- Mesh regularization options
+CellShapingSpeed       0.5               
+CellMaxAngleFactor     2.25          
+ReferenceGasPartMass   0
+TargetGasMassFactor    1
+RefinementCriterion    1
+DerefinementCriterion  1
+TreecoolFile           code/Arepo/data/TREECOOL_fg_dec11 
+
+%----- Subfind
+ErrTolThetaSubfind     0.7
+DesLinkNgb             20
+
+%----- Wind
+VariableWindVelFactor        3.7
+WindEnergyFraction           3.0   2.0 
+VariableWindSpecMomentum     0.0
+WindFreeTravelMaxTimeFactor  0.025
+WindFreeTravelDensFac        0.05
+TimeBetOnTheFlyFoF           1.03
+MinWindVel                   0.0
+
+%----- Enrichment
+IMF_MinMass_Msun           0.1
+IMF_MaxMass_Msun           100.0
+AGB_MassTransferOn         1
+SNIa_MassTransferOn        1
+SNII_MassTransferOn        1
+SNII_MinMass_Msun          6.0
+SNII_MaxMass_Msun          100.0
+SNIa_Rate_TAU              0.04
+SNIa_Rate_Norm             1.3e-3
+YieldTablePath             code/Arepo_GFM_Tables/Yields/
+DesNumNgbEnrichment        256 
+MaxNumNgbDeviationEnrichment 32
+
+%-----  Black holes
+BlackHoleAccretionFactor         100.0 
+BlackHoleFeedbackFactor          0.05
+BlackHoleEddingtonFactor         1.0
+SeedBlackHoleMass                1.e-5
+MinFoFMassForNewSeed             5.0
+DesNumNgbBlackHole               256 
+BlackHoleMaxAccretionRadius      1.e5
+BlackHoleRadiativeEfficiency     0.2
+
+%-----  Bubbles
+BubbleDistance                  100.0 200.0  30.0
+BubbleRadius                    50.0
+BubbleEnergy                    1.0e60
+BlackHoleRadioTriggeringFactor  1.15
+DefaultICMDensity               1.e-6
+RadioFeedbackFactor             0.35  0.40   0.50
+RadioThreshold                  0.05
+
+%-----  Metal cooling
+CoolingTablePath            code/Arepo_GFM_Tables/Cooling/cooling_metal_AGN_Compton_self_shielding_Rahmati12.hdf5
+MinMetalTemp                1e4
+
+%-----  Photometrics
+PhotometricsTablePath       code/Arepo_GFM_Tables/Photometrics/
+
+%----- AGN radiation
+TreecoolFileAGN             code/Arepo/data/TREECOOL_AGN
+SelfShieldingDensity        0.1295
+ObscurationFactor           0.3
+ObscurationSlope            0.07
+
+%----- Subbox
+SubboxCoordinatesPath          subboxes_coordinates.dat 
+SubboxMinTime                  0.0078125 
+SubboxMaxTime                  1.00
+SubboxSyncModulo               1
+SubboxNumFilesPerSnapshot      512
+SubbxNumFilesWrittenInParallel 512
+
+%----- Softer EOS
+FactorForSofterEQS   0.3
+TempForSofterEQS     1e4
+
+%----- Wind stripping
+WindDumpFactor       0.6  0.7
+
+%----- Self-Shielding
+SelfShieldingFile    code/Arepo/data/SelfShielding_Rahmati12 
+
+%---- Tracers
+TracerMCPerCell         1
+

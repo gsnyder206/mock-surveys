@@ -1,0 +1,97 @@
+
+# emergence parameters
+#camera_positions	cam_pos.txt / [] Use this and comment out ntheta, nphi
+			# to manually specify camera positions via a text file
+			# containing two columns: theta & phi in radians
+cameradistance		10000	/ [kpc] Camera distance from origin
+compress_images         false
+write_images_parallel   false
+
+nrays_nonscatter	1e7  // for production runs probably want 1e7 at least
+
+# scatter parameters
+
+#nrays_scatter          0 / turns off RT (scattering & absorption)
+nrays_scatter           0
+
+#Only one of the two parameters below should be nonzero.
+#dust_to_gas_ratio	0.008	/ [] Constant dust-to-gas (metals ignored)
+dust_to_gas_ratio	0.	/ [] Metals are calculated correctly
+#dust_to_metal_ratio	0.	/ [] Ignore metals when calculating dust
+dust_to_metal_ratio	0.4	/ [] M_d/M_m from Dwek98 (solar)
+use_multiphase_model	true
+#use_multiphase_model	false	/ [] Turn off to use total SPH gas density rather than just diffuse phase
+multiphase_t0_star	1.1e9	/ [yr]
+multiphase_rho_th	4.2e6	/ [Msun/kpc^3]
+
+#i_last_scatter		1e-2	/ [] Lowest intensity before RR sets in
+n_forced		1	/ [] The max number of forced scatterings/ray.
+i_forced		0	/ [] The minimum intensity for rays to use forced scattering
+#i_split			10.	/ [] Split rays with intensity > 10
+i_min			1e-2    / []  ???
+i_max			10.	/ []  ???
+
+
+n_scatter_min		0 / Inclusive range for number of scatterings allowed.
+n_scatter_max		0 / Both 0 gives only attenuated light. Min = 1
+#			and max unset gives light that's scattered at least once
+
+reference_wavelength		0.9e-6
+use_reference_for_emission	false
+check_energy_conservation	true
+
+
+# Aux parameters
+#nrays_aux               0 / turns off aux; not sure if aux is working now, so best to leave it off
+nrays_aux              1e7
+aux_particles_only	false
+
+# Intensity stage
+nrays_intensity		0  #1e5
+n_wavelengths_intensity	10  #as high as 10 works for supersparse tests, 25 for higher res
+
+
+#IR parameters
+
+nrays_ir		0 / turns off IR calculation
+#nrays_ir               1e6
+integrate_ir		false
+#n_forced_ir          1 / [] The maximum number of scatterings for rays
+#			     to use forced scattering during shooting
+#			     of dust emission in IR stage.
+ir_luminosity_percentile	0.20  // this is somewhat large, few percent if possible
+
+
+
+#dust emission parameters
+#grain_model            wd01
+grain_model             wd01_Brent_PAH	/ default grain model
+#grain_model		dl07_template	/ use DL07 template for emission as way to include stochastically heated grains
+#wd01_parameter_set      MW3.1_60
+wd01_parameter_set	DL07_MW3.1_60
+use_dl07_opacities      true / set to true if using DL07 models above
+grain_data_directory    ~chayward/sundata/dust_data/crosssections
+#grain_min_emission_wavelength
+template_pah_fraction                   0.5 / [] fraction of PAH grains that emit the template; others emit thermally
+
+ir_reference_wavelength		40e-6
+ir_equilibrium_tolerance	0.25  //  this might be somewhat large, can go as low as 0.1 or so
+
+use_grain_temp_lookup   true	/ [] Uses a lookup table to make the IR calculation ~7x faster
+
+use_kinematics		false
+
+cpu_time_margin		180
+wall_clock_margin	240
+resubmit_command_variable	RESUBMIT_COMMAND
+seed 			0
+
+use_counters		false
+#use_hpm		true
+#CCfits_verbose		true
+#skip_postprocessing	true
+
+mcrx_version		v4 / Tagged version used
+mcrx_data_dir   	/home/gsnyder/code/InstallationLibraries/sunrise/src/
+
+
