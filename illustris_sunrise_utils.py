@@ -417,7 +417,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
         generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
                                 galprops_data = galprops_data, run_type = run_type,
-                                nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch)
+                                nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch,use_cf00=True)
 
 
         print('\tGenerating mcrx.config file for %s...'%run_type)
@@ -425,7 +425,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
         mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
 
         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
-                             stub_name = mcrx_stub,
+                             stub_name = mcrx_stub,npix=1000,
                              galprops_data = galprops_data, run_type = run_type, nthreads=nthreads, cam_file=cam_file , idx = idx,use_scratch=use_scratch, aux_part_only=True)
 
 
@@ -454,7 +454,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
         print('\tGenerating sunrise.sbatch file for %s...'%run_type)
         sbatch_fn   = 'sunrise.sbatch'		
         final_fn = generate_sbatch(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
-                                 galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit,use_scratch=use_scratch)
+                                   galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit,use_scratch=use_scratch,candelize=True)
 
         
     
@@ -463,7 +463,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
 
 
-def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False,isnap=None):
+def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False,isnap=None,use_cf00=False):
     if use_scratch is True:
         if isnap is not None:
             int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
@@ -496,7 +496,10 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
         sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
         
         sf.write('mappings_sed_file			%s\n'%(data_dir+"Smodel-lores128.fits"))
-        sf.write('stellarmodelfile			%s\n'%(data_dir+"Patrik-imfKroupa-Zmulti-ml.fits"))
+        if use_cf00==True:
+            sf.write('stellarmodelfile                     %s\n'%(data_dir+"bc03_cf00_1e7_new_ism_both.fits"))
+        else:
+            sf.write('stellarmodelfile			%s\n'%(data_dir+"Patrik-imfKroupa-Zmulti-ml.fits"))
 
 
     elif run_type == 'ifu':
@@ -659,7 +662,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_
     return
 
 
-def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='24', queue='compute',email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0,account='hsc102',use_scratch=False):
+def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus='24', queue='compute',email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0,account='hsc102',use_scratch=False, candelize=False):
 
     bsubf = open(run_dir+'/'+filename, 'w+')
     bsubf.write('#!/bin/bash\n')
@@ -684,7 +687,8 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         
         #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/mock_panstarrs.py\n'))  #doesn't exist yet!
         #follow this code below to write mock_panstarrs:
-        #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+        if candelize==True:
+            bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
     elif run_type=='ifu':
         bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         #bsubf.write('gzip -9 mcrx.fits\n')
