@@ -483,13 +483,12 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     gridw=200
     if idx==None:
         sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['pos_x']*scale_convert, galprops_data['pos_y']*scale_convert, galprops_data['pos_z']*scale_convert))
+        sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(-1.0*gridw, -1.0*gridw,-1.0*gridw))
+        sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(1.0*gridw,1.0*gridw,1.0*gridw))
     else:
         sf.write('translate_origin          %.2f\t%.2f\t%.2f         / [kpc]\n'%(galprops_data['stars_maxndens'][idx][0], galprops_data['stars_maxndens'][idx][1], galprops_data['stars_maxndens'][idx][2]))
 
-    #sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(galprops_data['cm_x']*scale_convert-gridw, galprops_data['cm_y']*scale_convert-gridw, galprops_data['cm_z']*scale_convert-gridw))
-    #sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(galprops_data['cm_x']*scale_convert+gridw, galprops_data['cm_y']*scale_convert+gridw, galprops_data['cm_z']*scale_convert+gridw))
-    sf.write('grid_min			%.1f\t%.1f\t%.1f         / [kpc]\n'%(-1.0*gridw, -1.0*gridw,-1.0*gridw))
-    sf.write('grid_max			%.1f\t%.1f\t%.1f         / [kpc]\n\n\n'%(1.0*gridw,1.0*gridw,1.0*gridw))
+
 
 
     if run_type == 'images':
