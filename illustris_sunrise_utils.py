@@ -688,7 +688,7 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         #bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/mock_panstarrs.py\n'))  #doesn't exist yet!
         #follow this code below to write mock_panstarrs:
         if candelize==True:
-            bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize.py\n'))
+            bsubf.write(os.path.expandvars('python $SYNIMAGE_CODE/candelize_enzo.py\n'))
     elif run_type=='ifu':
         bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         #bsubf.write('gzip -9 mcrx.fits\n')
