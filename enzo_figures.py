@@ -154,17 +154,6 @@ def jwst_nirspec_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=400.0,do_psf=False):
     
     axi.imshow(np.fliplr(np.transpose(Zm)),interpolation='nearest',origin='upper',vmin=vmin,vmax=vmax,cmap=themap)
 
-
-    '''
-    #10kpc scale bar
-    axi.plot([delt-100,delt+100],[delt/3,delt/3],marker='None',linestyle='solid',color='White',lw=5)
-    axi.annotate('10 kpc', (delt,delt/4), xycoords='data',color='White',ha='center',va='center',fontsize=20)
-    if do_psf==False:
-        axi.annotate('No PSF', (delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
-    else:
-        axi.annotate('0.1" FWHM', (delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
-    '''
-
     
     for ss in axi.spines:
         s=axi.spines[ss]
@@ -219,14 +208,13 @@ def jwst_nirspec_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=400.0,do_psf=False):
 
     
 
-def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False):
+def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAMERA5-BROADBAND-NONSCATTER',label=''):
 
 
     nref11_z2='nref11/RD0020/broadbandz.fits'
     extra_z2='nref11_refine200kpc_z4to2/RD0020/broadbandz.fits'
     extra_z3='nref11_refine200kpc_z4to2/RD0017/broadbandz.fits'
 
-    cs='CAMERA6-BROADBAND-NONSCATTER'
 
     nref11_z2_o=snapshot()
     extra_z2_o=snapshot()
@@ -272,16 +260,20 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False):
     
     
     if do_psf==False:
-        filen='images_hires.pdf'
+        filen='images_hires_'+label+'_'+cs[0:7]+'.pdf'
         nref11_z2_o.rgbthing = make_color_image.make_interactive(nref11_z2_o.b,nref11_z2_o.g,nref11_z2_o.r,alph,Q)
         extra_z2_o.rgbthing = make_color_image.make_interactive(extra_z2_o.b,extra_z2_o.g,extra_z2_o.r,alph,Q)
         extra_z3_o.rgbthing = make_color_image.make_interactive(extra_z3_o.b,extra_z3_o.g,extra_z3_o.r,alph,Q)
     else:
-        filen='images_psf.pdf'
-        psf_fwhm_arcsec=0.1
+        filen='images_psf_'+label+'_'+cs[0:7]+'.pdf'
+        psf_fwhm_arcsec=0.05
         fwhm_pixels_z2=psf_fwhm_arcsec*kpc_per_arcsec_z2/kpc_per_pix
         fwhm_pixels_z3=psf_fwhm_arcsec*kpc_per_arcsec_z3/kpc_per_pix
-        
+        print('KPC per as, z2: ', kpc_per_arcsec_z2)
+        print('FWHM arcsec:    ', psf_fwhm_arcsec)
+        print('FWHM pixels z2: ', fwhm_pixels_z2)
+        print('FWHM pixels z3: ', fwhm_pixels_z3)
+       
         nref11_z2_o.rgbthing = make_color_image.make_interactive(nref11_z2_o.b,nref11_z2_o.g,nref11_z2_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z2)
         extra_z2_o.rgbthing = make_color_image.make_interactive(extra_z2_o.b,extra_z2_o.g,extra_z2_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z2)
         extra_z3_o.rgbthing = make_color_image.make_interactive(extra_z3_o.b,extra_z3_o.g,extra_z3_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z3)        
@@ -318,14 +310,19 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False):
     axi.imshow(extra_z2_o.rgbthing,interpolation='nearest',origin='lower')
 
     #10kpc scale bar
-    axi.plot([delt-100,delt+100],[delt/3,delt/3],marker='None',linestyle='solid',color='White',lw=5)
-    axi.annotate('10 kpc', (delt,delt/4), xycoords='data',color='White',ha='center',va='center',fontsize=20)
-    axi.annotate('z = 2', (0.5*delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+    if label=='zoom':
+        axi.plot([delt-10,delt+10],[delt/3,delt/3],marker='None',linestyle='solid',color='White',lw=5)
+        axi.annotate('1 kpc', (delt,delt/4), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+        axi.annotate('z = 2', (0.5*delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+    else:
+        axi.plot([delt-100,delt+100],[delt/3,delt/3],marker='None',linestyle='solid',color='White',lw=5)
+        axi.annotate('10 kpc', (delt,delt/4), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+        axi.annotate('z = 2', (0.5*delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
     
     if do_psf==False:
-        axi.annotate('No PSF', (delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+        axi.annotate('No PSF', (1.5*delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
     else:
-        axi.annotate('0.1" FWHM', (delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
+        axi.annotate('0.05" FWHM', (1.5*delt,2*delt*0.90), xycoords='data',color='White',ha='center',va='center',fontsize=20)
         
     for ss in axi.spines:
         s=axi.spines[ss]
