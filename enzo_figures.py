@@ -212,11 +212,14 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAME
 
 
     nref11_z2='nref11/RD0020/broadbandz.fits'
+    nref11_z3='nref11/RD0017/broadbandz.fits'
+
     extra_z2='nref11_refine200kpc_z4to2/RD0020/broadbandz.fits'
     extra_z3='nref11_refine200kpc_z4to2/RD0017/broadbandz.fits'
 
 
     nref11_z2_o=snapshot()
+    nref11_z3_o=snapshot()
     extra_z2_o=snapshot()
     extra_z3_o=snapshot()
     
@@ -238,6 +241,10 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAME
     nref11_z2_o.r=fudge*pyfits.open(nref11_z2)[cs].data[rf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*rfact
     nref11_z2_o.g=fudge*pyfits.open(nref11_z2)[cs].data[gf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*gfact
     nref11_z2_o.b=fudge*pyfits.open(nref11_z2)[cs].data[bf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*bfact
+
+    nref11_z3_o.r=fudge*pyfits.open(nref11_z3)[cs].data[rf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*rfact
+    nref11_z3_o.g=fudge*pyfits.open(nref11_z3)[cs].data[gf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*gfact
+    nref11_z3_o.b=fudge*pyfits.open(nref11_z3)[cs].data[bf,dx+mid-delt:dx+mid+delt,dy+mid-delt:dy+mid+delt]*bfact
 
 
     print(np.max(nref11_z2_o.r),np.max(nref11_z2_o.b))
@@ -262,6 +269,7 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAME
     if do_psf==False:
         filen='images_hires_'+label+'_'+cs[0:7]+'.pdf'
         nref11_z2_o.rgbthing = make_color_image.make_interactive(nref11_z2_o.b,nref11_z2_o.g,nref11_z2_o.r,alph,Q)
+        nref11_z3_o.rgbthing = make_color_image.make_interactive(nref11_z3_o.b,nref11_z3_o.g,nref11_z3_o.r,alph,Q)
         extra_z2_o.rgbthing = make_color_image.make_interactive(extra_z2_o.b,extra_z2_o.g,extra_z2_o.r,alph,Q)
         extra_z3_o.rgbthing = make_color_image.make_interactive(extra_z3_o.b,extra_z3_o.g,extra_z3_o.r,alph,Q)
     else:
@@ -275,6 +283,7 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAME
         print('FWHM pixels z3: ', fwhm_pixels_z3)
        
         nref11_z2_o.rgbthing = make_color_image.make_interactive(nref11_z2_o.b,nref11_z2_o.g,nref11_z2_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z2)
+        nref11_z3_o.rgbthing = make_color_image.make_interactive(nref11_z3_o.b,nref11_z3_o.g,nref11_z3_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z3)
         extra_z2_o.rgbthing = make_color_image.make_interactive(extra_z2_o.b,extra_z2_o.g,extra_z2_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z2)
         extra_z3_o.rgbthing = make_color_image.make_interactive(extra_z3_o.b,extra_z3_o.g,extra_z3_o.r,alph,Q,fwhm_pixels=fwhm_pixels_z3)        
     
@@ -332,7 +341,7 @@ def jwst_image_figure(alph=0.1,Q=1.0,dx=0,dy=0,Npix=1000.0,do_psf=False,cs='CAME
 
         
     axi=f1.add_subplot(2,2,3)
-    axi.imshow(extra_z2_o.rgbthing*0.0,interpolation='nearest',origin='lower')
+    axi.imshow(nref11_z3_o.rgbthing,interpolation='nearest',origin='lower')
 
     axi.set_xticks([]) ; axi.set_yticks([])
     axi.annotate('natural refine', (delt,0.25*delt), xycoords='data',color='White',ha='center',va='center',fontsize=20)
