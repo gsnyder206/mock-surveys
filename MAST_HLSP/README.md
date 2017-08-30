@@ -19,7 +19,7 @@
 * Mock HST and JWST machinery supported by [HST#13887](http://adsabs.harvard.edu/abs/2014hst..prop13887S)
 
 #### Contents, geometry, and selection:
-The filenames indicate the mission, instrument, and filter combination of each image. The geometry/selection of these three fields is derived from the three ``Thin'' lightcones defined in Snyder et al. (2017), for example MAG30_FIELDA_11_10_v1 corresponds to Field A from that paper. The string MAG30 refers to the selection of Illustris subhalos included in the mock image.  For these files, the selection is based on the rest-frame g-band apparent magnitude of the source, such that g < 30.0.
+The filenames indicate the mission, instrument, and filter combination of each image. The geometry/selection of these three fields is derived from the three ``Thin'' lightcones defined in Snyder et al. (2017), for example mag30-fielda-11-10_v1 corresponds to Field A from that paper. The string "mag30" refers to the selection of Illustris subhalos included in the mock image.  For these files, the selection is based on the rest-frame g-band apparent magnitude of the source, such that g < 30.0.
 
 #### FITS files contain the following HDUs:
 
