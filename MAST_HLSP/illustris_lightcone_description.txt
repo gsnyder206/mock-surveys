@@ -2,7 +2,7 @@
 #### Created by Gregory Snyder, Space Telescope Science Institute
 
 #### Files with names:
-* hlsp_misty_illustris_jwst-nircam_f150w_FIELDA_11_10_v1_lightcone.fits
+* hlsp_misty_illustris_jwst-nircam_f150w_mag30-fielda-11-10_v1_lightcone.fits
 * hlsp_misty_sim_telescope-instrument_filter_(geometry/selection)_version_type.fits
 
 #### On Central Storage at STScI:
