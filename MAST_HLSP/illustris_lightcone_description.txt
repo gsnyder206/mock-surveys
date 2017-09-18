@@ -2,15 +2,15 @@
 #### Created by Gregory Snyder, Space Telescope Science Institute
 
 #### Files with names:
-* hlsp_misty_illustris_jwst-nircam_f150w_mag30-fielda-11-10_v1_lightcone.fits
-* hlsp_misty_sim_telescope-instrument_filter_(geometry/selection)_version_type.fits
+* hlsp_misty_illustris_jwst-nircam_mag30-fielda-11-10_f150w_v1_lightcone.fits
+* hlsp_misty_sim_telescope-instrument_(field/selection)_filter_version_type.fits
 
 #### On Central Storage at STScI:
 * /astro/snyder_lab2/Illustris/Lightcones/Lightcone_Catalog_Images/
 
 #### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
-#### Demo file:  [hst-wfc3_f160w via Dropbox](https://www.dropbox.com/s/1i6fqufzk13z37c/hlsp_misty_illustris_hst-wfc3_f160w_MAG30_FIELDA_11_10_v1_lightcone.fits?dl=1)
-
+#### Demo file:  [jwst-nircam_f150w via Dropbox](https://www.dropbox.com/s/1i6fqufzk13z37c/hlsp_misty_illustris_jwst-nircam_f150w_MAG30_FIELDA_11_10_v1_lightcone.fits?dl=1)
+#### Note: Demo filename structure differs from final MAST filename structure
 
 #### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
 * Lightcone image presented by: Vogelsberger et al. 2014
