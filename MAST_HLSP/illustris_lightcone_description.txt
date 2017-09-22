@@ -1,6 +1,11 @@
 # Illustris Mock Deep Fields
 #### Created by Gregory Snyder, Space Telescope Science Institute
 
+#### On MAST HLSP:
+* Website   : <https://archive.stsci.edu/prepds/illustris/>
+* Files like: <https://archive.stsci.edu/hlsps/illustris/mag30-fielda-11-10_images/hlsp_misty_illustris_jwst-nircam_mag30-fielda-11-10_f200w_v1_lightcone.fits>
+* DOI       : [10.17909/T98385](https://archive.stsci.edu/doi/resolve/resolve.html?doi=10.17909/T98385)
+
 #### Files with names:
 * hlsp_misty_illustris_jwst-nircam_mag30-fielda-11-10_f150w_v1_lightcone.fits
 * hlsp_misty_sim_telescope-instrument_(field/selection)_filter_version_type.fits
@@ -9,17 +14,15 @@
 * /astro/snyder_lab2/Illustris/Lightcones/Lightcone_Catalog_Images/
 
 #### Demo notebook: <https://github.com/gsnyder206/mock-surveys/blob/master/MAST_HLSP/illustris_lightcone_demo.ipynb>
-#### Demo file:  [jwst-nircam_f150w via Dropbox](https://www.dropbox.com/s/1i6fqufzk13z37c/hlsp_misty_illustris_jwst-nircam_f150w_MAG30_FIELDA_11_10_v1_lightcone.fits?dl=1)
-#### Note: Demo filename structure differs from final MAST filename structure
 
 #### Acknowledgements.  These are based on the Illustris Project hydrodynamical simulations:
-* Lightcone image presented by: Vogelsberger et al. 2014
+* Lightcone image presented by: Vogelsberger et al. 2014 (Nature)
 * Data release paper and documentation:  <http://illustris-project.org> ; Nelson et al. 2015
 * Lightcone application for hydro sims described by: [Snyder et al. 2017](http://adsabs.harvard.edu/abs/2017MNRAS.468..207S)
 * Mock HST and JWST machinery supported by [HST#13887](http://adsabs.harvard.edu/abs/2014hst..prop13887S)
 
 #### Contents, geometry, and selection:
-The filenames indicate the mission, instrument, and filter combination of each image. The geometry/selection of these three fields is derived from the three ``Thin'' lightcones defined in Snyder et al. (2017), for example mag30-fielda-11-10_v1 corresponds to Field A from that paper. The string "mag30" refers to the selection of Illustris subhalos included in the mock image.  For these files, the selection is based on the rest-frame g-band apparent magnitude of the source, such that g < 30.0.
+The filenames indicate the mission, instrument, and filter combination of each image. The geometry/selection of these three fields is derived from the three ``Thin'' lightcones defined in Snyder et al. (2017), for example mag30-fielda-11-10_v1 corresponds to Field A (Thin) from that paper. The string "mag30" refers to the selection of Illustris subhalos included in the mock image.  For these files, the selection is based on the rest-frame g-band apparent magnitude of the source, such that g < 30.0.
 
 #### FITS files contain the following HDUs:
 
