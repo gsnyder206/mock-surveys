@@ -6,7 +6,7 @@ import gfs_sublink_utils as gsu
 import shutil
 import math
 import astropy
-import astropy.io.fits as pyfits
+import astropy.io.fits as fits
 #import matplotlib
 #import matplotlib.pyplot as plt
 import scipy
@@ -20,46 +20,9 @@ import astropy.io.ascii as ascii
 from astropy.convolution import *
 import copy
 
+
 sq_arcsec_per_sr = 42545170296.0
 c = 3.0e8
-
-filters_to_analyze = np.asarray(['hst/acs_f435w','hst/acs_f606w','hst/acs_f775w','hst/acs_f850lp',
-                      'hst/wfc3_f105w','hst/wfc3_f125w','hst/wfc3_f160w',
-                      'jwst/nircam_f070w', 'jwst/nircam_f090w','jwst/nircam_f115w', 'jwst/nircam_f150w', 
-                      'jwst/nircam_f200w', 'jwst/nircam_f277w', 'jwst/nircam_f356w', 'jwst/nircam_f444w', 
-                      'hst/wfc3_f140w',
-                      'hst/wfc3_f275w', 'hst/wfc3_f336w',
-                      'hst/acs_f814w',
-                      'jwst/miri_F560W','jwst/miri_F770W','jwst/miri_F1000W','jwst/miri_F1130W',
-                      'jwst/miri_F1280W','jwst/miri_F1500W','jwst/miri_F1800W','jwst/miri_F2100W','jwst/miri_F2550W'])
-
-psf_dir = os.path.expandvars('$GFS_PYTHON_CODE/vela-yt-sunrise/kernels')
-
-psf_names = np.asarray(['TinyTim_IllustrisPSFs/F435W_rebin.fits','TinyTim_IllustrisPSFs/F606W_rebin.fits','TinyTim_IllustrisPSFs/F775W_rebin.fits','TinyTim_IllustrisPSFs/F850LP_rebin.fits',
-             'TinyTim_IllustrisPSFs/F105W_rebin.fits','TinyTim_IllustrisPSFs/F125W_rebin.fits','TinyTim_IllustrisPSFs/F160W_rebin.fits',
-             'WebbPSF_F070W_trunc.fits','WebbPSF_F090W_trunc.fits','WebbPSF_F115W_trunc.fits','WebbPSF_F150W_trunc.fits',
-             'WebbPSF_F200W_trunc.fits','WebbPSF_F277W_trunc.fits','WebbPSF_F356W_trunc.fits','WebbPSF_F444W_trunc.fits',
-             'TinyTim_IllustrisPSFs/F140W_rebin.fits','TinyTim_IllustrisPSFs/F275W_rebin.fits','TinyTim_IllustrisPSFs/F336W_rebin.fits','TinyTim_IllustrisPSFs/F814W_rebin.fits',
-             'WebbPSF_F560W_trunc.fits','WebbPSF_F770W_trunc.fits','WebbPSF_F1000W_trunc.fits','WebbPSF_F1130W_trunc.fits',
-             'WebbPSF_F1280W_trunc.fits','WebbPSF_F1500W_trunc.fits','WebbPSF_F1800W_trunc.fits','WebbPSF_F2100W_trunc.fits','WebbPSF_F2550W_trunc.fits'])
-
-
-psf_pix_arcsec = np.asarray([0.03,0.03,0.03,0.03,0.06,0.06,0.06,0.0317,0.0317,0.0317,0.0317,0.0317,0.0648,0.0648,0.0648,0.06,0.03,0.03,0.03,0.11,0.11,0.11,0.11,0.11,0.11,0.11,0.11,0.11])
-psf_fwhm = np.asarray([0.10,0.11,0.12,0.13,0.14,0.17,0.20,0.11,0.11,0.11,0.11,0.12,0.15,0.18,0.25,0.18,0.07,0.08,0.13,
-            0.035*5.61,0.035*7.57,0.035*9.90,0.035*11.30,0.035*12.75,0.035*14.96,0.035*17.90,0.035*20.65,0.035*25.11])
-
-#photfnu units Jy; flux in 1 ct/s
-photfnu_Jy = np.asarray([1.96e-7,9.17e-8,1.97e-7,4.14e-7,
-                         1.13e-7,1.17e-7,1.52e-7,
-                         5.09e-8,3.72e-8,3.17e-8,2.68e-8,2.64e-8,2.25e-8,2.57e-8,2.55e-8,
-                         9.52e-8,8.08e-7,4.93e-7,1.52e-7,
-                         5.75e-8,3.10e-8,4.21e-8,1.39e-7,
-                         4.65e-8,4.48e-8,5.88e-8,4.98e-8,1.15e-7])
-
-#construct real illustris lightcones from individual images
-
-#in parallel, produce estimated Hydro-ART surveys based on matching algorithms -- high-res?
-
 
 lcfile_cols={'col1':'snapshot',
              'col2':'SubfindID',
@@ -104,304 +67,324 @@ lcfile_cols={'col1':'snapshot',
              'col38':'v_kms_hubble',
              'col39':'g_AB_appmag'}
 
+scale_window=1.2
+mass_window=2.0
 
-def process_single_filter(data,lcdata,filname,fil_index,output_dir,image_filelabel,image_suffix,eff_lambda_microns,lim=None,minz=None):
+def process_single_filter_subimage(image_parameters,galaxy_data,lcdata,filname,lambda_eff_microns):
 
-    data=copy.copy(data)
+    print('**** Processing subimage:  ',image_parameters)
+
+    single_filter_subimage=np.ndarray((image_parameters['Npix'],image_parameters['Npix']))
+    print(single_filter_subimage.shape)
+
+    #find sources in this sub-image
+
+    #use buffer to clear edge effects from lower left
+    buf_deg=10.0/3600.0 #10 arcsec buffer?
+    sub_indices=(lcdata['ra_deg']>=image_parameters['x1_deg']-buf_deg)*(lcdata['ra_deg']<image_parameters['x2_deg'])*(lcdata['dec_deg']>=image_parameters['y1_deg']-buf_deg)*(lcdata['dec_deg']<image_parameters['y2_deg'])
+
+    sub_data=lcdata[sub_indices]
+
+    success=0
+
+    image_catalog={'filter':filname}
+
+    #final source info
+    xcen_list=[]
+    ycen_list=[]
+    final_flux_njy_list=[]
+    ab_appmag_list=[]
     
-    print('Processing:  ', filname)
-    full_npix=data['full_npix'][0]
-    pixsize_arcsec=data['pixsize_arcsec'][0]
-    n_galaxies=data['full_npix'].shape[0]
+    #galaxy_data=galaxy_data.fromkeys(['image_dir','scale','simlabel','Mvir','Mstar','Rhalf_stars'])
 
+    #original image source data
+    final_file_list=[]
+    image_dir_list=[]
+    scalefactor_list=[]
+    simlabel_list=[]
+    Mvir_list=[]
+    mstar_list=[]
+    rhalf_list=[]
 
-    if filname.find('WFI')==0:
-        fn=filname[-4:]
-        filname='wfirst/wfidrm15_'+fn
+    #lightcone entry data... all of it???
+    
+    
+    for i,entry in enumerate(sub_data):
+        #need pos_i, pos_j
+        pos_i=np.int64( (entry['ra_deg']-image_parameters['x1_deg'])*np.float64(image_parameters['Npix'])/(image_parameters['x2_deg']-image_parameters['x1_deg'])   )
+        pos_j=np.int64( (entry['dec_deg']-image_parameters['y1_deg'])*np.float64(image_parameters['Npix'])/(image_parameters['y2_deg']-image_parameters['y1_deg'])   )
+
+        #select image file to insert
+        mass_value=entry['subhalo_mass_msun']
+        scale_value=1.0/(1.0+entry['true_z'])
+        mstar_value=entry['mstar_msun_rad']
         
-    try:
-        pbi= filters_to_analyze==filname
-        this_psf_file=os.path.join(psf_dir,psf_names[pbi][0])
-        this_psf_pixsize_arcsec=psf_pix_arcsec[pbi][0]
-        this_psf_fwhm=psf_fwhm[pbi][0]
-        this_photfnu_Jy=photfnu_Jy[pbi][0]
-        print('PSF info: ', this_psf_file, this_psf_pixsize_arcsec, this_psf_fwhm, this_photfnu_Jy)
-        do_psf=True
-    except:
-        print('Missing filter info, skipping PSF: ', filname)
-        do_psf=False
-        this_psf_pixsize_arcsec=pixsize_arcsec
-        #return None
-    
 
+        galaxy_scale_indices=(galaxy_data['scale']>=scale_value/scale_window)
+        galaxy_scale_indices*=(galaxy_data['scale']<=scale_value*scale_window)
+        
+        galaxy_mass_indices=(galaxy_data['Mvir']>=mass_value/mass_window)
+        galaxy_mass_indices*=(galaxy_data['Mvir']<=mass_value*mass_window)
 
-    desired_pixsize_arcsec=this_psf_pixsize_arcsec
+        galaxy_search_indices=galaxy_scale_indices*galaxy_mass_indices
 
-    full_fov=full_npix*pixsize_arcsec
-
-    desired_npix=full_fov/desired_pixsize_arcsec
-
-    print('Orig pix: ', full_npix, ' Desired pix: ', desired_npix)
-
-    if do_psf is True:
-        orig_psf_kernel = pyfits.open(this_psf_file)[0].data 
-
-        #psf kernel shape must be odd for astropy.convolve??
-        if orig_psf_kernel.shape[0] % 2 == 0:
-            new_psf_shape = orig_psf_kernel.shape[0]-1
-            psf_kernel = congrid.congrid(orig_psf_kernel,(new_psf_shape,new_psf_shape))
+        found_galaxy=False
+        
+        if np.sum(galaxy_search_indices)==0 and np.sum(galaxy_scale_indices)>0:
+            #pick random galaxy and resize?
+            #index into list of Trues
+            random_index=random.randint(np.sum(galaxy_scale_indices))
+            scale_where=np.where(galaxy_scale_indices==True)[0]
+            galaxy_index=scale_where[random_index]
+            success+=1
+            found_galaxy=True
+        elif np.sum(galaxy_search_indices)==0 and np.sum(galaxy_scale_indices)==0:
+            galaxy_index=None
+            pass
         else:
-            psf_kernel = orig_psf_kernel
+            random_index=random.randint(np.sum(galaxy_search_indices))
+            galaxy_where=np.where(galaxy_search_indices==True)[0]
+            galaxy_index=galaxy_where[random_index]
+            success+=1
+            found_galaxy=True
+
+
         
-        assert( psf_kernel.shape[0] % 2 != 0)
-
-
-    image_cube = np.zeros((full_npix,full_npix),dtype=np.float64)
-
-    success=[]
-
-    #for bigger files, may need to split by filter first
-    index=np.arange(n_galaxies)
-
-    for pos_i,pos_j,origin_i,origin_j,run_dir,this_npix,this_z,num in zip(data['pos_i'],data['pos_j'],data['origin_i'],data['origin_j'],data['run_dir'],data['this_npix'],data['z'],index):
-        if lim is not None:
-            if num > lim:
-                success.append(False)
-                continue
-        if minz is not None:
-            if this_z < minz:
-                success.append(False)
-                continue
-
-        try:
-            bblist=pyfits.open(os.path.join(run_dir,'broadbandz.fits'))
-            this_cube = bblist['CAMERA0-BROADBAND-NONSCATTER'].data
-            bblist.close()
-
-            #if catalog and image have different npix, this is a failure somewhere
-            cube_npix=this_cube.shape[-1]
-            assert(cube_npix==this_npix)
             
-            success.append(True)
-        except:
-            print('Missing file or mismatched shape, ', run_dir, cube_npix, this_npix)
-            success.append(False)
-            continue
+        found_data=False
+        #now we have galaxy_index
+        if galaxy_index is not None:
+            mstar_factor=mstar_value/(galaxy_data['Mstar'][galaxy_index])
+            size_factor=(mstar_factor)**0.5
 
+            folder=galaxy_data['image_dir'][galaxy_index]
+            label=galaxy_data['simlabel'][galaxy_index]
+            possible_files=np.sort(np.asarray(glob.glob(folder+'/hires_images_cam??/'+label+'cam??_'+filname+'*.fits')))
+            
+
+            if possible_files.shape[0]>0:
+                #pick a random camera
+                file_index=random.randint(possible_files.shape[0])
+                this_file=possible_files[file_index]
+                try:
+                    #locate file and load
+                    found_data=True
+                    this_hdu=fits.open(this_file)[0]
+                    this_image=this_hdu.data
+                    
+                    pixstr=this_file.split('_')[-2][3:]
+
+                    #this was foolish!
+
+                    pixsize_arcsec=np.float64(pixstr)
+
+
+                except:
+                    found_data=False
+
+
+                if found_data==True:
+                    #these are in nJy-- preserve integral!
+
+                    original_flux=np.sum(this_image)
+                    
+                    total_flux=original_flux*mstar_factor  #shrink luminosity by mstar factor
+
+                    this_npix=this_image.shape[0]
+                    
+                    #resize--preserve proper units
+
+                    desired_npix=np.int32( this_npix*(pixsize_arcsec/image_parameters['pix_size_arcsec'])*size_factor  )
+
+                    resized_image=congrid.congrid(this_image,(desired_npix,desired_npix))
+                    resized_flux=np.sum(resized_image)
+
+                    resized_image=resized_image*(total_flux/resized_flux)
+
+
+                    #is there a way to detect and avoid edge effects here??
+
+                    #1. smooth image
+                    #2. locate peak flux
+                    #3. apply gaussian/exponential factor strong enough to eliminate to full-res image?
+                    #4. use size info... to make sensible??
+
+                    
+                    #add to image
+
+                    npsub=desired_npix
+                    i1=pos_i
+                    i2=pos_i+npsub
+                    j1=pos_j
+                    j2=pos_j+npsub
+                    icen=np.float64(pos_i)+np.float64(npsub)/2.0
+                    jcen=np.float64(pos_j)+np.float64(npsub)/2.0
+
+                    #determine overlap image_parameters['Npix']
+                    im0=0
+                    im1=image_parameters['Npix']
+
+                    sub_image_to_add=resized_image[im0-i1:npsub-(i2-im1),im0-j1:npsub-(j2-im1)]
+                    print('Resized: ', mstar_factor, size_factor, pixsize_arcsec, this_npix, desired_npix, resized_image.shape,sub_image_to_add.shape, i1, i2, j1, j2)
+
+                    if sub_image_to_add.shape[0] > 0 and sub_image_to_add.shape[1] > 0:
+                        iplace=np.max([i1,0])
+                        jplace=np.max([j1,0])
+                        new_npi=sub_image_to_add.shape[0]
+                        new_npj=sub_image_to_add.shape[1]
+                        single_filter_subimage[iplace:iplace+new_npi,jplace:jplace+new_npj] += sub_image_to_add
+
+
+                    if icen >= 0.0 and jcen >= 0.0:
+                        #assemble catalog entries for this object
+                        #final source info
+                        xcen_list.append(icen)
+                        ycen_list.append(jcen)
+                        
+                        final_flux_njy_list.append(total_flux)
+                        ab_appmag_list.append(-2.5*np.log10((1.0e9)*(total_flux)/3632.0))
+                        
+                        #galaxy_data=galaxy_data.fromkeys(['image_dir','scale','simlabel','Mvir','Mstar','Rhalf_stars'])
+                        
+                        #original image source data
+                        final_file_list=[]
+                        image_dir_list=[]
+                        scalefactor_list=[]
+                        simlabel_list=[]
+                        Mvir_list=[]
+                        mstar_list=[]
+                        rhalf_list=[]
+                        
+                        #lightcone entry data... all of it???
+                            
+
+                        
+        print('found galaxy? ', found_galaxy, 'found data? ', found_data)
+                
 
 
             
-        i_tc=0
-        j_tc=0
-        i_tc1=this_npix
-        j_tc1=this_npix
-
-        if origin_i < 0:
-            i0=0
-            i_tc=-1*origin_i
-        else:
-            i0=origin_i
-
-        if origin_j < 0:
-            j0=0
-            j_tc=-1*origin_j
-        else:
-            j0=origin_j
-
-        if i0+this_npix > full_npix:
-            i1=full_npix
-            i_tc1= full_npix-i0   #this_npix - (i0+this_npix-full_npix)
-        else:
-            i1=i0+this_npix-i_tc
-
-        if j0+this_npix > full_npix:
-            j1=full_npix
-            j_tc1= full_npix-j0
-        else:
-            j1=j0+this_npix-j_tc
-
-
-        sub_cube1=image_cube[i0:i1,j0:j1]
-        this_subcube=this_cube[fil_index,i_tc:i_tc1,j_tc:j_tc1]
-        print(run_dir, this_subcube.shape)
-
-        image_cube[i0:i1,j0:j1] = sub_cube1 + this_subcube
-
-
-
-    #convolve here
-    
-    #first, re-grid to desired scale
-
-    new_image=congrid.congrid(image_cube,(desired_npix,desired_npix))
-    new_i=data['pos_i']*desired_npix/full_npix
-    new_j=data['pos_j']*desired_npix/full_npix
-
-    
-    pixel_Sr = (desired_pixsize_arcsec**2)/sq_arcsec_per_sr  #pixel area in steradians:  Sr/pixel
-    to_nJy_per_Sr = (1.0e9)*(1.0e14)*(eff_lambda_microns**2)/c   #((pixscale/206265.0)^2)*
-    #sigma_nJy = 0.3*(2.0**(-0.5))*((1.0e9)*(3631.0/5.0)*10.0**(-0.4*self.maglim))*self.Pix_arcsec*(3.0*self.FWHM_arcsec)
-    to_nJy_per_pix = to_nJy_per_Sr*pixel_Sr
+            
         
-    nopsf_im=new_image*to_nJy_per_pix
+    print('**** Subimage successes: ', str(success), '  out of  ', i+1)
 
-    if do_psf is True:
-        conv_im = convolve_fft(new_image,psf_kernel,boundary='fill',fill_value=0.0,normalize_kernel=True,allow_huge=True)
-        final_im=conv_im*to_nJy_per_pix
     
-    outname=os.path.join(output_dir,image_filelabel+'_'+filname.replace('/','-')+'_'+image_suffix+'_v1_lightcone.fits')
-    print('saving:', outname)
-
-    primary_hdu=pyfits.PrimaryHDU(nopsf_im)
-    primary_hdu.header['FILTER']=filname.replace('/','-')
-    primary_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
-    primary_hdu.header['UNIT']=('nanoJanskies','per pixel')
-    abzp= - 2.5*(-9.0) + 2.5*np.log10(3631.0)  #images in nanoJanskies
-    primary_hdu.header['ABZP']=(abzp, 'AB mag zeropoint')
-    if do_psf is True:
-        primary_hdu.header['PHOTFNU']=(this_photfnu_Jy,'Jy; approx flux[Jy] at 1 count/sec')
-        
-    primary_hdu.header['EXTNAME']='IMAGE_NOPSF'
-
-    if do_psf is True:
-        psfim_hdu=pyfits.ImageHDU(final_im)
-        psfim_hdu.header['EXTNAME']='IMAGE_PSF'
-        
-        psf_hdu = pyfits.ImageHDU(psf_kernel)
-        psf_hdu.header['EXTNAME']='MODELPSF'
-        psf_hdu.header['PIXSIZE']=(desired_pixsize_arcsec,'arcsec')
+    return single_filter_subimage
 
 
-    if np.sum(np.asarray(data.colnames)=='success')==0:
-        newcol=astropy.table.column.Column(data=success,name='success')
-        data.add_column(newcol)
+def build_lightcone_images(lightcone_file,run_type='images',lim=None,minz=None,
+                           image_filelabel='hlsp_misty_mockluvoir',
+                           total_images=16,
+                           do_sub_image_x=0,
+                           do_sub_image_y=0,
+                           n_cameras=19):
 
-    if np.sum(np.asarray(data.colnames)=='new_i')==0:
-        newicol=astropy.table.column.Column(data=new_i,name='new_i')
-        newjcol=astropy.table.column.Column(data=new_j,name='new_j')
+    #image parameters
+    image_parameters={}
+    image_parameters['Npix']=8192
+    image_parameters['pix_size_arcsec']=0.00732421875
+    #gives exactly 1-arcmin images
 
-        data.add_column(newicol)
-        data.add_column(newjcol)
+    lightcone_fov_arcmin=5.305160
+
+    #give some buffer for clearing edge effects
+    full_image_min=-0.95*lightcone_fov_arcmin/2.0
+    full_image_max=0.95*lightcone_fov_arcmin/2.0
+
+    x_min=full_image_min + (do_sub_image_x+0)*image_parameters['Npix']*image_parameters['pix_size_arcsec']/60.0
+    x_max=full_image_min + (do_sub_image_x+1)*image_parameters['Npix']*image_parameters['pix_size_arcsec']/60.0
+
+    y_min=full_image_min + (do_sub_image_y+0)*image_parameters['Npix']*image_parameters['pix_size_arcsec']/60.0
+    y_max=full_image_min + (do_sub_image_y+1)*image_parameters['Npix']*image_parameters['pix_size_arcsec']/60.0
 
 
+    image_parameters['x1_deg']=x_min/60.0
+    image_parameters['x2_deg']=x_max/60.0
+    image_parameters['y1_deg']=y_min/60.0
+    image_parameters['y2_deg']=y_max/60.0
+    image_parameters['xsub']=do_sub_image_x
+    image_parameters['ysub']=do_sub_image_y
 
-    data_df=data.to_pandas()
-    lc_df = lcdata.to_pandas()
-    lc_df.rename(columns=lcfile_cols,inplace=True)
+    #pick random seed 
+    random.seed(image_parameters['xsub']+int(total_images**0.5)*image_parameters['ysub'])
     
-    assert(lc_df.shape[0]==data_df.shape[0])
     
-    new_df=lc_df.join(data_df)
+    lightcone_dir=os.path.abspath(os.path.dirname(lightcone_file))
+    print('Constructing lightcone data from: ', lightcone_file)
 
-    failures = new_df.where(new_df['success']==False).dropna()
-    successes=new_df.drop(failures.index)
-    print('N successes: ', successes.shape[0])
-    
-    new_data=astropy.table.Table.from_pandas(successes)
-
-
-
-    table_hdu = pyfits.table_to_hdu(new_data)
-    table_hdu.header['EXTNAME']='Catalog'
-
-    if do_psf is True:
-        output_list=pyfits.HDUList([primary_hdu,psfim_hdu,psf_hdu,table_hdu])
-    else:
-        output_list=pyfits.HDUList([primary_hdu,table_hdu])
-
-
-
-    tempfile=os.path.join(os.path.expandvars('/scratch/$USER/$SLURM_JOBID'),os.path.basename(outname))
-    print('saving to scratch first.. , ', tempfile)
-    output_list.writeto(tempfile,overwrite=True)
-    output_list.close()
-
-    shutil.copy(tempfile,output_dir)
-    
-    return success
-
-
-def build_lightcone_images(image_info_file,lightcone_file,run_type='images',lim=None,minz=None,image_filelabel='hlsp_misty_vela',jwst_only=False):
-
-    data=ascii.read(image_info_file)
-    print(data)
-
-
-    #get expected shape
-    '''
-    test_file=os.path.join(data['run_dir'][0],'broadbandz.fits')
-    tfo =pyfits.open(test_file)
-    print(tfo.info())
-
-    try:
-        cube=tfo['CAMERA0-BROADBAND-NONSCATTER'].data
-        cubeshape=cube.shape
-    except:
-        square=tfo['CAMERA0-PARAMETERS'].data
-        nf=tfo['FILTERS'].data.shape[0]
-        cubeshape=(nf,square.shape[0],square.shape[0])
-        
-    print(cubeshape)
-    auxcube=tfo['CAMERA0-AUX'].data
-
-    filters_hdu = tfo['FILTERS']
-    '''
-    
-    lightcone_dir=os.path.abspath(os.path.dirname(image_info_file))
-    print('Constructing lightcone data from: ', lightcone_dir)
-
-    output_dir = os.path.join(lightcone_dir,os.path.basename(image_info_file).rstrip('.txt'))
+    output_dir = os.path.join(lightcone_dir,'luvoir_mosaics')
     print('Saving lightcone outputs in: ', output_dir)
     if not os.path.lexists(output_dir):
         os.mkdir(output_dir)
-
-    image_suffix=os.path.basename(image_info_file).rstrip('_images.txt')
-        
-    success_catalog=os.path.join(output_dir,os.path.basename(image_info_file).rstrip('.txt')+'_success.txt')
-
-    N_filters = cubeshape[0]
-
+    
     lcdata=ascii.read(lightcone_file)
 
-    filters_data=filters_hdu.data
-    print(filters_data.columns)
-    lambda_eff_microns = filters_data['lambda_eff']*1.0e6
-
-    for i,filname in enumerate(filters_data['filter']):
-        if jwst_only is True:
-            if filname.find('jwst')==-1:
-                continue
-
-        success=process_single_filter(data,lcdata,filname,i,output_dir,image_filelabel,image_suffix,lambda_eff_microns[i],lim=lim,minz=minz)
-        if i==0:
-            success=np.asarray(success)
-            #newcol=astropy.table.column.Column(data=success,name='success')
-            #data.add_column(newcol)
-            ascii.write(data,output=success_catalog,overwrite=True)
-
-
-    #convert units before saving.. or save both?
-
-    return
-
-
-
-
-def create_sim_catalogs(dataloc='/oasis/projects/nsf/hsc102/gsnyder/VelaData/VELA_v2'):
-
-    cwd=os.path.abspath(os.curdir)
-    os.chdir(dataloc)
+    for colkey in lcfile_cols:
+        col_obj=lcdata[colkey]
+        col_obj.name=lcfile_cols[colkey]
     
-    fns=np.asarray(glob.glob('VELA??/VELA??_*/images/broadbandz.fits*')) 
-    bbl_test=pyfits.open(fns[0])
-    fils=bbl_test['FILTERS'].data
-    filnames=fils['filter']
+    filters = ['Z']#['U','B','V','I','Z','nircam_f115w','nircam_f150w','nircam_f200w']
+    output_filters=['f850lp']#['f336w','f435w','f606w','f775w','f850lp','f115w','f150w','f200w']
+    lambda_eff_microns = [0.35,0.45,0.55,0.75,0.85,1.15,1.50,2.0]
 
 
+    #get galprops catalog(s)
+    galaxy_data={}
+    galaxy_data=galaxy_data.fromkeys(['image_dir','scale','simlabel','Mvir','Mstar','Rhalf_stars'])
+    print(galaxy_data.keys())
     
-    for fn in fns:
-        #save redshift and AB mag in approx rest-g filter?   or... re-construct Illustris lightcones and save observed mags in each filter??
+    galprops_files=np.sort(np.asarray(glob.glob(lightcone_dir+'/galprops_data/VELA??_galprops.npy')))
+    for gp_file in galprops_files:
+        print('   ', gp_file)
+        
+        this_gp_dict=(np.load(gp_file,encoding='bytes')).all()
+
+        snap_files=this_gp_dict[b'snap_files']
+        sim_dir_list = np.str_(snap_files).split('/')[7::8]   #OMG wut
+        sim_labels=[]
+        sim_names=[]
+
+        for sn in sim_dir_list:
+            sim_labels.append(sn.rstrip('_sunrise'))
+            sim_names.append(lightcone_dir+'/'+sn[0:6])
+            
+        sim_labels=np.asarray(sim_labels)
+        sim_names=np.asarray(sim_names)
+                
+        assert(sim_labels.shape[0]==len(sim_names))
+
+        if galaxy_data['image_dir'] is None:
+            galaxy_data['image_dir']=sim_names
+            galaxy_data['scale']=this_gp_dict[b'scale']
+            galaxy_data['simlabel']=sim_labels
+            galaxy_data['Mvir']=this_gp_dict[b'Mvir_dm']
+            galaxy_data['Mstar']=this_gp_dict[b'stars_total_mass']
+            galaxy_data['Rhalf_stars']=this_gp_dict[b'stars_rhalf']
+
+        else:
+            galaxy_data['image_dir']=np.append(galaxy_data['image_dir'],sim_names)
+            galaxy_data['scale']=np.append(galaxy_data['scale'],this_gp_dict[b'scale'])
+            galaxy_data['simlabel']=np.append(galaxy_data['simlabel'],sim_labels)
+            galaxy_data['Mvir']=np.append(galaxy_data['Mvir'],this_gp_dict[b'Mvir_dm'])
+            galaxy_data['Mstar']=np.append(galaxy_data['Mstar'],this_gp_dict[b'stars_total_mass'])
+            galaxy_data['Rhalf_stars']=np.append(galaxy_data['Rhalf_stars'],this_gp_dict[b'stars_rhalf'])
+                    
+    assert(galaxy_data['image_dir'].shape==galaxy_data['Mvir'].shape)
     
-    os.chdir(cwd)
+               
+    for i,filname in enumerate(filters):
+        print('processing.. ', filname)
+        
+        single_filter_subimage=process_single_filter_subimage(image_parameters,galaxy_data,lcdata,filname,lambda_eff_microns[i])
+
+        output_filename=os.path.join(output_dir,image_filelabel+'_imager'+'_fielda-subimage'+str(do_sub_image_x)+str(do_sub_image_y)+'-9-8_'+output_filters[i]+'_v1_lightcone.fits' )
+        print('**** Saving Subimage: ', output_filename )
+
+        outhdu=fits.PrimaryHDU(single_filter_subimage)
+        outhdu.header['PIXSIZE']=(image_parameters['pix_size_arcsec'],'arcsec')
+        
+        outlist=fits.HDUList([outhdu])
+        outlist.writeto(output_filename,overwrite=True)
     
+        
     return

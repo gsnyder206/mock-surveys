@@ -133,30 +133,30 @@ class LightCone:
 
     def export_runparams(self, filename,follow=False, follow_index=60, swapxy=False , swapxz=False ):
 	
-	dirvector = 1.0*self.u3
-	alpha_vector = 1.0*self.u1
-	delta_vector = 1.0*self.u2
-	xind=0
-	yind=1
-	zind=2
+        dirvector = 1.0*self.u3
+        alpha_vector = 1.0*self.u1
+        delta_vector = 1.0*self.u2
+        xind=0
+        yind=1
+        zind=2
 		
-	if swapxy==True:
-		temp=dirvector[0]
-		dirvector[0]=dirvector[1] ; dirvector[1]=temp
-		temp=alpha_vector[0]
-		alpha_vector[0]=alpha_vector[1] ; alpha_vector[1]=temp
-		temp=delta_vector[0]
-		delta_vector[0]=delta_vector[1] ; delta_vector[1]=temp
-		xind= 1 ; yind=0 ; zind=2
+        if swapxy==True:
+            temp=dirvector[0]
+            dirvector[0]=dirvector[1] ; dirvector[1]=temp
+            temp=alpha_vector[0]
+            alpha_vector[0]=alpha_vector[1] ; alpha_vector[1]=temp
+            temp=delta_vector[0]
+            delta_vector[0]=delta_vector[1] ; delta_vector[1]=temp
+            xind= 1 ; yind=0 ; zind=2
 			
-	if swapxz==True:
-		temp=dirvector[0]
-		dirvector[0]=dirvector[2] ; dirvector[2]=temp
-		temp=alpha_vector[0]
-		alpha_vector[0]=alpha_vector[2] ; alpha_vector[2]=temp
-		temp=delta_vector[0]
-		delta_vector[0]=delta_vector[2] ; delta_vector[2]=temp
-		xind= 2 ; yind=1 ; zind=0
+        if swapxz==True:
+            temp=dirvector[0]
+            dirvector[0]=dirvector[2] ; dirvector[2]=temp
+            temp=alpha_vector[0]
+            alpha_vector[0]=alpha_vector[2] ; alpha_vector[2]=temp
+            temp=delta_vector[0]
+            delta_vector[0]=delta_vector[2] ; delta_vector[2]=temp
+            xind= 2 ; yind=1 ; zind=0
 		
 
 
