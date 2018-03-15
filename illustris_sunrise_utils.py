@@ -478,7 +478,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     sf.write('snapshot_file       		%s\n'%fits_file)
     sf.write('output_file          		%s\n\n'%(int_dir+'/sfrhist.fits'))
     sf.write('n_threads          		'+nthreads+'\n')
-    sf.write('bh_radiative_efficiency        	'+str(bhradeff)+'\n'%)
+    sf.write('bh_radiative_efficiency        	'+str(bhradeff)+'\n')
     
     #only one of these should be translated
     gridw=200
