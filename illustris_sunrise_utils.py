@@ -257,7 +257,7 @@ def generate_sbatch_lightcone(run_dir, snap_dir, filename, galprops_data, run_ty
 def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clobber=True,
                                     stub_dir='$HOME/PythonCode/mock-surveys/stubs_illustris/',
                                     data_dir='$HOME/sunrise_data/',
-                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=True):
+                                    nthreads=24,redshift_override=None,walltime_limit='02:00:00',use_scratch=True,bhradeff=0.2):
 
     fits_file = os.path.abspath(snap_cutout)
     galprops_data = subhalo_object
@@ -305,7 +305,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
         generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
                                 galprops_data = galprops_data, run_type = run_type,
-                                nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch)
+                                nthreads=nthreads, idx = idx,scale_convert=scale_convert,use_scratch=use_scratch,bhradeff=bhradeff)
 
 
         print('\tGenerating mcrx.config file for %s...'%run_type)
@@ -463,7 +463,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
 
 
-def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False,isnap=None,use_cf00=False):
+def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, galprops_data, run_type, nthreads='1', idx = None,scale_convert=1.0,use_scratch=False,isnap=None,use_cf00=False,bhradeff=0.2):
     if use_scratch is True:
         if isnap is not None:
             int_dir='/scratch/$USER/$SLURM_JOBID/'+str(isnap)
@@ -478,6 +478,7 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
     sf.write('snapshot_file       		%s\n'%fits_file)
     sf.write('output_file          		%s\n\n'%(int_dir+'/sfrhist.fits'))
     sf.write('n_threads          		'+nthreads+'\n')
+    sf.write('bh_radiative_efficiency        	'+str(bhradeff)+'\n'%)
     
     #only one of these should be translated
     gridw=200
@@ -652,8 +653,8 @@ def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_
     bfg.write('redshift                          %.3f\n\n'%redshift)
     bfg.write('input_file                        %s\n'%(int_dir+'/mcrx.fits'))
     bfg.write('output_file                       %s\n'%(int_dir+'/grism.fits'))
-    bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_niriss200'))
-    bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
+    bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters_NIRISS/filters_niriss'))
+    bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters_NIRISS/'))
     bfg.close()
     
     
