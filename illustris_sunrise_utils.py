@@ -552,16 +552,16 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     if cam_file is None:
         mf.write('exclude_south_pole       true #comment\n')
         mf.write('camerafov     120\n')
-        mf.write('ntheta        2\n')
-        mf.write('nphi        3\n')
+        mf.write('ntheta        1\n')
+        mf.write('nphi        1\n')
     else:
         mf.write('camera_positions      %s\n'%(cam_file))
 
 
     mf.write('n_threads          		'+nthreads+'\n')
         
-    if run_type != 'ifu':
-        mf.write('use_kinematics	   %s\n'%('false #True for IFU'))
+    if run_type != 'ifu' and run_type != 'grism':
+        mf.write('use_kinematics	   %s\n'%('false #True for IFU or grism'))
     else:
         mf.write('use_kinematics	   %s\n'%('true #False for images'))
 
