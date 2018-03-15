@@ -273,7 +273,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
 
     
-    list_of_types = ['images','grism']
+    list_of_types = ['grism']
 
     idx=None
 
