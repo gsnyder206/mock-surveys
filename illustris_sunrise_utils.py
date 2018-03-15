@@ -704,6 +704,7 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         if run_type=='images':
             bsubf.write('cp /scratch/$USER/$SLURM_JOBID/broadband*.fits .')
         if run_type=='grism':
+            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/mcrx.fits .')
             bsubf.write('cp /scratch/$USER/$SLURM_JOBID/grism.fits .')
 
     
