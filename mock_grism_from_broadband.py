@@ -11,6 +11,9 @@ import gfs_sublink_utils as gsu
 import numpy as np
 import congrid
 
+ug_g235h=np.linspace(1.75,2.25,int( (2.25-1.75)/(2.0/2300.0)))
+ug_g235m=np.linspace(1.75,2.25,int( (2.25-1.75)/(2.0/800.0)))
+
 def get_integrated_spectrum(bbfile):
     bb=pyfits.open(bbfile)
     iq=bb['INTEGRATED_QUANTITIES'].data
@@ -66,7 +69,7 @@ def make_niriss_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
 
     print(delta_lam)
     
-    imw_cross=30.0
+    imw_cross=33.0
     imw_disp=total_width_impix+imw_cross
     Np=cube.shape[-1]
     mid = np.int64(Np/2)
