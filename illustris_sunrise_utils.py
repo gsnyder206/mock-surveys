@@ -702,10 +702,10 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
 
     if use_scratch is True:
         if run_type=='images':
-            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/broadband*.fits .')
+            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/broadband*.fits .\n')
         if run_type=='grism':
-            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/mcrx.fits .')
-            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/grism.fits .')
+            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/mcrx.fits .\n')
+            bsubf.write('cp /scratch/$USER/$SLURM_JOBID/grism.fits .\n')
 
     
     bsubf.write('\n')
