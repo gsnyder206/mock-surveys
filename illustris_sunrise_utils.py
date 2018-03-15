@@ -273,7 +273,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
 
     
-    list_of_types = ['images']
+    list_of_types = ['images','grism']
 
     idx=None
 
@@ -513,8 +513,10 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
         sf.write('min_wavelength			%s\n'%("0.02e-6"))
         sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
         
-        sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
-        sf.write('stellarmodelfile			%s\n'%(data_dir+'GFS_combined_nolines.fits'))   
+        #sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
+        #sf.write('stellarmodelfile			%s\n'%(data_dir+'GFS_combined_nolines.fits'))   
+        sf.write('mappings_sed_file			%s\n'%(data_dir+"Smodel_full_hires.fits"))
+        sf.write('stellarmodelfile			%s\n'%(data_dir+"logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
 
 
 

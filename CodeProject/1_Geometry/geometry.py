@@ -428,63 +428,52 @@ if __name__=="__main__":
     mpcgrid = cosmology.comoving_mpc_grid
     zgrid = cosmology.redshift_grid
 
-    print("{:6s},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f},{:6.0f}".format('box', 25.0, 50.0, 100.0, 250.0, 500.0, 1000.0))
+    sizes=[150.0,300.0,600.0,1000.0]
+    
+    print("{:6s},{:6.0f},{:6.0f},{:6.0f},{:6.0f}".format('box', sizes[0],sizes[1],sizes[2],sizes[3]))
     m = 10.0 ; n = 11.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
 
 
     m = 8.0 ; n = 9.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
 
     m = 6.0 ; n = 7.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
 
     m = 4.0 ; n = 5.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
 
     m = 2.0 ; n = 3.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
     m = 2.0 ; n = 1.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*25.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*50.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*100.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*250.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*500.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*1000.0),mpcgrid,zgrid),
-                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*3000.0),mpcgrid,zgrid)))
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),
+                                                 np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
