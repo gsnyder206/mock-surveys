@@ -652,7 +652,7 @@ def generate_broadband_config_grism(run_dir, snap_dir, data_dir, filename, stub_
     bfg.write('redshift                          %.3f\n\n'%redshift)
     bfg.write('input_file                        %s\n'%(int_dir+'/mcrx.fits'))
     bfg.write('output_file                       %s\n'%(int_dir+'/grism.fits'))
-    bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_grism'))
+    bfg.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_niriss200'))
     bfg.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
     bfg.close()
     
