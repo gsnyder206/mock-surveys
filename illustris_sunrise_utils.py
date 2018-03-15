@@ -273,7 +273,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
     stub_files = np.asarray(glob.glob(os.path.join('stub_dir','*')))
 
     
-    list_of_types = ['grism']
+    list_of_types = ['grism','images']
 
     idx=None
 
@@ -696,7 +696,7 @@ def generate_sbatch(run_dir, snap_dir, filename, galprops_data, run_type, ncpus=
         #bsubf.write('gzip -9 mcrx.fits\n')
     elif run_type=='grism':
         bsubf.write('/home/gsnyder/bin/broadband broadbandgrism.config > broadbandgrism.out 2> broadbandgrism.err\n')
-        #bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
+        bsubf.write('rm -rf sfrhist.fits\n')   #enable this after testing
         #bsubf.write('rm -rf mcrx.fits\n')   #enable this after testing
 
     if use_scratch is True:
