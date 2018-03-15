@@ -510,8 +510,8 @@ def generate_sfrhist_config(run_dir, filename, data_dir, stub_name, fits_file, g
         sf.write('stellarmodelfile			%s\n'%(data_dir+"logspace-Patrik-imfKroupa-geneva-Zmulti-hires.fits"))
 
     elif run_type == 'grism':
-        sf.write('min_wavelength			%s\n'%("0.02e-6"))
-        sf.write('max_wavelength			%s\n\n'%("5.0e-6"))
+        sf.write('min_wavelength			%s\n'%("4.5e-7"))  #NIRISS F200W
+        sf.write('max_wavelength			%s\n\n'%("5.5e-7"))
         
         #sf.write('mappings_sed_file			%s\n'%(data_dir+'Mappings_Smodels_gfs.fits'))
         #sf.write('stellarmodelfile			%s\n'%(data_dir+'GFS_combined_nolines.fits'))   
