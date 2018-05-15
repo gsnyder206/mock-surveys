@@ -40,12 +40,13 @@ def make_niriss_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
     max_lam=2.220
     
     hdu=go['CAMERA0-BROADBAND-NONSCATTER']
-    cube=hdu.data #L_lambda units! 
+    cube=hdu.data[6:,:,:] #L_lambda units! 
     #cube=np.flipud(cube) ; print(cube.shape)
     
     fil=go['FILTERS']
-    lamb=fil.data['lambda_eff']*1.0e6
-    flux=fil.data['L_lambda_eff_nonscatter0']
+    lamb=fil.data['lambda_eff'][6:]*1.0e6
+    flux=fil.data['L_lambda_eff_nonscatter0'][6:]
+
     
     g_i = (lamb >= min_lam) & (lamb <= max_lam)
     
@@ -53,7 +54,6 @@ def make_niriss_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
     kpc_per_arcsec=1.0/arcsec_per_kpc.value
     
     im_kpc=hdu.header['CD1_1']
-    print('pix size kpc: ', im_kpc)
     
     niriss_kpc_per_pix=niriss_pix_as*kpc_per_arcsec
     total_width_pix=(1.0e3)*(max_lam-min_lam)/f200_nm_per_pix
@@ -67,9 +67,8 @@ def make_niriss_trace(bbfile='grism.fits',outname='grismtrace',ybox=None,xbox=No
     psf_kpc=psf_arcsec*kpc_per_arcsec
     psf_impix=psf_kpc/im_kpc
 
-    print(delta_lam)
     
-    imw_cross=33.0
+    imw_cross=32
     imw_disp=total_width_impix+imw_cross
     Np=cube.shape[-1]
     mid = np.int64(Np/2)
