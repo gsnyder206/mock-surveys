@@ -1,7 +1,7 @@
 nbodycod		yt
 
-use_mappings_seds	true
-#use_mappings_seds	false / don't use Groves HII+PDR templates, just Starburst99
+#use_mappings_seds	true
+use_mappings_seds	false / don't use Groves HII+PDR templates, just Starburst99
 
 
 #mappings_pdr_fraction	0. / no PDRs
@@ -15,9 +15,9 @@ mappings_mcl		1e6
 #mappings_pdr_file       ~chayward/sundata/mappings/Z1_AvRadii.txt
 #cluster_mappings_particles   true / combines particles into one particle if they overlap; potentially important for extreme starbursts where a lot of Mappings particles are present
 
-bhmodelfile		~gsnyder/sunrise_data/newbhmodel.fits
+bhmodelfile		/home5/gfsnyder/sunrise_data/newbhmodel.fits
 # Use this high-resolution version for kinematics (N/A currently)
-bhmodelfile		~gsnyder/sunrise_data/newbhmodel_hires.fits
+bhmodelfile		/home5/gfsnyder/sunrise_data/newbhmodel_hires.fits
 
 bh_radiative_efficiency	0.2
 #bh_radiative_efficiency 0. / turn AGN off
@@ -54,5 +54,5 @@ size_factor     	1.0
 max_level       	11
 work_chunk_levels       4
 
-mcrx_data_dir   	/home/gsnyder/code/InstallationLibraries/sunrise/src/
+mcrx_data_dir   	/home5/gfsnyder/code/InstallationLibraries/sunrise/src/
 

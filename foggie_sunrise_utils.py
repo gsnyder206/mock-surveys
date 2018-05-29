@@ -167,7 +167,19 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s
 
 def setup_foggie_image_pipeline():
 
+    dat=ascii.read('sunrise_enzo_snap_list.txt')
+    snaps=dat['col1']
+    props=dat['col2']
+    
+
+    for snap,prop in zip(snaps,props):
+        setup_sunrise_enzo(snap,prop)
     
     #for loop over all snapshots in directory
 
     return
+
+
+
+if __name__=="__main__":
+    setup_foggie_image_pipeline()
