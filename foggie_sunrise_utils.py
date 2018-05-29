@@ -111,7 +111,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
         print('\tGenerating sunrise.sbatch file for %s...'%run_type)
         if pleiades is True:
             qsub_fn = 'sunrise.qsub'
-            final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, model='ivy'
+            final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, model='ivy',
                                      galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit,
                                      use_scratch=use_scratch,candelize=False)
         else:
