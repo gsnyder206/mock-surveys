@@ -112,8 +112,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
         if pleiades is True:
             qsub_fn = 'sunrise.qsub'
             final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, model='ivy',
-                                     galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit,
-                                     use_scratch=use_scratch,candelize=False)
+                                     galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit)
         else:
             sbatch_fn   = 'sunrise.sbatch'		
             final_fn = isu.generate_sbatch(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
