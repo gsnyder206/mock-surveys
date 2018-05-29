@@ -37,7 +37,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     dirdirdir=os.path.join(dirdir,os.path.basename(dirdir))
     print('checking.. ', dirdir, dirdirdir, fits_file)
 
-    idx = np.argwhere( galprops_data['snap_files']==dirdirdir )[0]
+    idx = np.argwhere( galprops_data['snap_files']==dirdirdir )[0][0]
 
     cam_file = fits_file.rstrip('.fits')+'.cameras'
 
@@ -173,6 +173,8 @@ def setup_foggie_image_pipeline():
     
 
     for snap,prop in zip(snaps,props):
+        print(snap, prop)
+        
         setup_sunrise_enzo(snap,prop)
     
     #for loop over all snapshots in directory
