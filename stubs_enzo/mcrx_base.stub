@@ -92,6 +92,6 @@ use_counters		false
 #skip_postprocessing	true
 
 mcrx_version		v4 / Tagged version used
-mcrx_data_dir   	/home/gsnyder/code/InstallationLibraries/sunrise/src/
+mcrx_data_dir   	$HOME/code/InstallationLibraries/sunrise/src/
 
 
