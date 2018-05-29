@@ -128,7 +128,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s
 
     bsubf = open(run_dir+'/'+filename, 'w+')
     bsubf.write('#!/bin/bash\n')
-    bsubf.write('#PBS -W group_list='group+'\n')
+    bsubf.write('#PBS -W group_list='+group+'\n')
     bsubf.write('#PBS -S /bin/bash\n')   #apparently this is a thing
     bsubf.write('#PBS -l select=1:ncpus='+ncpus+':model='+model+'\n')   #selects cpu model and number (sunrise uses 1 node)
     bsubf.write('#PBS -l walltime='+walltime+'\n')    #hh:mm:ss before job is killed
