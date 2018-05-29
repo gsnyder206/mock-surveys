@@ -32,6 +32,8 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     list_of_types = ['images','grism']
 
     galprops_data = np.load(prop_file)[()]
+    print(galprops_data)
+    
     #oh wow
     dirdir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(fits_file))))
     dirdirdir=os.path.join(dirdir,os.path.basename(dirdir))
@@ -171,7 +173,6 @@ def setup_foggie_image_pipeline():
     snaps=dat['snapshot_list']
     props=dat['galprops_list']
     
-
     for snap,prop in zip(snaps,props):
         print(snap, prop)
         
