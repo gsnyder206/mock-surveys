@@ -95,7 +95,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
             isu.generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                              stub_name = broadband_stub, 
-                                             galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch)
+                                                 galprops_data = galprops_data, idx = idx,redshift=redshift,use_scratch=use_scratch,filter_set_light=True)
         if run_type == 'grism': 
             print('\tGenerating broadband.config file for %s...'%run_type)
             broadband_fn   = 'broadband.config'

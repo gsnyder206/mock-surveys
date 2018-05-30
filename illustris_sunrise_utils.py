@@ -590,7 +590,7 @@ def generate_mcrx_config(run_dir, snap_dir, filename, stub_name, galprops_data, 
     return
 
 
-def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0,use_scratch=False,isnap=None):
+def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub_name, galprops_data, idx = None,redshift=0.0,use_scratch=False,isnap=None,light_filter_set=False):
 
     #copy sunrise filter folder to snap_dir+'/inputs/sunrise_filters/'
 
@@ -623,7 +623,11 @@ def generate_broadband_config_images(run_dir, snap_dir, data_dir, filename, stub
     bfz.write('redshift                          %.8f\n\n'%redshift)
     bfz.write('input_file                        %s\n'%(int_dir+'/mcrx.fits'))
     bfz.write('output_file                       %s\n'%(int_dir+'/broadbandz.fits'))
-    bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st'))
+    if light_filter_set is False:
+        bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st'))
+    else:
+        bfz.write('filter_list                       %s\n'%(data_dir+'sunrise_filters/filters_st_light'))
+        
     bfz.write('filter_file_directory             %s\n'%(data_dir+'sunrise_filters/'))
     bfz.close()
     
