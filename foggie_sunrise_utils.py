@@ -169,7 +169,7 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s
 
 def make_setup_list():
 
-    fits_list=np.sort(np.asarray(glob.glob('*/*_sunrise/input/*.fits')))
+    fits_list=np.sort(np.asarray(glob.glob(os.path.abspath('*/*_sunrise/input/*.fits'))))
     print(fits_list)
 
     prop_list = glob.glob('*_galprops.npy')
