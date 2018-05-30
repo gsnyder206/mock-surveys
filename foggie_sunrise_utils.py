@@ -172,8 +172,15 @@ def make_setup_list():
     fits_list=np.sort(np.asarray(glob.glob(os.path.abspath('*/*_sunrise/input/*.fits'))))
     print(fits_list)
 
-    prop_list = glob.glob('*_galprops.npy')
+    prop_list = glob.glob(os.path.abspath('*_galprops.npy'))
     print(prop_list)
+
+    fo=open('sunrise_enzo_snap_list.txt','w')
+    fo.write('snapshot_list     galprops_list\n')
+    for ff in fits_list:
+        fo.write(ff+'     '+prop_list[0]+'\n')
+        
+    fo.close()
     
     return
 
