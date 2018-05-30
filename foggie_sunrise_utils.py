@@ -11,7 +11,7 @@ import illustris_sunrise_utils as isu
 
 def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
                        stub_dir='$HOME/PythonCode/mock-surveys/stubs_enzo/',
-                       data_dir='$HOME/sunrise_data/',
+                       data_dir='$HOME/sunrise_data/',list_of_types = ['images','grism'],
                        pleiades=True,nthreads=20,redshift_override=None,walltime_limit='02:00:00',use_scratch=False):
 
     fits_file = os.path.abspath(snap_fits)
@@ -29,7 +29,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
 
     
-    list_of_types = ['images','grism']
+    
 
     galprops_data = np.load(prop_file)[()]
     
@@ -110,18 +110,22 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
 
         print('\tGenerating sunrise.sbatch file for %s...'%run_type)
+        submit_list=[]
+        
         if pleiades is True:
             qsub_fn = 'sunrise.qsub'
             final_fn = generate_qsub(run_dir = run_dir, snap_dir = snap_dir, filename = qsub_fn, model='ivy',
                                      galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit)
+            submit_list.append(final_fn)
         else:
             sbatch_fn   = 'sunrise.sbatch'		
             final_fn = isu.generate_sbatch(run_dir = run_dir, snap_dir = snap_dir, filename = sbatch_fn, 
                                        galprops_data = galprops_data, run_type = run_type,ncpus=nthreads,walltime=walltime_limit,use_scratch=use_scratch,candelize=True)
-
+            submit_list.append(final_fn)
+            
         
     
-    return final_fn
+    return submit_list, list_of_types
 
 
 def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s1938',ncpus='12', model='ivy', queue='normal',email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0):
@@ -189,14 +193,14 @@ def setup_foggie_image_pipeline():
     snaps=dat['snapshot_list']
     props=dat['galprops_list']
 
-    fo=open('submit_all_sunrise.sh','w')
+    fo=open('submit_all_sunrise_images.sh','w')
     
     
     for snap,prop in zip(snaps,props):
         
-        sunrise_submit_script = setup_sunrise_enzo(snap,prop)
-
-        fo.write('qsub '+sunrise_submit_script+'\n')
+        sunrise_submit_scripts, list_of_types = setup_sunrise_enzo(snap,prop,list_of_types=['images'])
+        
+        fo.write('qsub '+sunrise_submit_scripts[0]+'\n')
         
     fo.close()
 
