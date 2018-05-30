@@ -32,7 +32,6 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
     list_of_types = ['images','grism']
 
     galprops_data = np.load(prop_file)[()]
-    print(galprops_data)
     
     #oh wow
     dirdir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(fits_file))))
@@ -122,7 +121,7 @@ def setup_sunrise_enzo(snap_fits,prop_file,verbose=True,clobber=True,
 
         
     
-    return
+    return final_fn
 
 
 def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s1938',ncpus='12', model='ivy', queue='normal',email='gsnyder@stsci.edu',walltime='04:00:00',isnap=0):
@@ -189,13 +188,17 @@ def setup_foggie_image_pipeline():
     dat=ascii.read('sunrise_enzo_snap_list.txt')
     snaps=dat['snapshot_list']
     props=dat['galprops_list']
+
+    fo=open('submit_all_sunrise.sh','w')
+    
     
     for snap,prop in zip(snaps,props):
-        print(snap, prop)
         
-        setup_sunrise_enzo(snap,prop)
-    
-    #for loop over all snapshots in directory
+        sunrise_submit_script = setup_sunrise_enzo(snap,prop)
+
+        fo.write('qsub '+sunrise_submit_script+'\n')
+        
+    fo.close()
 
     return
 
