@@ -167,6 +167,16 @@ def generate_qsub(run_dir, snap_dir, filename, galprops_data, run_type, group='s
     return os.path.abspath(run_dir+'/'+filename)
 
 
+def make_setup_list():
+
+    fits_list=np.sort(np.asarray(glob.glob('*/*_sunrise/input/*.fits')))
+    print(fits_list)
+
+    prop_list = glob.glob('*_galprops.npy')
+    print(prop_list)
+    
+    return
+
 def setup_foggie_image_pipeline():
 
     dat=ascii.read('sunrise_enzo_snap_list.txt')
