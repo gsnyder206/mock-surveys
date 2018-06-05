@@ -36,7 +36,7 @@ seed			0
 
 #Optional keywords for sfrhist
 
-star_adaptive_smoothing false
+star_adaptive_smoothing true
 star_radius_factor	1.0	/ The radius of the stellar particles are set to the gravitational softening length multiplied by this factor.
 #bh_radius_factor 0.1	/ same for BHs
 
