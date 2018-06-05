@@ -1,8 +1,6 @@
 # This file contains general settings for broadband.  It is included by 
 # the file-specific configuration files
 
-filter_file_directory		filters/
-filter_list			filters_list
 filter_lambda_conversion	1.e-10	/ [] Filter files are in Angstrom
 #redshift			10.	/ [] Set to redshift SEDs for
 use_lyman_absorption		true
