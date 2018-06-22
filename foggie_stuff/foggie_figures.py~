@@ -1,0 +1,77 @@
+import astropy
+import astropy.io.ascii as ascii
+import numpy as np
+import extract_bb_images as ebi
+import matplotlib
+import matplotlib.pyplot as pyplot
+import make_color_image
+import astropy.units as u
+from astropy.cosmology import WMAP7,z_at_value
+import glob
+import sys
+
+flh = 0.695
+fogcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.285,Ob0=0.2850-0.2389)
+
+def foggie_time_series(label,alph=1e3,Q=15,label_redshift=True,label_time=True):
+    savefile='timeseries'+label+'.pdf'
+    
+    f=pyplot.figure(figsize=(10.0,8.0),dpi=500) 
+    pyplot.subplots_adjust(wspace=0.0,hspace=0.0,top=1.0,right=1.0,left=0.00,bottom=0.00)
+    
+    list_of_dumps=np.asarray(['RD0012','RD0013','RD0014','RD0015',
+                              'RD0016','RD0017','RD0018','RD0019',
+                              'RD0020','RD0021','RD0022','RD0023',
+                              'RD0024','RD0025','RD0026','RD0027',
+                              'RD0028','RD0029','RD0030','RD0031',
+                              'RD0032','RD0033','RD0034','RD0035',
+                              'RD0036','RD0037','RD0038','RD0039'])
+
+    flist=np.sort(np.asarray(glob.glob('RD00??/*_sunrise/input/images/broadbandz.fits')))
+    print(flist.shape,flist)
+    
+    mid=500
+    delt=500
+
+    Nx=5
+    Ny=4
+    Ntot=Nx*Ny
+    
+    for i,fn in enumerate(flist[0:Ntot]):
+        ims,fils,header,bbheader=ebi.extract_bb_images(fn,
+                                                       fils=['hst/acs_f606w','jwst/nircam_f115w','jwst/nircam_f277w'],
+                                                       hdukey='CAMERA5-BROADBAND-NONSCATTER')
+
+        
+        ax=f.add_subplot(4,5,i+1)
+        ax.set_xticks([]) ; ax.set_yticks([])
+        print(ims[2].shape)
+
+        b=(0.61**1.0)*ims[0][mid-delt:mid+delt,mid-delt:mid+delt]
+        g=(1.15**1.0)*ims[1][mid-delt:mid+delt,mid-delt:mid+delt]
+        r=(2.77**1.0)*ims[2][mid-delt:mid+delt,mid-delt:mid+delt]
+    
+        alph=alph ; Q=Q
+        rgbthing = make_color_image.make_interactive(b,g,r,alph,Q)
+        ax.imshow(rgbthing,interpolation='nearest',aspect='auto',origin='lower')
+
+        if label_redshift is True:
+            ax.annotate('z={:6.2f}'.format(bbheader['REDSHIFT']),
+                        (0.50,0.85),ha='center',xycoords='axes fraction',
+                        color='white',fontsize=10,va='center')
+        if label_time is True:
+            ax.annotate('t={:6.2f} Gyr'.format(fogcos.age(bbheader['REDSHIFT']).value ),
+                        (0.50,0.95),ha='center',xycoords='axes fraction',
+                        color='white',fontsize=10,va='center')
+        
+        #ax.annotate(label[i],(0.50,0.85),ha='center',xycoords='axes fraction',color='white',fontsize=10,va='center',bbox=dict(boxstyle='round', fc="gray", ec="blue"))
+        
+    f.savefig(savefile,dpi=500)
+
+if __name__=="__main__":
+    if len(sys.argv) > 1:
+        label=sys.argv[1]
+    else:
+        label=''
+        
+    foggie_time_series(label)
