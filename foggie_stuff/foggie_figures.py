@@ -27,8 +27,8 @@ def foggie_time_series(label,alph=1e3,Q=15,label_redshift=True,label_time=True,p
     mid=500
     delt=500
 
-    Nx=6
-    Ny=4
+    Nx=3
+    Ny=2
     Ntot=Nx*Ny
     
     for i,fn in enumerate(flist[0:Ntot]):
