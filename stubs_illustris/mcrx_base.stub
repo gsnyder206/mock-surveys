@@ -70,7 +70,7 @@ grain_model             wd01_Brent_PAH	/ default grain model
 #wd01_parameter_set      MW3.1_60
 wd01_parameter_set	DL07_MW3.1_60
 use_dl07_opacities      true / set to true if using DL07 models above
-grain_data_directory    ~chayward/sundata/dust_data/crosssections
+grain_data_directory    /home/gsnyder/sunrise_data/crosssections
 #grain_min_emission_wavelength
 template_pah_fraction                   0.5 / [] fraction of PAH grains that emit the template; others emit thermally
 
