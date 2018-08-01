@@ -300,7 +300,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
             
         print('\tGenerating sfrhist.config file for %s...'%run_type)
         sfrhist_fn   = 'sfrhist.config'
-        sfrhist_stub = os.path.join(stub_dir,'sfrhist_base.stub')
+        sfrhist_stub = 'sfrhist_base.stub'
 
         generate_sfrhist_config(run_dir = run_dir, filename = sfrhist_fn, data_dir=data_dir,
                                 stub_name = sfrhist_stub,  fits_file = fits_file, 
@@ -310,7 +310,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
 
         print('\tGenerating mcrx.config file for %s...'%run_type)
         mcrx_fn   = 'mcrx.config'
-        mcrx_stub = os.path.join(stub_dir,'mcrx_base.stub')
+        mcrx_stub = 'mcrx_base.stub'
 
         generate_mcrx_config(run_dir = run_dir, snap_dir = snap_dir, filename = mcrx_fn, 
                              stub_name = mcrx_stub,
@@ -321,7 +321,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
         if run_type == 'images': 
             print('\tGenerating broadband.config file for %s...'%run_type)
             broadband_fn   = 'broadband.config'
-            broadband_stub = os.path.join(stub_dir,'broadband_base.stub')
+            broadband_stub = 'broadband_base.stub'
 
             generate_broadband_config_images(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                              stub_name = broadband_stub, light_filter_set=light_filter_set,
@@ -329,7 +329,7 @@ def setup_sunrise_illustris_subhalo(snap_cutout,subhalo_object,verbose=True,clob
         if run_type == 'grism': 
             print('\tGenerating broadband.config file for %s...'%run_type)
             broadband_fn   = 'broadband.config'
-            broadband_stub = os.path.join(stub_dir, 'broadband_base.stub')
+            broadband_stub = 'broadband_base.stub'
 
             generate_broadband_config_grism(run_dir = run_dir, snap_dir = snap_dir, data_dir=data_dir, filename = broadband_fn, 
                                             stub_name = broadband_stub, 
