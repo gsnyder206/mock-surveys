@@ -306,7 +306,7 @@ class LightCone:
 if __name__=="__main__":
 
     print("Exploring some things about setting up lightcones...")
-    h=0.704
+    h=0.6774
     L = 20.0/h
     #print "L = ", L, " Mpc"
 
@@ -347,7 +347,7 @@ if __name__=="__main__":
     #data = asciitable.read('gfm_snaps.txt')
     #data = asciitable.read('snap_v_redshift.txt')
 	
-    data = asciitable.read('snap_v_redshift_Cosmo0.txt')	
+    data = asciitable.read('tng_snaps_v_redshift.txt')	
 	
     zlist = np.array(map(float,(data['col2'])))
 	
@@ -356,12 +356,12 @@ if __name__=="__main__":
     #namelist = np.asarray([(s)[85:89] for s in namelist])
 	
     namelist = ((data['col1']))
-    namelist = np.asarray([(s)[89:93] for s in namelist])
+    namelist = np.asarray([(str(s)) for s in namelist])
 
     #namelist = np.asarray([(s)[84:88] for s in namelist])
 
     #print namelist#, zlist
-    cosmology = Cosmology(H0=70.4,WM=0.27,WV=0.73)
+    cosmology = Cosmology(H0=67.74,WM=0.3089,WV=1.0-0.3089)
     #hudf_default = LightCone(75.0/h,cosmology,"Default Deep")
     #hudf_default.BasicCone(11.0, 9.0, namelist, zlist)
     #hudf_shallow = LightCone(75.0/h,cosmology,"Default Shallow")
@@ -369,49 +369,14 @@ if __name__=="__main__":
     #hudf_narrow = LightCone(25.0/h,cosmology,"Default Deep but Narrow")
     #hudf_narrow.BasicCone(11.0, 10.0, namelist, zlist, manual_fov_arcmin=1.0)
 	
-    #hudf = LightCone(25.0/h,cosmology,"Default 25mpc repeated, 136 snaps")
-    #hudf.BasicCone(11.0, 10.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
-    
-	#hudf_narrow = LightCone(20.0/h,cosmology,"Cluster evolution")
-    #hudf_narrow.BasicCone(15.0, 14.0, namelist, zlist, manual_fov_arcmin=1.2)
-    #print "Approx. Total Volume: ", hudf_shallow.volfrac
-    #testbox = (hudf_shallow.boxlist)[-2]
-    #note: v=lab frame
-    #note: last box is placeholder/not used
-    #print testbox.mid_z, testbox.v_origin, testbox.v_ingress, testbox.v_egress, testbox.snaplabel, testbox.snapredshift
-
-    #i=0
-    #for box in (hudf_narrow.boxlist)[:-1]:
-    #   print i, box.snaplabel, np.round_(box.snapredshift,3), np.round_(box.box_distance,6), np.round_(np.linalg.norm(box.v_egress - box.v_ingress)/hudf_narrow.L,3), np.round_(box.cylinder_radius_approx/hudf_narrow.L,3), np.round_(box.cylinder_radius_approx, 3), box.v_ingress, box.v_egress
-    #  i=i+1
-
-        #I think we can put the camera at the laboratory origin in comoving units, but need this in current *physical* units for Sunrise input
-        #OR option to put camera positions and FOV in comoving units?
-
-    #hudf_narrow.export_runparams('hudf_narrow_20Mpc_15_14_followcluster.txt', follow=True, follow_index=60)
-    #hudf.export_runparams('hudf_25Mpc_11_10_repeats_136snaps_mod.txt')
-
-    #hudf_bigbox = LightCone(75.0/h,cosmology,"Default 75mpc no repeats, 136 snaps")
-    #hudf_bigbox.BasicCone(11.0, 10.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
-    #hudf_bigbox.export_runparams('hudf_75Mpc_11_10_136snaps_fixedh_xyz_NEW.txt')
-    #hudf_bigbox.export_runparams('hudf_75Mpc_11_10_136snaps_fixedh_yxz_NEW.txt', swapxy=True)
-    #hudf_bigbox.export_runparams('hudf_75Mpc_11_10_136snaps_fixedh_zyx_NEW.txt', swapxz=True)
 
 
 
-    #hudf_bigbox_nwide = LightCone(75.0/h,cosmology,"Meh Wide 75mpc repeated, 136 snaps")
-    #hudf_bigbox_nwide.BasicCone(8.0, 7.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
-    #hudf_bigbox_nwide.export_runparams('hudfwide_75Mpc_8_7_xyz.txt')
-    #hudf_bigbox_nwide.export_runparams('hudfwide_75Mpc_8_7_yxz.txt', swapxy=True)
-    #hudf_bigbox_nwide.export_runparams('hudfwide_75Mpc_8_7_zyx.txt', swapxz=True)
-
-
-
-    hudf_bigbox_wide = LightCone(75.0/h,cosmology,"Wide 75mpc repeated, 136 snaps")
-    hudf_bigbox_wide.BasicCone(9.0, 8.0, namelist, zlist, manual_dist_limit=11000.0)  #z~18
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_xyz.txt')
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_yxz.txt', swapxy=True)
-    hudf_bigbox_wide.export_runparams('hudfwide_75Mpc_9_8_zyx.txt', swapxz=True)
+    hudf_bigbox_wide = LightCone(75.0/h,cosmology,"Wide 75 Mpc")
+    hudf_bigbox_wide.BasicCone(6.0, 5.0, namelist, zlist, manual_dist_limit=10000.0)  #z~8
+    hudf_bigbox_wide.export_runparams('tng100_6_5_xyz.txt')
+    hudf_bigbox_wide.export_runparams('tng100_6_5_yxz.txt', swapxy=True)
+    hudf_bigbox_wide.export_runparams('tng100_6_5_zyx.txt', swapxz=True)
 
 
     #hudf_bigbox_vwide = LightCone(75.0/h,cosmology,"Very Wide 75mpc repeated, 136 snaps")
@@ -428,7 +393,7 @@ if __name__=="__main__":
     mpcgrid = cosmology.comoving_mpc_grid
     zgrid = cosmology.redshift_grid
 
-    sizes=[150.0,300.0,600.0,1000.0]
+    sizes=[75.0/0.6774,205.0/0.6774,750.0/0.6774,2000.0/0.6774]
     
     print("{:6s},{:6.0f},{:6.0f},{:6.0f},{:6.0f}".format('box', sizes[0],sizes[1],sizes[2],sizes[3]))
     m = 10.0 ; n = 11.0
@@ -456,8 +421,8 @@ if __name__=="__main__":
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[3]),mpcgrid,zgrid)))
 
 
-    m = 4.0 ; n = 5.0
-    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi),
+    m = 5.0 ; n = 6.0
+    print("{:6.1f},{:6.2f},{:6.2f},{:6.2f},{:6.2f}".format(1.0/(m*n**2.0)*(180.0/math.pi)*60.0,
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[0]),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[1]),mpcgrid,zgrid),
                                                  np.interp(np.linalg.norm(np.asarray([n,m,n*m])*sizes[2]),mpcgrid,zgrid),

@@ -6,6 +6,7 @@ import astropy.units as u
 import astropy.io.ascii as ascii
 
 import os
+import pandas
 
 
 
@@ -14,6 +15,81 @@ def hdu_from_existing_filter(input_file):
 
 
 def wfirst_filters():
+    
+    xls='WFIRST_WIMWSM_throughput_data_190531.xlsm'
+    
+    throughputs=pandas.read_excel(xls,'EffectiveArea')
+
+    wl_microns=throughputs['Unnamed: 0'][19:].values
+
+    r062_A=throughputs['Unnamed: 1'][19:].values
+    z087_A=throughputs['Unnamed: 2'][19:].values
+    y106_A=throughputs['Unnamed: 3'][19:].values
+    j129_A=throughputs['Unnamed: 4'][19:].values
+    w146_A=throughputs['Unnamed: 5'][19:].values
+    h158_A=throughputs['Unnamed: 6'][19:].values
+    f184_A=throughputs['Unnamed: 7'][19:].values
+
+    maxA = np.max(throughputs[['Unnamed: 2','Unnamed: 3','Unnamed: 4',
+                               'Unnamed: 5','Unnamed: 6','Unnamed: 7','Unnamed: 1']][19:].values)
+    
+    r_tr = r062_A/maxA
+    z_tr = z087_A/maxA
+    y_tr = y106_A/maxA
+    j_tr = j129_A/maxA
+    w_tr = w146_A/maxA
+    h_tr = h158_A/maxA
+    f_tr = f184_A/maxA
+    
+    rhdu = wf_hdu(r_tr[r_tr > 1.0e-4],wl_microns[r_tr > 1.0e-4])
+    rhdu.header['EXTNAME']='wfirst/wfi_r062'
+    
+    zhdu = wf_hdu(z_tr[z_tr > 1.0e-4],wl_microns[z_tr > 1.0e-4])
+    zhdu.header['EXTNAME']='wfirst/wfi_z087'
+    
+    yhdu = wf_hdu(y_tr[y_tr > 1.0e-4],wl_microns[y_tr > 1.0e-4])
+    yhdu.header['EXTNAME']='wfirst/wfi_y106'
+    
+    jhdu = wf_hdu(j_tr[j_tr > 1.0e-4],wl_microns[j_tr > 1.0e-4])
+    jhdu.header['EXTNAME']='wfirst/wfi_j129'
+    
+    whdu = wf_hdu(w_tr[w_tr > 1.0e-4],wl_microns[w_tr > 1.0e-4])
+    whdu.header['EXTNAME']='wfirst/wfi_w146'
+    
+    hhdu = wf_hdu(h_tr[h_tr > 1.0e-4],wl_microns[h_tr > 1.0e-4])
+    hhdu.header['EXTNAME']='wfirst/wfi_h158'
+    
+    fhdu = wf_hdu(f_tr[f_tr > 1.0e-4],wl_microns[f_tr > 1.0e-4])
+    fhdu.header['EXTNAME']='wfirst/wfi_f184'
+    
+    '''
+    Z_tr = Z_Aeff_m2/np.max(Z_Aeff_m2)
+    Y_tr = Y_Aeff_m2/np.max(Y_Aeff_m2)
+    J_tr = J_Aeff_m2/np.max(J_Aeff_m2)
+    W_tr = W_Aeff_m2/np.max(W_Aeff_m2)
+    H_tr = H_Aeff_m2/np.max(H_Aeff_m2)
+    F_tr = F_Aeff_m2/np.max(F_Aeff_m2)
+
+    zhdu = wf_hdu(Z_tr,Z_wl_um)
+    zhdu.header['EXTNAME']='WFI_DRM15_Z087'
+    yhdu = wf_hdu(Y_tr,Y_wl_um)
+    yhdu.header['EXTNAME']='WFI_DRM15_Y106'
+    jhdu = wf_hdu(J_tr,J_wl_um)
+    jhdu.header['EXTNAME']='WFI_DRM15_J129'
+    whdu = wf_hdu(W_tr,W_wl_um)
+    whdu.header['EXTNAME']='WFI_DRM15_W149'
+    hhdu = wf_hdu(H_tr,H_wl_um)
+    hhdu.header['EXTNAME']='WFI_DRM15_H158'
+    fhdu = wf_hdu(F_tr,F_wl_um)
+    fhdu.header['EXTNAME']='WFI_DRM15_F184'
+    '''
+
+
+    return (rhdu,zhdu,yhdu,jhdu,whdu,hhdu,fhdu)
+
+
+    
+def wfirst_filters_drm15():
     Z_wl_um = np.asarray([0.75,0.7559,0.7617,0.7676,0.7734,0.7793,0.7851,0.7910,0.7968,0.8027,0.8085,0.8144,0.8202,0.8261,0.8320,0.8378,0.8437,0.8495,0.8554,0.8612,0.8671,0.8729,0.8788,0.8846,0.8905,0.8963,0.9022,0.9080,0.9139,0.9198,0.9256,0.9315,0.9373,0.9432,0.9490,0.9549,0.9607,0.9666,0.9724,0.9783,0.9841])
     Z_Aeff_m2 = np.asarray([0.069,1.955,2.317,2.292,2.292,2.294,2.279,2.275,2.266,2.271,2.268,2.272,2.266,2.270,2.262,2.258,2.263,2.247,2.251,2.252,2.273,2.270,2.267,2.265,2.264,2.253,2.258,2.255,2.255,2.253,2.253,2.249,2.246,2.235,2.231,2.219,2.214,2.117,0.050,0.000,0.000])
     Y_wl_um = np.asarray([0.92,0.9280,0.9361,0.9441,0.9522,0.9602,0.9683,0.9763,0.9844,0.9924,1.0005,1.0085,1.0166,1.0246,1.0327,1.0407,1.0488,1.0568,1.0649,1.0729,1.0810,1.0890,1.0971,1.1051,1.1132,1.1212,1.1293,1.1373,1.1454,1.1534,1.1615,1.1695,1.1776,1.1856,1.1937,1.2017,1.2098,1.2178,1.2259,1.2339,1.2420,1.2500])
@@ -53,9 +129,12 @@ def wfirst_filters():
     return (zhdu,yhdu,jhdu,whdu,hhdu,fhdu)
 
 def wf_hdu(tr,um):
-    col2 = pyfits.Column(name='totalrelativeefficiency',format='D',unit='relative fraction',array=tr)
-    col1 = pyfits.Column(name='wavelength',format='D',unit='angstrom',array=um*1.0e4)
-    cols = pyfits.ColDefs([col1,col2]) ;  
+    print(np.asarray(tr))
+    print(um)
+    
+    col2 = pyfits.Column(name='totalrelativeefficiency',format='D',unit='relative fraction',array=np.asarray(tr,dtype=np.float64))
+    col1 = pyfits.Column(name='wavelength',format='D',unit='angstrom',array=np.asarray(um,dtype=np.float64)*1.0e4)
+    cols = pyfits.ColDefs([col1,col2])
     zhdu = pyfits.BinTableHDU.from_columns(cols)
     return zhdu
 
@@ -69,7 +148,7 @@ def output_sunrise_filter_directory(fitsfile,dirname):
     all_list = []
     grism_list = []
     for hdu in f[1:]:
-        print hdu.header['EXTNAME']
+        #print hdu.header['EXTNAME']
         filter_name = os.path.join(dirname,hdu.header['EXTNAME'])
         filter_wl = hdu.data['wavelength']
         filter_tr = hdu.data['totalrelativeefficiency']
@@ -89,43 +168,30 @@ def output_sunrise_filter_directory(fitsfile,dirname):
 
 
     #output_lists
-    print all_list
-    print grism_list
+    #print all_list
+    #print grism_list
 
-    st_list = ['hst/wfc3_f275w',
-               'hst/wfc3_f336w',
+    st_list = ['hst/wfc3_f336w',
                'hst/acs_f435w',
                'hst/acs_f606w',
-               'hst/acs_f775w',
                'hst/acs_f814w',
-               'hst/acs_f850lp',
-               'hst/wfc3_f105w',
                'hst/wfc3_f125w',
-               'hst/wfc3_f140w',
                'hst/wfc3_f160w',
-               'WFI_DRM15_Z087',
-               'WFI_DRM15_Y106',
-               'WFI_DRM15_J129',
-               'WFI_DRM15_W149',
-               'WFI_DRM15_H158',
-               'WFI_DRM15_F184',
-               'jwst/nircam_f070w',
-               'jwst/nircam_f090w',
+               'wfirst/wfi_r062',
+               'wfirst/wfi_z087',
+               'wfirst/wfi_y106',
+               'wfirst/wfi_j129',
+               'wfirst/wfi_w146',
+               'wfirst/wfi_h158',
+               'wfirst/wfi_f184',
                'jwst/nircam_f115w',
                'jwst/nircam_f150w',
                'jwst/nircam_f200w',
                'jwst/nircam_f277w',
                'jwst/nircam_f356w',
                'jwst/nircam_f444w',
-               'jwst/miri_F560W',
                'jwst/miri_F770W',
-               'jwst/miri_F1000W',
-               'jwst/miri_F1130W',
-               'jwst/miri_F1280W',
-               'jwst/miri_F1500W',
-               'jwst/miri_F1800W',
-               'jwst/miri_F2100W',
-               'jwst/miri_F2550W']
+               'jwst/miri_F1500W']
 
     rest_list = ['standard/wfcam_j',
                  'standard/wfcam_h',
@@ -177,13 +243,13 @@ def output_sunrise_filter_directory(fitsfile,dirname):
 def input_old_filters(flist,folder):
     names = np.asarray( ascii.read(flist,Reader=ascii.NoHeader))
     hdus = []
-    print flist
-    print folder
-    print names
+    #print flist
+    #print folder
+    #print names
 
 
     for n in names:
-        print n[0]
+        #print n[0]
         path = os.path.join(folder,n[0])
 
         data = ascii.read(path)
@@ -191,7 +257,7 @@ def input_old_filters(flist,folder):
         tr = np.round(np.asarray(data['col2']),8)
         hdu = wf_hdu(tr,wl_ang/1.0e4)
         hdu.header['EXTNAME']=n[0][0:-4]
-        print hdu.header['EXTNAME']
+        #print hdu.header['EXTNAME']
         hdus.append(hdu)
 
     return hdus
@@ -212,6 +278,31 @@ def miri_filters():
     return hdus
 
 
+
+def nircam_filters():
+    flist = ['F070W_throughput.fits',
+             'F090W_throughput.fits',
+             'F115W_throughput.fits',
+             'F150W_throughput.fits',
+             'F200W_throughput.fits',
+             'F277W_throughput.fits',
+             'F356W_throughput.fits',
+             'F444W_throughput.fits',
+             'F410M_throughput.fits']
+    
+    hdus = []
+
+    for file in flist:
+        f = pyfits.open(os.path.join('NIRCam_Filters',file))
+        tr = f[1].data['THROUGHPUT']
+        wl = f[1].data['WAVELENGTH']
+        hdu = wf_hdu(tr,wl/1.0e4)
+        hdu.header['EXTNAME']='jwst/nircam_'+file[:-16]
+        hdus.append(hdu)
+    
+    return hdus
+
+
 def make_grism_filters(start,stop,number):
 
     micron_bins = np.logspace(np.log10(start),np.log10(stop),number)
@@ -223,7 +314,7 @@ def make_grism_filters(start,stop,number):
         bin_width = bin_stop-bin_start
         bin_center = (bin_start + bin_stop)/2.0
         thisname='grism/gen1_'+'{:5.3f}'.format(bin_center)
-        print bin_start, bin_stop, bin_width, bin_center, thisname
+        #print bin_start, bin_stop, bin_width, bin_center, thisname
         wl_start = bin_start-bin_width
         wl_stop = bin_stop+bin_width
         wl_grid = np.linspace(wl_start,wl_stop,30.0)
@@ -239,7 +330,7 @@ if __name__=="__main__":
     #get existing filters and add new ones
     #note these filters are for simple BROADBAND test images, not full simulations, so accuracy=== MEH
     wfirst_hdus = wfirst_filters()
-    print wfirst_hdus[4].data['totalrelativeefficiency'], wfirst_hdus[4].data['wavelength'], wfirst_hdus[4].header.cards
+    #print wfirst_hdus[4].data['totalrelativeefficiency'], wfirst_hdus[4].data['wavelength'], wfirst_hdus[4].header.cards
 
     primhdu = pyfits.PrimaryHDU()
     newlist = pyfits.HDUList([primhdu])
@@ -263,6 +354,9 @@ if __name__=="__main__":
     for hdu in miri_hdus:
         newlist.append(hdu)
 
+    nircam_hdus = nircam_filters()
+    for hdu in nircam_hdus:
+        newlist.append(hdu)
 
     gen1_grisms = make_grism_filters(0.69,5.0,250)
     #grs_grisms = make_grism_filters(1.35,1.89,250)

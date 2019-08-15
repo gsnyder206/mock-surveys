@@ -1,4 +1,4 @@
-## Wide 75mpc repeated, 136 snaps,   LightCone Created, 2018-02-07
+## Wide 75mpc repeated, 136 snaps,   LightCone Created, 2019-07-12
 ## Comoving Single Box L = 106.534090909
 ## HubbleParam = 0.704
 ## Basic info: n,m = 9.0 , 8.0
