@@ -1,5 +1,5 @@
 #custom
-illustris_api_key.txt
+load_api_key.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
