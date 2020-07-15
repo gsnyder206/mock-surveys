@@ -5,7 +5,6 @@ import glob
 import shutil
 import tarfile
 import string
-import pandas
 import astropy
 import astropy.cosmology
 import astropy.io.fits as fits
