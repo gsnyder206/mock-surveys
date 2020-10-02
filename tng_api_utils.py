@@ -15,6 +15,13 @@ import requests
 import io
 import h5py
 import load_api_key as lak
+from astropy.stats import gaussian_fwhm_to_sigma
+import scipy.ndimage
+import scipy as sp
+import photutils
+from photutils import aperture_photometry
+from photutils import CircularAperture
+
 
 ilh = 0.704
 illcos = astropy.cosmology.FlatLambdaCDM(H0=70.4,Om0=0.2726,Ob0=0.0456)
@@ -83,12 +90,14 @@ def get_subhalo_mockdata_as_fits(sim='TNG100-1',
     output=io.BytesIO()
     try:
         output.write(r.content)
-        ho=h5py.File(output)
+        ho=h5py.File(output,mode='r')
     except OSError as OE:
         print(r)
         print(url)
         raise
 
+    #print(ho.keys())
+    #print(ho['Header'])
     data=ho['grid'][()] #dataset should be nPixels x nPixels
 
     pixsize_arcsec = 60.0*(size/nPixels)
@@ -101,7 +110,6 @@ def get_subhalo_mockdata_as_fits(sim='TNG100-1',
         in_units='mag/arcsec^2' #(confirmed)
         #convert to nanoJanskies
         #size is fixed to be in arcmin
-
         flux_njy=(pixsize_arcsec**2)*1.0e9*3631.0*10.0**(-0.4*data)  #nJy
         out_data = flux_njy*1.0
         out_units='nanoJanskies'
@@ -152,3 +160,82 @@ def get_subhalo_mockdata_as_fits(sim='TNG100-1',
 
 
     return fits_hdu
+
+
+#takes as input the results of get_subhalo_mockdata_as_fits
+#returns the new HDU with PSF applied
+
+def convolve_with_fwhm(in_hdu, fwhm_arcsec=0.10):
+
+    #load image data and metadata
+    image_in=in_hdu.data
+    header_in=in_hdu.header
+
+    #Choi et al. 2018
+    #this_cosmology=astropy.cosmology.FlatLambdaCDM(0.72*100.0,0.26,Ob0=0.044)
+    #kpc_per_arcsec = this_cosmology.kpc_proper_per_arcmin(header_in['REDSHIFT']).value/60.0
+
+    #calculate PSF width in pixel units
+    #pixel_size_arcsec=header_in['PIX_KPC']/kpc_per_arcsec
+    pixel_size_arcsec=header_in['pixscale']
+
+    sigma_arcsec=fwhm_arcsec*gaussian_fwhm_to_sigma
+    sigma_pixels=sigma_arcsec/pixel_size_arcsec
+
+    image_out=sp.ndimage.filters.gaussian_filter(image_in,sigma_pixels,mode='nearest')
+    hdu_out = fits.ImageHDU(image_out,header=header_in)
+    hdu_out.header['FWHMPIX']=(sigma_pixels/gaussian_fwhm_to_sigma,'pixels')
+    hdu_out.header['FWHM']=(fwhm_arcsec,'arcsec')
+    hdu_out.header['SIGMAPIX']=(sigma_pixels,'pixels')
+    hdu_out.header['SIGMA']=(sigma_arcsec,'arcsec')
+    hdu_out.header['EXTNAME']='MockData_PSF'
+    hdu_out.header['PIXSIZE']=(pixel_size_arcsec,'arcsec')
+
+    return hdu_out
+
+
+#takes as input the results of convolve_with_fwhm
+#returns the new HDU with basic noise model applied
+def add_simple_noise_extractedsn(in_hdu,radius_arcsec=0.5,extractedsn=300):
+
+
+    image_in=in_hdu.data
+    header_in=in_hdu.header
+
+    #this is the approximate equation for sb magnitude input limit
+    #sigma_njy=(2.0**(-0.5))*((1.0e9)*(3631.0/5.0)*10.0**(-0.4*sb_maglim))*header_in['PIXSIZE']*(3.0*header_in['FWHM'])
+
+    #get flux in aperture
+    #can we guarantee that the galaxy is in the middle?
+    npix=image_in.shape[0]
+    ci=np.float32(npix)/2
+
+    radius_pixels = radius_arcsec/in_hdu.header['PIXSIZE']
+
+    positions = [(ci, ci),]
+    aperture = CircularAperture(positions, r=radius_pixels)
+    phot_table = aperture_photometry(image_in, aperture)
+    flux_aperture=phot_table['aperture_sum'][0]
+
+    #get npix in aperture
+    area_pixels=np.pi*radius_pixels**2
+
+
+
+    #convert to pixel noise level
+    sigma_njy=flux_aperture/(extractedsn*(area_pixels)**0.5)
+
+
+
+    noise_image = sigma_njy*np.random.randn(npix,npix)
+
+    image_out=image_in + noise_image
+
+    hdu_out = fits.ImageHDU(image_out,header=header_in)
+    hdu_out.header['EXTNAME']='MockImage_SN'
+    hdu_out.header['EXTSN']=(extractedsn,'rough extracted S/N ratio')
+    hdu_out.header['APERFLUX']=flux_aperture
+    hdu_out.header['APERRAD']=radius_pixels
+    hdu_out.header['RMSNOISE']=(sigma_njy,'nanojanskies')
+
+    return hdu_out
