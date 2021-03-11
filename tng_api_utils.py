@@ -65,6 +65,61 @@ def get(path, params=None,savepath=None, stream=False):
     return r
 
 
+#takes subhalo and partField as inputs
+#for ObsFrame, returns apparent AB magnitudes
+#for rest frame, returns absolute AB magnitudes
+
+def get_subhalo_magnitude(sim='TNG100-1',
+                            snap=50,
+                            sfid=0,
+                            partField='stellarBandObsFrame-wfc3_ir_f160w',
+                            axes='0,1'):
+
+
+    partType='stars'
+    size=0.30
+    nPixels=1
+
+    url=baseUrl+'/'+sim+'/snapshots/'+str(snap)+'/subhalos/'+str(sfid)+\
+             '/vis.hdf5?partType='+partType+'&partField='+partField+'&size='+str(size)+\
+             '&sizeType=arcmin&nPixels='+str(nPixels)+'&method=sphMap_subhalo'+'&axes='+axes
+
+
+
+    r=get(url,stream=True)
+
+    output=io.BytesIO()
+    try:
+        output.write(r.content)
+        ho=h5py.File(output,mode='r')
+    except OSError as OE:
+        print(r)
+        print(url)
+        raise
+
+    #print(ho.keys())
+    #print(ho['Header'])
+    data=ho['grid'][()] #dataset should be nPixels x nPixels
+
+    pixsize_arcsec = 60.0*(size/nPixels)
+
+    if partField.find('stellarBandObsFrame-')==0:
+        in_units='mag/arcsec^2' #(confirmed)
+        #convert to nanoJanskies
+        #size is fixed to be in arcmin
+        flux_njy=(pixsize_arcsec**2)*1.0e9*3631.0*np.sum(10.0**(-0.4*data))  #nJy
+        magnitude= -2.5*np.log10(flux_njy*(1.0e-9)/3631.0)
+
+    elif partField.find('stellarBand-')==0:
+        in_units='ABS AB mag'  #(true?)
+        flux= np.sum(10.0**(-0.4*data))
+        magnitude= -2.5*np.log10(flux)
+    else:
+        assert(False)
+
+    return magnitude
+
+
 
 def get_subhalo_mockdata_as_fits(sim='TNG100-1',
                                  snap=50,
