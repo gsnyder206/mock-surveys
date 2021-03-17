@@ -3,6 +3,10 @@ import astropy
 from astropy.io import fits
 from astropy.io import ascii
 from astropy import wcs
+from PIL import Image
+#resized_img = Image.fromarray(orj_img).resize(size=(new_h, new_w))
+#import scipy
+#from scipy.misc import imresize
 import tng_api_utils as tau
 import initialize_mock_fits as imf
 import os
@@ -11,6 +15,7 @@ from astropy.coordinates import SkyCoord
 from astropy.nddata import Cutout2D
 from astropy import units as u
 import time
+import sys
 
 
 lc_colnames=['Snapshot number', 'Subhalo index', 'RA degree', 'DEC degree',
@@ -72,10 +77,18 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
     use_hdu.data[np.isnan(use_hdu.data)]=0.0
 
     #manage weird-unit things here like Mz/Mtot and Age
+    total_flux_njy=np.sum(use_hdu.data)
+
+    n_arcmin=use_hdu.header['N_ARCMIN']
+
+    if total_flux_njy==0.0:
+        return n_arcmin, 0.0
 
     if reshape is True:
-        total_flux_njy=np.sum(use_hdu.data)
-        new_data=imresize(use_hdu.data,(cutout_size,cutout_size),interp='bicubic')
+        #this thing is deprecated
+        #new_data=imresize(use_hdu.data,(cutout_size,cutout_size),interp='bicubic')
+        new_data = Image.fromarray(use_hdu.data).resize(size=(cutout_size, cutout_size))
+        #print(np.sum(new_data))
         new_data = new_data*total_flux_njy/np.sum(new_data)
         use_hdu = fits.ImageHDU(new_data,header=use_hdu.header)
 
@@ -86,7 +99,7 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
     #output_data = input_data*0.0 + use_hdu.data
     #input_data += output_data
 
-    n_arcmin=use_hdu.header['N_ARCMIN']
+
     total_quant = np.sum(use_hdu.data)
 
     return n_arcmin, total_quant
@@ -121,6 +134,12 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         orig_lctable=hdulist['InputData']
         image_catalog=hdulist['OutputData']
         start_i=hydro_hdu.header['NEXTI']
+
+        #when NEXTI equals shape, we are done
+        if start_i == orig_lctable.data.shape[0]:
+            print('output file is complete, exiting.. ')
+            return hydro_hdu
+
     else:
         hydro_hdu = imf.blank_image(header_only=False,**kwargs)
         hydro_hdu.header['EXTNAME']=filtername
@@ -146,6 +165,7 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         orig_cols=orig_lctable.columns
         new_cols=fits.ColDefs([
             fits.Column(name='image_success',format='K',array=np.zeros_like(orig_lctable.data['Snapshot number'])),
+            fits.Column(name='primary_flag',format='K',array=np.zeros_like(orig_lctable.data['Snapshot number'])),
             fits.Column(name='photrad_kpc',format='D',array=np.zeros_like(orig_lctable.data['Apparent total gmag'])),
             fits.Column(name='cutoutfov_kpc',format='D',array=np.zeros_like(orig_lctable.data['Apparent total gmag'])),
             fits.Column(name='cutout_size',format='K',array=np.zeros_like(orig_lctable.data['Snapshot number'])),
@@ -158,7 +178,7 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
     scale_arcsec=hydro_hdu.header['PIXSCALE']
     hydro_wcs=wcs.WCS(hydro_hdu.header)
 
-    for i,row in enumerate(tqdm(orig_lctable.data[start_i:start_i+110 ],mininterval=1,miniters=10,smoothing=0.1)):
+    for i,row in enumerate(tqdm(orig_lctable.data[start_i:],mininterval=1,miniters=10,smoothing=0.1)):
         snapnum=row['Snapshot number']
         subhalo_id=row['Subhalo index']
         #print(snapnum,subhalo_id)
@@ -166,9 +186,17 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         #obtain size estimate
         try:
             subhalo_url=tau.baseUrl+simname+'/snapshots/'+str(snapnum)+'/subhalos/'+str(subhalo_id)
+            #print(subhalo_url)
             r=tau.get(subhalo_url)
+            #print(r)
             photrad_kpc=r['stellarphotometricsrad']/tau.tngh
-            starrad_kpc=r['subhalohalfmassradtype'][4]/tau.tngh
+            starrad_kpc=r['halfmassrad_stars']/tau.tngh
+            primary_flag=r['primary_flag']
+
+            #this below looks deprecated?
+            #starrad_kpc=r['subhalohalfmassradtype'][4]/tau.tngh
+            #print(photrad_kpc)
+            #print(starrad_kpc)
             #check subhalo flag here?
 
         except:
@@ -189,6 +217,7 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         image_catalog.data['photrad_kpc'][start_i+i]=photrad_kpc
         image_catalog.data['cutoutfov_kpc'][start_i+i]=cutoutfov_kpc
         image_catalog.data['cutout_size'][start_i+i]=cutout_size
+        image_catalog.data['primary_flag'][start_i+i]=primary_flag
 
         #create cutout object
         try:
@@ -224,6 +253,9 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         image_catalog.data['n_arcmin'][start_i+i]=n_arcmin
         image_catalog.data['total_quant'][start_i+i]=total_quant
         image_catalog.data['image_success'][start_i+i]=1
+
+        if i % 100 ==0:
+            sys.stdout.flush()
 
         if i % 1000 == 0:
             print('Saving intermediate image')

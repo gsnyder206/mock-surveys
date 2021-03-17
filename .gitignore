@@ -1,5 +1,6 @@
 #custom
 load_api_key.py
+mocks_from_publicdata/outputs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
