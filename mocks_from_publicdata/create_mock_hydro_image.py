@@ -200,7 +200,8 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
             #check subhalo flag here?
 
         except:
-            print('failed to get subhalo info',snapnum,subhalo_id)
+            print(sys.exc_info())
+            print('failed to get subhalo info',snapnum,subhalo_id)   #this could be nefarious as it can happen repeatedly, then a later success will cause the image to get corrupted.
             continue
 
         #probably need something better here.
@@ -254,10 +255,10 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         image_catalog.data['total_quant'][start_i+i]=total_quant
         image_catalog.data['image_success'][start_i+i]=1
 
-        if i % 100 ==0:
+        if i % 10 ==0:
             sys.stdout.flush()
 
-        if i % 1000 == 0:
+        if i % 200 == 0:
             print('Saving intermediate image')
             hydro_hdu.header['NEXTI']=start_i+i+1
             out_hdulist=fits.HDUList([hydro_hdu,orig_lctable,image_catalog])
