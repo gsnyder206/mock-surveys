@@ -382,11 +382,11 @@ if __name__=="__main__":
 
 
 
-    hudf_bigbox_wide = LightCone(75.0/h,cosmology,"Deep 75 Mpc")
-    hudf_bigbox_wide.BasicCone(7.0, 6.0, namelist, zlist, manual_dist_limit=10000.0)  #z~8
-    hudf_bigbox_wide.export_runparams('tng100_7_6_xyz.txt')
-    hudf_bigbox_wide.export_runparams('tng100_7_6_yxz.txt', swapxy=True)
-    hudf_bigbox_wide.export_runparams('tng100_7_6_zyx.txt', swapxz=True)
+    hudf_bigbox_wide = LightCone(25.0/h,cosmology,"Deep 25 Mpc")
+    hudf_bigbox_wide.BasicCone(12.0, 11.0, namelist, zlist, manual_dist_limit=10000.0)  #z~8
+    hudf_bigbox_wide.export_runparams('foggie35_12_11_xyz.txt')
+    hudf_bigbox_wide.export_runparams('foggie35_12_11_yxz.txt', swapxy=True)
+    hudf_bigbox_wide.export_runparams('foggie35_12_11_zyx.txt', swapxz=True)
 
 
     #hudf_bigbox_vwide = LightCone(75.0/h,cosmology,"Very Wide 75mpc repeated, 136 snaps")

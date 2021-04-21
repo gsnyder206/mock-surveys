@@ -95,6 +95,8 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
     input_data=hydro_cutout.data
     input_data += use_hdu.data
 
+    #cache use_hdu here???
+    
 
     #output_data = input_data*0.0 + use_hdu.data
     #input_data += output_data
