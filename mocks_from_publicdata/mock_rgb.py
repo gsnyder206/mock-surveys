@@ -92,4 +92,4 @@ if __name__=="__main__":
         Q=4.0
         remake=True
 
-    ceers_field_rgb(alph=alph,Q=Q,remake=remake,root='outputs/TNG100-1_xyz_',filtemp='F{}W.fits',tempname='hydro',subset=None)
+    ceers_field_rgb(alph=alph,Q=Q,remake=remake,root='outputs/TNG50-1_12_11_xyz_',filtemp='F{}W.fits',tempname='hydro',subset=None)

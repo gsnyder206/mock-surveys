@@ -15,9 +15,10 @@ def hdu_from_existing_filter(input_file):
 
 
 def wfirst_filters():
-    
-    xls='WFIRST_WIMWSM_throughput_data_190531.xlsm'
-    
+
+    #xls='WFIRST_WIMWSM_throughput_data_190531.xlsm'
+    xls='Roman_effarea_20201130.xlsx'
+
     throughputs=pandas.read_excel(xls,'EffectiveArea')
 
     wl_microns=throughputs['Unnamed: 0'][19:].values
@@ -26,13 +27,14 @@ def wfirst_filters():
     z087_A=throughputs['Unnamed: 2'][19:].values
     y106_A=throughputs['Unnamed: 3'][19:].values
     j129_A=throughputs['Unnamed: 4'][19:].values
-    w146_A=throughputs['Unnamed: 5'][19:].values
-    h158_A=throughputs['Unnamed: 6'][19:].values
-    f184_A=throughputs['Unnamed: 7'][19:].values
+    h158_A=throughputs['Unnamed: 5'][19:].values
+    f184_A=throughputs['Unnamed: 6'][19:].values
+    w146_A=throughputs['Unnamed: 7'][19:].values
+    k213_A=throughputs['Unnamed: 8'][19:].values
 
     maxA = np.max(throughputs[['Unnamed: 2','Unnamed: 3','Unnamed: 4',
-                               'Unnamed: 5','Unnamed: 6','Unnamed: 7','Unnamed: 1']][19:].values)
-    
+                               'Unnamed: 5','Unnamed: 6','Unnamed: 7','Unnamed: 8','Unnamed: 1']][19:].values)
+
     r_tr = r062_A/maxA
     z_tr = z087_A/maxA
     y_tr = y106_A/maxA
@@ -40,28 +42,32 @@ def wfirst_filters():
     w_tr = w146_A/maxA
     h_tr = h158_A/maxA
     f_tr = f184_A/maxA
-    
+    k_tr = k213_A/maxA
+
     rhdu = wf_hdu(r_tr[r_tr > 1.0e-4],wl_microns[r_tr > 1.0e-4])
-    rhdu.header['EXTNAME']='wfirst/wfi_r062'
-    
+    rhdu.header['EXTNAME']='roman/wfi_r062'
+
     zhdu = wf_hdu(z_tr[z_tr > 1.0e-4],wl_microns[z_tr > 1.0e-4])
-    zhdu.header['EXTNAME']='wfirst/wfi_z087'
-    
+    zhdu.header['EXTNAME']='roman/wfi_z087'
+
     yhdu = wf_hdu(y_tr[y_tr > 1.0e-4],wl_microns[y_tr > 1.0e-4])
-    yhdu.header['EXTNAME']='wfirst/wfi_y106'
-    
+    yhdu.header['EXTNAME']='roman/wfi_y106'
+
     jhdu = wf_hdu(j_tr[j_tr > 1.0e-4],wl_microns[j_tr > 1.0e-4])
-    jhdu.header['EXTNAME']='wfirst/wfi_j129'
-    
+    jhdu.header['EXTNAME']='roman/wfi_j129'
+
     whdu = wf_hdu(w_tr[w_tr > 1.0e-4],wl_microns[w_tr > 1.0e-4])
-    whdu.header['EXTNAME']='wfirst/wfi_w146'
-    
+    whdu.header['EXTNAME']='roman/wfi_w146'
+
     hhdu = wf_hdu(h_tr[h_tr > 1.0e-4],wl_microns[h_tr > 1.0e-4])
-    hhdu.header['EXTNAME']='wfirst/wfi_h158'
-    
+    hhdu.header['EXTNAME']='roman/wfi_h158'
+
     fhdu = wf_hdu(f_tr[f_tr > 1.0e-4],wl_microns[f_tr > 1.0e-4])
-    fhdu.header['EXTNAME']='wfirst/wfi_f184'
-    
+    fhdu.header['EXTNAME']='roman/wfi_f184'
+
+    khdu = wf_hdu(f_tr[k_tr > 1.0e-4],wl_microns[k_tr > 1.0e-4])
+    khdu.header['EXTNAME']='roman/wfi_k213'
+
     '''
     Z_tr = Z_Aeff_m2/np.max(Z_Aeff_m2)
     Y_tr = Y_Aeff_m2/np.max(Y_Aeff_m2)
@@ -85,10 +91,10 @@ def wfirst_filters():
     '''
 
 
-    return (rhdu,zhdu,yhdu,jhdu,whdu,hhdu,fhdu)
+    return (rhdu,zhdu,yhdu,jhdu,whdu,hhdu,fhdu,khdu)
 
 
-    
+
 def wfirst_filters_drm15():
     Z_wl_um = np.asarray([0.75,0.7559,0.7617,0.7676,0.7734,0.7793,0.7851,0.7910,0.7968,0.8027,0.8085,0.8144,0.8202,0.8261,0.8320,0.8378,0.8437,0.8495,0.8554,0.8612,0.8671,0.8729,0.8788,0.8846,0.8905,0.8963,0.9022,0.9080,0.9139,0.9198,0.9256,0.9315,0.9373,0.9432,0.9490,0.9549,0.9607,0.9666,0.9724,0.9783,0.9841])
     Z_Aeff_m2 = np.asarray([0.069,1.955,2.317,2.292,2.292,2.294,2.279,2.275,2.266,2.271,2.268,2.272,2.266,2.270,2.262,2.258,2.263,2.247,2.251,2.252,2.273,2.270,2.267,2.265,2.264,2.253,2.258,2.255,2.255,2.253,2.253,2.249,2.246,2.235,2.231,2.219,2.214,2.117,0.050,0.000,0.000])
@@ -131,7 +137,7 @@ def wfirst_filters_drm15():
 def wf_hdu(tr,um):
     print(np.asarray(tr))
     print(um)
-    
+
     col2 = pyfits.Column(name='totalrelativeefficiency',format='D',unit='relative fraction',array=np.asarray(tr,dtype=np.float64))
     col1 = pyfits.Column(name='wavelength',format='D',unit='angstrom',array=np.asarray(um,dtype=np.float64)*1.0e4)
     cols = pyfits.ColDefs([col1,col2])
@@ -154,7 +160,7 @@ def output_sunrise_filter_directory(fitsfile,dirname):
         filter_tr = hdu.data['totalrelativeefficiency']
         data = astropy.table.Table([np.round(filter_wl,4),np.round(filter_tr,4)],names=['wl','tr'])
         dn = os.path.dirname(filter_name)
-        
+
         if not os.path.lexists(dn):
             os.mkdir(dn)
 
@@ -177,13 +183,14 @@ def output_sunrise_filter_directory(fitsfile,dirname):
                'hst/acs_f814w',
                'hst/wfc3_f125w',
                'hst/wfc3_f160w',
-               'wfirst/wfi_r062',
-               'wfirst/wfi_z087',
-               'wfirst/wfi_y106',
-               'wfirst/wfi_j129',
-               'wfirst/wfi_w146',
-               'wfirst/wfi_h158',
-               'wfirst/wfi_f184',
+               'roman/wfi_r062',
+               'roman/wfi_z087',
+               'roman/wfi_y106',
+               'roman/wfi_j129',
+               'roman/wfi_w146',
+               'roman/wfi_h158',
+               'roman/wfi_f184',
+               'roman/wfi_k213',
                'jwst/nircam_f115w',
                'jwst/nircam_f150w',
                'jwst/nircam_f200w',
@@ -235,7 +242,7 @@ def output_sunrise_filter_directory(fitsfile,dirname):
     ascii.write(st_table,os.path.join(dirname,'filters_st'),Writer=ascii.NoHeader)
     ascii.write(rest_table,os.path.join(dirname,'filters_rest'),Writer=ascii.NoHeader)
     ascii.write(other_table,os.path.join(dirname,'filters_other'),Writer=ascii.NoHeader)
-    
+
 
     return
 
@@ -274,7 +281,7 @@ def miri_filters():
         hdu = wf_hdu(tr,wl/1.0e4)
         hdu.header['EXTNAME']='jwst/miri_'+file[:-16]
         hdus.append(hdu)
-    
+
     return hdus
 
 
@@ -289,7 +296,7 @@ def nircam_filters():
              'F356W_throughput.fits',
              'F444W_throughput.fits',
              'F410M_throughput.fits']
-    
+
     hdus = []
 
     for file in flist:
@@ -299,7 +306,7 @@ def nircam_filters():
         hdu = wf_hdu(tr,wl/1.0e4)
         hdu.header['EXTNAME']='jwst/nircam_'+file[:-16]
         hdus.append(hdu)
-    
+
     return hdus
 
 
@@ -317,7 +324,7 @@ def make_grism_filters(start,stop,number):
         #print bin_start, bin_stop, bin_width, bin_center, thisname
         wl_start = bin_start-bin_width
         wl_stop = bin_stop+bin_width
-        wl_grid = np.linspace(wl_start,wl_stop,30.0)
+        wl_grid = np.linspace(wl_start,wl_stop,30)
         wl_tr = np.where(np.logical_and(wl_grid >= bin_start,wl_grid < bin_stop ),np.ones_like(wl_grid),np.zeros_like(wl_grid) )
         this_hdu = wf_hdu(wl_tr,wl_grid)
         this_hdu.header['EXTNAME']=thisname
@@ -368,5 +375,5 @@ if __name__=="__main__":
     packagef = 'filterpackage.fits'
     newlist.writeto(packagef,clobber=True)
 
-    
+
     output_sunrise_filter_directory(packagef,'sunrise_filters')

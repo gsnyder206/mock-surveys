@@ -96,7 +96,7 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
     input_data += use_hdu.data
 
     #cache use_hdu here???
-    
+
 
     #output_data = input_data*0.0 + use_hdu.data
     #input_data += output_data
@@ -243,6 +243,14 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
                                                                     pT_use,pF_use,key_use) #first try
         except:
             print(sys.exc_info())
+            print('Attempting subhalo dict retrieval')
+            try:
+                subthing=tau.get_subhalo_dict(simname,snapnum,subhalo_id)
+                print('Successfully retrieved subhalo dict, problem with individual vis, skipping and continuing.')
+                continue
+            except Exception as EXCSUB:
+                print(sys.exc_info())
+                print('Failed to retrieve subhalo dict, probably a server problem, moving onto waiting section.')
             time.sleep(300) #likely server failure/reboot -- wait 5 minutes
             try:
                 n_arcmin,total_quant=populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,

@@ -120,6 +120,12 @@ def get_subhalo_magnitude(sim='TNG100-1',
     return magnitude
 
 
+def get_subhalo_dict(sim='TNG100-1',snap=50,sfid=0):
+    url=baseUrl+'/'+sim+'/snapshots/'+str(snap)+'/subhalos/'+str(sfid)
+    sub=get(url)
+    return sub
+
+
 
 def get_subhalo_mockdata_as_fits(sim='TNG100-1',
                                  snap=50,
