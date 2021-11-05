@@ -194,6 +194,12 @@ def get_subhalo_mockdata_as_fits(sim='TNG100-1',
             out_units=outunitdict[partField]
             if partField=='stellar_age':
                 out_data=1.0*data #keep in Gyr
+            elif partField=='sfr':
+                #catch case where sfr field returns uniform zeros -- assume this means de-logged values should be zero
+                if np.all(data==0.0):
+                    out_data = 0.0*data
+                else:
+                    out_data = 10.0**data #de-log
             else:
                 out_data=10.0**data #de-log
         else:

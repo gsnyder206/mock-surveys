@@ -24,7 +24,10 @@ fdict={
 'F200W':'jwst_f200w',
 'F277W':'jwst_f277w',
 'F356W':'jwst_f356w',
-'F444W':'jwst_f444w'
+'F444W':'jwst_f444w',
+
+'mstar':'mstar',
+'sfr':'sfr'
 }
 
 pdict={
@@ -46,7 +49,10 @@ pdict={
 'F200W':0.03,
 'F277W':0.03,
 'F356W':0.03,
-'F444W':0.03
+'F444W':0.03,
+
+'mstar':0.03,
+'sfr':0.03
 }
 
 # Lightcone_TNG100-1_mag30_7_6_xyz.txt
@@ -65,7 +71,7 @@ assert fkey in pdict.keys()
 hh=cmhi.run('priority_lightcones/Lightcone_TNG100-1_mag30_7_6_xyz.txt',
             scale_arcsec=pdict[fkey],w_deg=0.2,h_deg=0.2,
             filtername=fdict[fkey],
-            outfile='outputs/TNG100-1_7_6_xyz_'+fkey+'.fits')
+            outfile='/Users/gsnyder/Documents/mocks_testing/outputs_7_6/TNG100-1_7_6_xyz_'+fkey+'.fits',cache=True)
 
 
 #hh=cmhi.run('priority_lightcones/testlc_TNG100-1_small.txt',

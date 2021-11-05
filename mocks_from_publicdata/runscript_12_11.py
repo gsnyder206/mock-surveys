@@ -24,7 +24,10 @@ fdict={
 'F200W':'jwst_f200w',
 'F277W':'jwst_f277w',
 'F356W':'jwst_f356w',
-'F444W':'jwst_f444w'
+'F444W':'jwst_f444w',
+
+'mstar':'mstar',
+'sfr':'sfr'
 }
 
 pdict={
@@ -46,7 +49,10 @@ pdict={
 'F200W':0.03,
 'F277W':0.03,
 'F356W':0.03,
-'F444W':0.03
+'F444W':0.03,
+
+'mstar':0.03,
+'sfr':0.03
 }
 
 # Lightcone_TNG100-1_mag30_7_6_xyz.txt

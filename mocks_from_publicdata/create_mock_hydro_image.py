@@ -43,7 +43,7 @@ unitdict={'mstar':'Msun','mgas':'Msun','sfr':'Msun/year','zgas':'MZ/Mtot','zstar
 
 
 def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
-                                simname,snapnum,subhalo_id,pT_use,pF_use,key_use):
+                                simname,snapnum,subhalo_id,pT_use,pF_use,key_use,cache_dir=None):
 
     axes=['0,1','0,2','1,2','1,0','2,0','2,1']
 
@@ -58,9 +58,52 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
 
     wcs_header=hydro_cutout.wcs.to_header()
 
+    '''
+    assert(len(self.idstring)>4)
+
+    lev1='lev1-'+self.idstring[-2:]
+    lev2='lev2-'+self.idstring[-4:-2]
+
+    extname=self.fieldname+'_'+self.idstring+'-'+str(self.sam_source_row['gal_id'])
+
+    basename='sam-sources_'+self.fieldname+'_'+self.filters[0].replace('_','-')+'_'+self.lev1+'_'+self.lev2+'.fits'
+    fitsfile_rel=os.path.join(self.filters[0],self.lev1,self.basename)
+    '''
+    if cache_dir is not None:
+        lev1=str(snapnum)
+        lev2=str(subhalo_id)[-1]
+        field_name=os.path.basename(cache_dir)
+        extname=field_name+'_'+str(snapnum)+'_'+str(subhalo_id)
+        basename='hydro-sources_'+field_name+'_'+key_use+'_'+lev1+'_'+lev2+'.fits'
+        filename=os.path.join(cache_dir,basename)
+    else:
+        filename=None
+
+    if filename is not None:
+        file_exists = os.path.lexists(filename)
+        existing_hdu = None
+
+        if file_exists is True:
+            hfo=fits.open(filename,'append')
+            try:
+                existing_hdu = hfo[extname]
+            except KeyError as KE:
+                existing_hdu = None
+
+    else:
+        existing_hdu = None
+        file_exists=False
 
 
-    use_hdu = tau.get_subhalo_mockdata_as_fits(sim=simname,
+    if existing_hdu is not None:
+        #use existing image
+        use_hdu = existing_hdu
+        #print('re-using cached HDU..', filename)
+        total_flux_njy=np.sum(use_hdu.data)
+
+    else:
+        #use API to grab data
+        use_hdu = tau.get_subhalo_mockdata_as_fits(sim=simname,
                                                 snap=np.int32(snapnum),
                                                 sfid=np.int64(subhalo_id),
                                                 partType=pT_use,
@@ -69,28 +112,49 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
                                                 nPixels=npix,
                                                 axes=axes[0],
                                                 existingheader=wcs_header)
-    use_hdu.header['KEY']=key_use
+        use_hdu.header['KEY']=key_use
 
 
-    #manage NANs here???
+        #manage NANs here
+        use_hdu.data[np.isnan(use_hdu.data)]=0.0
 
+        total_flux_njy=np.sum(use_hdu.data)
+
+
+
+        if reshape is True:
+            #this thing is deprecated
+            #new_data=imresize(use_hdu.data,(cutout_size,cutout_size),interp='bicubic')
+            new_data = np.asarray( Image.fromarray(use_hdu.data).resize(size=(cutout_size, cutout_size)) )
+            #print(np.sum(new_data))
+            if total_flux_njy==0.0:
+                new_data=1.0*new_data
+            else:
+                new_data = new_data*total_flux_njy/np.sum(new_data)
+            use_hdu = fits.ImageHDU(new_data,header=use_hdu.header)
+
+        if cache_dir is not None:
+            if file_exists is True:
+                use_hdu.header['EXTNAME']=extname
+                hfo.append(use_hdu)
+                hfo.close()
+            else:
+                #this is handled in main function
+                #if not os.path.lexists(os.path.dirname(hf)):
+                #    os.makedirs((os.path.dirname(hf)))
+                use_hdu.header['EXTNAME']=extname
+                use_hdu.writeto(filename)
+
+    #manage NANs here
     use_hdu.data[np.isnan(use_hdu.data)]=0.0
 
     #manage weird-unit things here like Mz/Mtot and Age
-    total_flux_njy=np.sum(use_hdu.data)
+
 
     n_arcmin=use_hdu.header['N_ARCMIN']
 
     if total_flux_njy==0.0:
         return n_arcmin, 0.0
-
-    if reshape is True:
-        #this thing is deprecated
-        #new_data=imresize(use_hdu.data,(cutout_size,cutout_size),interp='bicubic')
-        new_data = Image.fromarray(use_hdu.data).resize(size=(cutout_size, cutout_size))
-        #print(np.sum(new_data))
-        new_data = new_data*total_flux_njy/np.sum(new_data)
-        use_hdu = fits.ImageHDU(new_data,header=use_hdu.header)
 
     input_data=hydro_cutout.data
     input_data += use_hdu.data
@@ -107,7 +171,7 @@ def populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
     return n_arcmin, total_quant
 
 
-def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
+def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',cache=False,**kwargs):
 
     lcfname=os.path.basename(lcfile)
     simname=lcfname.split('_')[1]
@@ -115,6 +179,18 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
     print(lcfname)
     print(simname)
 
+
+    field_name=lcfname.split('.')[0]
+    print(field_name)
+    out_dir=os.path.dirname(outfile)
+    if not os.path.lexists(out_dir):
+        os.makedirs(out_dir)
+    if cache is True:
+        cache_dir=os.path.join(out_dir,field_name)
+        if not os.path.lexists(cache_dir):
+            os.makedirs(cache_dir)
+    else:
+        cache_dir=None
 
     #add quantity/units functionality
     if filtername in pTdict.keys():
@@ -240,7 +316,7 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
         try:
             n_arcmin,total_quant=populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
                                                                     simname,snapnum,subhalo_id,
-                                                                    pT_use,pF_use,key_use) #first try
+                                                                    pT_use,pF_use,key_use,cache_dir) #first try
         except:
             print(sys.exc_info())
             print('Attempting subhalo dict retrieval')
@@ -255,7 +331,7 @@ def run(lcfile,filtername='wfc3_ir_f160w',outfile='test.fits',**kwargs):
             try:
                 n_arcmin,total_quant=populate_hydro_source_only(hydro_cutout,cutout_size,scale_arcsec,
                                                                     simname,snapnum,subhalo_id,
-                                                                    pT_use,pF_use,key_use)  #2nd try
+                                                                    pT_use,pF_use,key_use,cache_dir)  #2nd try
             except Exception as EXC:
                 print(sys.exc_info())
                 print('Two failures to populate hydro source (likely server issue?), halting...')
