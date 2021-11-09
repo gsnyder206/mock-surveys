@@ -306,7 +306,8 @@ def make_sm_fig(source_morph,thisdir,filelabel):
 
 def run_morphs_calculations(im435,im814,im200,im277,im356,im_mstar,
                             cat_435,cat_814,cat_200,cat_277,cat_356,cat_mstar,
-                            wcs_200,segm_1,tbl_1,scat_1,label="test",min_mag=24.0,max_mag=29.0,limit=10,starti=0):
+                            wcs_200,segm_1,tbl_1,scat_1,label="test",min_mag=24.0,max_mag=29.0,limit=10,starti=0,
+                            outdir_root='/astro/snyder_lab/MockSurveys/MockLightcones/morph_analysis/'):
     im_200_1=1.0*im200
 
     #segm_1,tbl_1,scat_1 = do_photutils_stuff(im_200_1)
@@ -345,7 +346,7 @@ def run_morphs_calculations(im435,im814,im200,im277,im356,im_mstar,
 
 
 
-    outputs_dir='morphology_diagnostics_'+label
+    outputs_dir=os.path.join(outdir_root,'morphology_diagnostics_'+label)
     f200_dir=os.path.join(outputs_dir,'f200w')
     f435_dir=os.path.join(outputs_dir,'f435w')
     f814_dir=os.path.join(outputs_dir,'f814w')

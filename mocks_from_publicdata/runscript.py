@@ -71,7 +71,7 @@ assert fkey in pdict.keys()
 hh=cmhi.run('priority_lightcones/Lightcone_TNG100-1_mag30_7_6_xyz.txt',
             scale_arcsec=pdict[fkey],w_deg=0.2,h_deg=0.2,
             filtername=fdict[fkey],
-            outfile='/Users/gsnyder/Documents/mocks_testing/outputs_7_6/TNG100-1_7_6_xyz_'+fkey+'.fits',cache=True)
+            outfile='/astro/snyder_lab/MockSurveys/MockLightcones/outputs_7_6/TNG100-1_7_6_xyz_'+fkey+'.fits',cache=True)
 
 
 #hh=cmhi.run('priority_lightcones/testlc_TNG100-1_small.txt',
